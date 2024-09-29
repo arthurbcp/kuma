@@ -2,6 +2,7 @@ package helpers
 
 import "html/template"
 
+//go:generate mockgen -source=helpers.go -destination=../mocks/helpers.go -package=mocks
 type HelpersInterface interface {
 	StringContains(s []string, e string) bool
 	InterfaceContains(s []interface{}, e string) bool

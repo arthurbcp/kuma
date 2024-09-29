@@ -59,7 +59,7 @@ func NewBuilder(fs filesystem.FileSystemInterface, helpers helpers.HelpersInterf
 	if err != nil {
 		return nil, err
 	}
-	err = builder.SetConfig(config)
+	err = builder.setConfig(config)
 	if err != nil {
 		return nil, err
 	}
@@ -95,13 +95,13 @@ func (b *Builder) SetBuilderData(file string, vars map[string]interface{}) error
 	// Determine the file type based on its extension and unmarshal accordingly.
 	switch filepath.Ext(file) {
 	case ".yaml", ".yml":
-		data, err := UnmarshalYamlConfig([]byte(configData))
+		data, err := unmarshalYamlConfig([]byte(configData))
 		if err != nil {
 			return err
 		}
 		b.Data = data
 	case ".json":
-		data, err := UnmarshalJsonConfig([]byte(configData))
+		data, err := unmarshalJsonConfig([]byte(configData))
 		if err != nil {
 			return err
 		}
@@ -120,7 +120,7 @@ func (b *Builder) SetBuilderData(file string, vars map[string]interface{}) error
 // Returns:
 //
 //	An error if setting the configuration fails, otherwise nil.
-func (b *Builder) SetConfig(config *Config) error {
+func (b *Builder) setConfig(config *Config) error {
 	b.Config = config
 	return nil
 }
@@ -133,7 +133,7 @@ func (b *Builder) SetConfig(config *Config) error {
 // Returns:
 //
 //	A pointer to BuilderData and an error if unmarshaling fails.
-func UnmarshalJsonConfig(configData []byte) (*BuilderData, error) {
+func unmarshalJsonConfig(configData []byte) (*BuilderData, error) {
 	config := BuilderData{}
 	err := json.Unmarshal(configData, &config)
 	if err != nil {
@@ -151,7 +151,7 @@ func UnmarshalJsonConfig(configData []byte) (*BuilderData, error) {
 // Returns:
 //
 //	A pointer to BuilderData and an error if unmarshaling fails.
-func UnmarshalYamlConfig(configData []byte) (*BuilderData, error) {
+func unmarshalYamlConfig(configData []byte) (*BuilderData, error) {
 	config := BuilderData{}
 	c := map[interface{}]interface{}{}
 	err := yaml.Unmarshal(configData, &c)

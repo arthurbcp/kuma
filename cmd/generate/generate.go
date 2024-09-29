@@ -42,6 +42,10 @@ var GenerateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate a scaffold for a project based on Go Templates",
 	Run: func(cmd *cobra.Command, args []string) {
+		if ParserToUse == "" && KumaConfigFilePath == "" {
+			fmt.Println("You must specify a config file or a parser to use")
+			cmd.Help()
+		}
 		helpers := helpers.NewHelpers()
 		// If a parser is specified, validate and execute parsing before building.
 		if ParserToUse != "" {
