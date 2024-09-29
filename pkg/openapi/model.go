@@ -83,7 +83,49 @@ type OpenApiTemplateResponse struct {
 
 // OpenApiTemplateComponent represents a component schema in the OpenAPI specification.
 type OpenApiTemplateComponent struct {
-	Name        string                 `json:"Name,omitempty"`
-	Description string                 `json:"Description,omitempty"`
-	Schema      map[string]interface{} `json:"Schema,omitempty"`
+	Name            string                             `json:"Name,omitempty"`
+	Description     string                             `json:"Description,omitempty"`
+	Properties      []OpenAPITemplateComponentProperty `json:"Properties,omitempty"`
+	Schemas         map[string]interface{}             `json:"Schema,omitempty"`
+	Responses       map[string]interface{}             `json:"Responses,omitempty"`
+	Examples        map[string]interface{}             `json:"Examples,omitempty"`
+	Parameters      map[string]interface{}             `json:"Parameters,omitempty"`
+	RequestBodies   map[string]interface{}             `json:"RequestBodies,omitempty"`
+	Headers         map[string]interface{}             `json:"Headers,omitempty"`
+	SecuritySchemes map[string]interface{}             `json:"SecuritySchemes,omitempty"`
+	Links           map[string]interface{}             `json:"Links,omitempty"`
+	Callbacks       map[string]interface{}             `json:"Callbacks,omitempty"`
+}
+
+type OpenAPITemplateComponentProperty struct {
+	Name             string                                `json:"Name,omitempty"`
+	Type             string                                `json:"Type,omitempty"`
+	Description      string                                `json:"Description,omitempty"`
+	Required         []string                              `json:"Required,omitempty"`
+	Nullable         bool                                  `json:"Nullable,omitempty"`
+	Format           string                                `json:"Format,omitempty"`
+	Default          string                                `json:"Default,omitempty"`
+	Enum             []string                              `json:"Enum,omitempty"`
+	ReadOnly         bool                                  `json:"ReadOnly,omitempty"`
+	WriteOnly        bool                                  `json:"WriteOnly,omitempty"`
+	Deprecated       bool                                  `json:"Deprecated,omitempty"`
+	Items            []OpenAPITemplateComponentProperty    `json:"Items,omitempty"`
+	MinLength        int                                   `json:"MinLength,omitempty"`
+	MaxLength        int                                   `json:"MaxLength,omitempty"`
+	Pattern          string                                `json:"Pattern,omitempty"`
+	Minimum          float64                               `json:"Minimum,omitempty"`
+	Maximum          float64                               `json:"Maximum,omitempty"`
+	ExclusiveMinimum float64                               `json:"ExclusiveMinimum,omitempty"`
+	ExclusiveMaximum float64                               `json:"ExclusiveMaximum,omitempty"`
+	UniqueItems      bool                                  `json:"UniqueItems,omitempty"`
+	AllOf            []string                              `json:"AllOf,omitempty"`
+	OneOf            []string                              `json:"OneOf,omitempty"`
+	AnyOf            []string                              `json:"AnyOf,omitempty"`
+	Not              []string                              `json:"Not,omitempty"`
+	Discriminator    OpenAPITemplateComponentDiscriminator `json:"Discriminator,omitempty"`
+}
+
+type OpenAPITemplateComponentDiscriminator struct {
+	PropertyName string            `json:"PropertyName,omitempty"`
+	Mapping      map[string]string `json:"Mapping,omitempty"`
 }

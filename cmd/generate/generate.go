@@ -44,7 +44,7 @@ var GenerateCmd = &cobra.Command{
 			}
 
 			// Check if the specified parser is available.
-			if !helpers.Contains(parser.AvailableParsers, ParserToUse) {
+			if !helpers.StringContains(parser.AvailableParsers, ParserToUse) {
 				fmt.Printf("Parser %s not found!\nAvailable parsers:\n - %s",
 					ParserToUse, parser.GetAvailableParsersString())
 				return

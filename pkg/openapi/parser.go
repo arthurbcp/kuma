@@ -1,10 +1,16 @@
 package openapi
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
+
+	"github.com/arthurbcp/kuma-cli/internal/helpers"
 )
 
+// Import necessary packages
+
+// Updated ParseToOpenAPITemplate function
 // ParseToOpenAPITemplate parses the OpenAPI file represented as a map[string]interface{}
 // into an OpenAPITemplate struct, including components and handling $ref references.
 func ParseToOpenAPITemplate(openAPIFile map[string]interface{}) OpenAPITemplate {
@@ -73,20 +79,11 @@ func ParseToOpenAPITemplate(openAPIFile map[string]interface{}) OpenAPITemplate 
 		if schemas, ok := components["schemas"].(map[string]interface{}); ok {
 			for name, schema := range schemas {
 				if schemaMap, ok := schema.(map[string]interface{}); ok {
-					component := OpenApiTemplateComponent{
-						Name:   name,
-						Schema: schemaMap,
-					}
-					if desc, ok := schemaMap["description"].(string); ok {
-						component.Description = desc
-					}
+					component := parseSchema(name, schemaMap)
 					template.Components = append(template.Components, component)
 				}
 			}
 		}
-
-		// Optionally, parse other component types like responses, parameters, etc.
-		// For this example, we're focusing on schemas.
 	}
 
 	// Initialize a map to group controllers by tag names
@@ -199,22 +196,208 @@ func ParseToOpenAPITemplate(openAPIFile map[string]interface{}) OpenAPITemplate 
 	return template
 }
 
-// isHTTPMethod checks if a given method string is a valid HTTP method.
-func isHTTPMethod(method string) bool {
-	httpMethods := []string{"get", "post", "put", "delete", "patch", "head", "options", "trace"}
-	method = strings.ToLower(method)
-	for _, m := range httpMethods {
-		if method == m {
-			return true
+// parseSchema parses a schema map into an OpenApiTemplateComponent struct.
+func parseSchema(name string, schemaMap map[string]interface{}) OpenApiTemplateComponent {
+	component := OpenApiTemplateComponent{
+		Name:    name,
+		Schemas: schemaMap,
+	}
+
+	// Description
+	if desc, ok := schemaMap["description"].(string); ok {
+		component.Description = desc
+	}
+
+	// Description
+	var required []interface{}
+	if req, ok := schemaMap["required"].([]interface{}); ok {
+		required = req
+	}
+
+	// Parse Properties
+	if properties, ok := schemaMap["properties"].(map[string]interface{}); ok {
+		for propName, propValue := range properties {
+			if propMap, ok := propValue.(map[string]interface{}); ok {
+				property := parseProperty(propName, propMap, required)
+				component.Properties = append(component.Properties, property)
+			}
 		}
 	}
-	return false
+
+	return component
 }
 
-// parameterWithIn is a helper struct to hold a parameter and its "in" field.
-type parameterWithIn struct {
-	Param OpenApiTemplateParam
-	In    string
+// parseProperty parses a property map into an OpenAPITemplateComponentProperty struct.
+func parseProperty(name string, propMap map[string]interface{}, required []interface{}) OpenAPITemplateComponentProperty {
+	property := OpenAPITemplateComponentProperty{
+		Name: name,
+	}
+
+	// Required
+	if helpers.InterfaceContains(required, name) {
+		property.Required = append(property.Required, name)
+	}
+
+	// Description
+	if desc, ok := propMap["description"].(string); ok {
+		property.Description = desc
+	}
+
+	// Type
+	if typ, ok := propMap["type"].(string); ok {
+		property.Type = typ
+	}
+
+	// Format
+	if format, ok := propMap["format"].(string); ok {
+		property.Format = format
+	}
+
+	// Nullable
+	if nullable, ok := propMap["nullable"].(bool); ok {
+		property.Nullable = nullable
+	}
+
+	// ReadOnly
+	if readOnly, ok := propMap["readOnly"].(bool); ok {
+		property.ReadOnly = readOnly
+	}
+
+	// WriteOnly
+	if writeOnly, ok := propMap["writeOnly"].(bool); ok {
+		property.WriteOnly = writeOnly
+	}
+
+	// Deprecated
+	if deprecated, ok := propMap["deprecated"].(bool); ok {
+		property.Deprecated = deprecated
+	}
+
+	// Default
+	if def, ok := propMap["default"]; ok {
+		// Convert default value to string
+		defBytes, err := json.Marshal(def)
+		if err == nil {
+			property.Default = string(defBytes)
+		}
+	}
+
+	// Enum
+	if enums, ok := propMap["enum"].([]interface{}); ok {
+		for _, enumVal := range enums {
+			if enumStr, ok := enumVal.(string); ok {
+				property.Enum = append(property.Enum, enumStr)
+			} else {
+				// Handle non-string enums if necessary
+				enumBytes, err := json.Marshal(enumVal)
+				if err == nil {
+					property.Enum = append(property.Enum, string(enumBytes))
+				}
+			}
+		}
+	}
+
+	// Items (for arrays)
+	if items, ok := propMap["items"].(map[string]interface{}); ok {
+		itemProperty := OpenAPITemplateComponentProperty{}
+		if itemType, ok := items["type"].(string); ok {
+			itemProperty.Type = itemType
+		}
+		if itemFormat, ok := items["format"].(string); ok {
+			itemProperty.Format = itemFormat
+		}
+		// Recursive parsing for nested items
+		if nestedItems, ok := items["items"].(map[string]interface{}); ok {
+			nestedProperty := parseProperty(name, nestedItems, required)
+			itemProperty.Items = append(itemProperty.Items, nestedProperty)
+		}
+		property.Items = append(property.Items, itemProperty)
+	}
+
+	// Pattern
+	if pattern, ok := propMap["pattern"].(string); ok {
+		property.Pattern = pattern
+	}
+
+	// Minimum and Maximum
+	if min, ok := propMap["minimum"].(float64); ok {
+		property.Minimum = min
+	}
+	if max, ok := propMap["maximum"].(float64); ok {
+		property.Maximum = max
+	}
+	if exMin, ok := propMap["exclusiveMinimum"].(float64); ok {
+		property.ExclusiveMinimum = exMin
+	}
+	if exMax, ok := propMap["exclusiveMaximum"].(float64); ok {
+		property.ExclusiveMaximum = exMax
+	}
+
+	// UniqueItems
+	if unique, ok := propMap["uniqueItems"].(bool); ok {
+		property.UniqueItems = unique
+	}
+
+	// AllOf, OneOf, AnyOf, Not
+	if allOf, ok := propMap["allOf"].([]interface{}); ok {
+		for _, item := range allOf {
+			if ref, ok := item.(map[string]interface{})["$ref"].(string); ok {
+				componentName := getComponentName(ref)
+				if componentName != "" {
+					property.AllOf = append(property.AllOf, componentName)
+				}
+			}
+		}
+	}
+	if oneOf, ok := propMap["oneOf"].([]interface{}); ok {
+		for _, item := range oneOf {
+			if ref, ok := item.(map[string]interface{})["$ref"].(string); ok {
+				componentName := getComponentName(ref)
+				if componentName != "" {
+					property.OneOf = append(property.OneOf, componentName)
+				}
+			}
+		}
+	}
+	if anyOf, ok := propMap["anyOf"].([]interface{}); ok {
+		for _, item := range anyOf {
+			if ref, ok := item.(map[string]interface{})["$ref"].(string); ok {
+				componentName := getComponentName(ref)
+				if componentName != "" {
+					property.AnyOf = append(property.AnyOf, componentName)
+				}
+			}
+		}
+	}
+	if not, ok := propMap["not"].([]interface{}); ok {
+		for _, item := range not {
+			if ref, ok := item.(map[string]interface{})["$ref"].(string); ok {
+				componentName := getComponentName(ref)
+				if componentName != "" {
+					property.Not = append(property.Not, componentName)
+				}
+			}
+		}
+	}
+
+	// Discriminator
+	if discriminator, ok := propMap["discriminator"].(map[string]interface{}); ok {
+		discriminatorStruct := OpenAPITemplateComponentDiscriminator{}
+		if propertyName, ok := discriminator["propertyName"].(string); ok {
+			discriminatorStruct.PropertyName = propertyName
+		}
+		if mapping, ok := discriminator["mapping"].(map[string]interface{}); ok {
+			discriminatorStruct.Mapping = make(map[string]string)
+			for key, value := range mapping {
+				if valStr, ok := value.(string); ok {
+					discriminatorStruct.Mapping[key] = valStr
+				}
+			}
+		}
+		property.Discriminator = discriminatorStruct
+	}
+
+	return property
 }
 
 // parseParameter parses a parameter map into a parameterWithIn struct.
@@ -337,6 +520,24 @@ func parseResponse(respMap map[string]interface{}, statusCode string) OpenApiTem
 	}
 
 	return response
+}
+
+// isHTTPMethod checks if a given method string is a valid HTTP method.
+func isHTTPMethod(method string) bool {
+	httpMethods := []string{"get", "post", "put", "delete", "patch", "head", "options", "trace"}
+	method = strings.ToLower(method)
+	for _, m := range httpMethods {
+		if method == m {
+			return true
+		}
+	}
+	return false
+}
+
+// parameterWithIn is a helper struct to hold a parameter and its "in" field.
+type parameterWithIn struct {
+	Param OpenApiTemplateParam
+	In    string
 }
 
 // parseStatusCode converts a status code string to an integer.
