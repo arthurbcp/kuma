@@ -6,6 +6,7 @@ package generate
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/arthurbcp/kuma-cli/cmd/parser"
 	"github.com/arthurbcp/kuma-cli/cmd/shared"
@@ -69,13 +70,13 @@ func build() {
 	builder, err := domain.NewBuilder(KumaConfigFile, shared.KumaConfig, domain.NewConfig(ProjectPath, KumaTemplates))
 	if err != nil {
 		helpers.ErrorPrint(err.Error())
-		return
+		os.Exit(1)
 	}
 
 	// Execute the build process using the BuilderHandler.
 	if err = handlers.NewBuilderHandler(builder).Build(map[string]interface{}{}); err != nil {
 		helpers.ErrorPrint(err.Error())
-		return
+		os.Exit(1)
 	}
 }
 
