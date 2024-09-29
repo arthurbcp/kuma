@@ -2,15 +2,24 @@ package helpers
 
 import (
 	"io"
-	"os"
+	"os" // Import the os package
 
 	"github.com/gookit/color"
+	"github.com/spf13/afero"
 )
 
+// Initialize the default filesystem. You can replace this with a mock filesystem in tests.
+var AppFs = afero.NewOsFs()
+
+// CreateDirectoryIfNotExists creates a directory if it does not already exist.
 func CreateDirectoryIfNotExists(path string) error {
-	_, err := os.Stat(path)
-	if os.IsNotExist(err) {
-		err := os.MkdirAll(path, os.ModePerm)
+	exists, err := afero.DirExists(AppFs, path)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		// Use os.FileMode directly
+		err := AppFs.MkdirAll(path, os.ModePerm)
 		if err != nil {
 			color.Gray.Printf("  ❌ " + path + "\n")
 			return err
@@ -20,8 +29,9 @@ func CreateDirectoryIfNotExists(path string) error {
 	return nil
 }
 
+// ReadFile reads the content of a file and returns it as a string.
 func ReadFile(filePath string) (string, error) {
-	file, err := os.Open(filePath)
+	file, err := AppFs.Open(filePath)
 	if err != nil {
 		return "", err
 	}
@@ -35,27 +45,38 @@ func ReadFile(filePath string) (string, error) {
 	return string(content), nil
 }
 
-func CreateFileIfNotExists(filename string) (*os.File, error) {
-	_, err := os.Stat(filename)
-	if os.IsNotExist(err) {
+// CreateFileIfNotExists creates a file if it does not already exist.
+func CreateFileIfNotExists(filename string) (afero.File, error) {
+	exists, err := afero.Exists(AppFs, filename)
+	if err != nil {
+		return nil, err
+	}
+	if !exists {
 		return CreateFile(filename)
 	}
-
 	return nil, nil
 }
 
-func CreateFile(filename string) (*os.File, error) {
-	file, err := os.Create(filename)
+// CreateFile creates or truncates the named file.
+func CreateFile(filename string) (afero.File, error) {
+	file, err := AppFs.Create(filename)
 	if err != nil {
 		return file, err
 	}
-
 	return file, nil
 }
 
+// WriteFile writes a string to a file, overwriting it if it already exists.
 func WriteFile(filename string, content string) error {
-	os.Remove(filename)
-	err := os.WriteFile(filename, []byte(content), os.ModePerm)
+	// Open the file with write permissions, create if not exists, truncate if exists
+	// Use os.FileMode directly
+	file, err := AppFs.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(content)
 	if err != nil {
 		return err
 	}
@@ -63,14 +84,16 @@ func WriteFile(filename string, content string) error {
 	return nil
 }
 
+// ReadDir reads the directory named by path and returns a slice of file names.
 func ReadDir(path string) ([]string, error) {
-	files, err := os.ReadDir(path)
+	entries, err := afero.ReadDir(AppFs, path)
 	if err != nil {
 		return nil, err
 	}
+
 	var fileNames []string
-	for _, file := range files {
-		fileNames = append(fileNames, file.Name())
+	for _, entry := range entries {
+		fileNames = append(fileNames, entry.Name())
 	}
 
 	return fileNames, nil
