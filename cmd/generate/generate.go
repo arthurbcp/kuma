@@ -47,7 +47,7 @@ var GenerateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if ParserToUse == "" && VariableFilePath == "" {
 			fmt.Println("You must specify a parser or a variables file to use")
-			os.Exit(1)
+			cmd.Help()
 		}
 		helpers := helpers.NewHelpers()
 		// If a parser is specified, validate and execute parsing before building.
