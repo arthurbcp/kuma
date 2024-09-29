@@ -199,13 +199,17 @@ func ParseToOpenAPITemplate(openAPIFile map[string]interface{}) OpenAPITemplate 
 // parseSchema parses a schema map into an OpenApiTemplateComponent struct.
 func parseSchema(name string, schemaMap map[string]interface{}) OpenApiTemplateComponent {
 	component := OpenApiTemplateComponent{
-		Name:    name,
-		Schemas: schemaMap,
+		Name: name,
 	}
 
 	// Description
 	if desc, ok := schemaMap["description"].(string); ok {
 		component.Description = desc
+	}
+
+	// Type
+	if typ, ok := schemaMap["type"].(string); ok {
+		component.Type = typ
 	}
 
 	// Description
@@ -235,7 +239,7 @@ func parseProperty(name string, propMap map[string]interface{}, required []inter
 
 	// Required
 	if helpers.InterfaceContains(required, name) {
-		property.Required = append(property.Required, name)
+		property.Required = helpers.InterfaceContains(required, name)
 	}
 
 	// Description
@@ -246,6 +250,10 @@ func parseProperty(name string, propMap map[string]interface{}, required []inter
 	// Type
 	if typ, ok := propMap["type"].(string); ok {
 		property.Type = typ
+	}
+
+	if ref, ok := propMap["$ref"].(string); ok {
+		property.Ref = getComponentName(ref)
 	}
 
 	// Format
@@ -394,7 +402,7 @@ func parseProperty(name string, propMap map[string]interface{}, required []inter
 				}
 			}
 		}
-		property.Discriminator = discriminatorStruct
+		property.Discriminator = &discriminatorStruct
 	}
 
 	return property
@@ -407,10 +415,7 @@ func parseParameter(paramMap map[string]interface{}) parameterWithIn {
 
 	// Check if the parameter uses a $ref
 	if ref, ok := paramMap["$ref"].(string); ok {
-		componentName := getComponentName(ref)
-		if componentName != "" {
-			param.Schema = map[string]interface{}{"$ref": componentName}
-		}
+		param.Ref = getComponentName(ref)
 	} else {
 		if name, ok := paramMap["name"].(string); ok {
 			param.Name = name
@@ -420,16 +425,6 @@ func parseParameter(paramMap map[string]interface{}) parameterWithIn {
 		}
 		if required, ok := paramMap["required"].(bool); ok {
 			param.Required = required
-		}
-		if schema, ok := paramMap["schema"].(map[string]interface{}); ok {
-			if ref, ok := schema["$ref"].(string); ok {
-				componentName := getComponentName(ref)
-				if componentName != "" {
-					param.Schema = map[string]interface{}{"$ref": componentName}
-				}
-			} else if typeStr, ok := schema["type"].(string); ok {
-				param.Schema = map[string]interface{}{"type": typeStr}
-			}
 		}
 	}
 
@@ -446,7 +441,7 @@ func parseParameter(paramMap map[string]interface{}) parameterWithIn {
 
 // parseRequestBody parses a request body map into an OpenApiTemplateRequestBody struct.
 // It handles $ref references to component schemas.
-func parseRequestBody(reqBody map[string]interface{}) OpenApiTemplateRequestBody {
+func parseRequestBody(reqBody map[string]interface{}) *OpenApiTemplateRequestBody {
 	requestBody := OpenApiTemplateRequestBody{}
 
 	if required, ok := reqBody["required"].(bool); ok {
@@ -464,21 +459,16 @@ func parseRequestBody(reqBody map[string]interface{}) OpenApiTemplateRequestBody
 				}
 				if schema, ok := mediaMap["schema"].(map[string]interface{}); ok {
 					if ref, ok := schema["$ref"].(string); ok {
-						componentName := getComponentName(ref)
-						if componentName != "" {
-							mediaTypeStruct.Schema = map[string]interface{}{"$ref": componentName}
-						}
-					} else if typeStr, ok := schema["type"].(string); ok {
-						mediaTypeStruct.Schema = map[string]interface{}{"type": typeStr}
+						mediaTypeStruct.Ref = getComponentName(ref)
 					}
 				}
 				parsedContent.MediaTypes = append(parsedContent.MediaTypes, mediaTypeStruct)
 			}
 		}
-		requestBody.Content = parsedContent
+		requestBody.Content = &parsedContent
 	}
 
-	return requestBody
+	return &requestBody
 }
 
 // parseResponse parses a response map into an OpenApiTemplateResponse struct.
@@ -505,18 +495,13 @@ func parseResponse(respMap map[string]interface{}, statusCode string) OpenApiTem
 				}
 				if schema, ok := mediaMap["schema"].(map[string]interface{}); ok {
 					if ref, ok := schema["$ref"].(string); ok {
-						componentName := getComponentName(ref)
-						if componentName != "" {
-							mediaTypeStruct.Schema = map[string]interface{}{"$ref": componentName}
-						}
-					} else if typeStr, ok := schema["type"].(string); ok {
-						mediaTypeStruct.Schema = map[string]interface{}{"type": typeStr}
+						mediaTypeStruct.Ref = getComponentName(ref)
 					}
 				}
 				parsedContent.MediaTypes = append(parsedContent.MediaTypes, mediaTypeStruct)
 			}
 		}
-		response.Content = parsedContent
+		response.Content = &parsedContent
 	}
 
 	return response
@@ -555,11 +540,7 @@ func parseStatusCode(statusCode string) (int, error) {
 // getComponentName extracts the component name from a $ref string.
 // Example: "#/components/schemas/User" returns "User"
 func getComponentName(ref string) string {
-	parts := strings.Split(ref, "/")
-	if len(parts) >= 4 && parts[1] == "components" && parts[2] == "schemas" {
-		return parts[3]
-	}
-	return ""
+	return ref[strings.LastIndex(ref, "/")+1:]
 }
 
 // getBasePath extracts the base path from a full API path.
