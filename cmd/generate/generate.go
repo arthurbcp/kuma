@@ -7,6 +7,8 @@ package generate
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/arthurbcp/kuma-cli/cmd/parser"
 	"github.com/arthurbcp/kuma-cli/cmd/shared"
@@ -23,11 +25,14 @@ var (
 	// ProjectPath defines the directory where the project will be generated.
 	ProjectPath string
 
-	// KumaConfigFile specifies the path to the Kuma configuration file.
-	KumaConfigFile string
+	// KumaConfigFilePath specifies the path to the Kuma configuration file.
+	KumaConfigFilePath string
 
-	// KumaTemplates defines the path to the directory containing Kuma templates.
-	KumaTemplates string
+	// KumaTemplatesPath defines the path to the directory containing Kuma templates.
+	KumaTemplatesPath string
+
+	//KumaConfigParsedFileTargetPath specifies the target directory for the parsed file.
+	KumaConfigParsedFileTargetPath string
 )
 
 // GenerateCmd represents the 'generate' subcommand.
@@ -67,7 +72,7 @@ var GenerateCmd = &cobra.Command{
 // It reads the Kuma configuration file and applies templates to generate the project structure.
 func build() {
 	// Initialize a new Builder with the provided configurations.
-	builder, err := domain.NewBuilder(KumaConfigFile, shared.KumaConfig, domain.NewConfig(ProjectPath, KumaTemplates))
+	builder, err := domain.NewBuilder(KumaConfigFilePath, shared.KumaConfig, domain.NewConfig(ProjectPath, KumaTemplatesPath))
 	if err != nil {
 		helpers.ErrorPrint(err.Error())
 		os.Exit(1)
@@ -78,6 +83,20 @@ func build() {
 		helpers.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
+
+	if KumaConfigParsedFileTargetPath != "" {
+		if err := helpers.CreateDirectoryIfNotExists(KumaConfigParsedFileTargetPath); err != nil {
+			helpers.ErrorPrint("creating target directory error: " + err.Error())
+			os.Exit(1)
+		}
+		fileName := "parsed-" +
+			KumaConfigFilePath[strings.LastIndex(KumaConfigFilePath, "/")+1:]
+		if err := helpers.WriteFile(filepath.Join(KumaConfigParsedFileTargetPath, fileName), builder.ParsedFile); err != nil {
+			helpers.ErrorPrint("writing file error: " + err.Error())
+			os.Exit(1)
+		}
+		helpers.CheckMarkPrint(fmt.Sprintf("File %s written successfully!", fileName))
+	}
 }
 
 // init sets up flags for the 'generate' subcommand and binds them to variables.
@@ -87,7 +106,9 @@ func init() {
 	GenerateCmd.Flags().StringVarP(&parser.ParserFilePath, "p-file", "", "", fmt.Sprintf("File path you want to parse\nAvailable parsers:\n - %s", parser.GetAvailableParsersString()))
 
 	// Generate-related flags.
-	GenerateCmd.Flags().StringVarP(&KumaConfigFile, "config", "c", "kuma-config.yaml", "Path to the Kuma config file")
+	// Target file directory
+	GenerateCmd.Flags().StringVarP(&KumaConfigParsedFileTargetPath, "target-dir", "", "", "target directory for the kuma parsed config file")
+	GenerateCmd.Flags().StringVarP(&KumaConfigFilePath, "config", "c", "kuma-config.yaml", "Path to the Kuma config file")
 	GenerateCmd.Flags().StringVarP(&ProjectPath, "project-path", "p", "kuma-generated", "Path to the project you want to generate")
-	GenerateCmd.Flags().StringVarP(&KumaTemplates, "templates-path", "t", "kuma-templates", "Path to the Kuma templates")
+	GenerateCmd.Flags().StringVarP(&KumaTemplatesPath, "templates-path", "t", "kuma-templates", "Path to the Kuma templates")
 }
