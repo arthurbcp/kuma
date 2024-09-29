@@ -311,12 +311,10 @@ func parseProperty(helpers helpers.HelpersInterface, name string, propMap map[st
 		if itemFormat, ok := items["format"].(string); ok {
 			itemProperty.Format = itemFormat
 		}
-		// Recursive parsing for nested items
-		if nestedItems, ok := items["items"].(map[string]interface{}); ok {
-			nestedProperty := parseProperty(helpers, name, nestedItems, required)
-			itemProperty.Items = append(itemProperty.Items, nestedProperty)
+		if ref, ok := items["$ref"].(string); ok {
+			itemProperty.Ref = getComponentName(ref)
 		}
-		property.Items = append(property.Items, itemProperty)
+		property.Items = &itemProperty
 	}
 
 	// Pattern

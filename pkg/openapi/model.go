@@ -110,7 +110,7 @@ type OpenAPITemplateComponentProperty struct {
 	ReadOnly         bool                                   `json:"ReadOnly,omitempty"`
 	WriteOnly        bool                                   `json:"WriteOnly,omitempty"`
 	Deprecated       bool                                   `json:"Deprecated,omitempty"`
-	Items            []OpenAPITemplateComponentProperty     `json:"Items,omitempty"`
+	Items            *OpenAPITemplateComponentProperty      `json:"Items,omitempty"`
 	MinLength        int                                    `json:"MinLength,omitempty"`
 	MaxLength        int                                    `json:"MaxLength,omitempty"`
 	Pattern          string                                 `json:"Pattern,omitempty"`

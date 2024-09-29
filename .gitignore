@@ -32,3 +32,4 @@ kuma-templates/**
 swagger.*
 kuma-swagger.*
 parsed-kuma-config.*
+/mylib/** 
