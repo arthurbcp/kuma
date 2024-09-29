@@ -1,4 +1,4 @@
-package helpers
+package filesystem
 
 import (
 	"io"
@@ -8,18 +8,25 @@ import (
 	"github.com/spf13/afero"
 )
 
-// Initialize the default filesystem. You can replace this with a mock filesystem in tests.
-var AppFs = afero.NewOsFs()
+type FileSystem struct {
+	Fs afero.Fs
+}
+
+func NewFileSystem(fs afero.Fs) *FileSystem {
+	return &FileSystem{
+		Fs: fs,
+	}
+}
 
 // CreateDirectoryIfNotExists creates a directory if it does not already exist.
-func CreateDirectoryIfNotExists(path string) error {
-	exists, err := afero.DirExists(AppFs, path)
+func (s *FileSystem) CreateDirectoryIfNotExists(path string) error {
+	exists, err := afero.DirExists(s.Fs, path)
 	if err != nil {
 		return err
 	}
 	if !exists {
 		// Use os.FileMode directly
-		err := AppFs.MkdirAll(path, os.ModePerm)
+		err := s.Fs.MkdirAll(path, os.ModePerm)
 		if err != nil {
 			color.Gray.Printf("  ❌ " + path + "\n")
 			return err
@@ -30,8 +37,8 @@ func CreateDirectoryIfNotExists(path string) error {
 }
 
 // ReadFile reads the content of a file and returns it as a string.
-func ReadFile(filePath string) (string, error) {
-	file, err := AppFs.Open(filePath)
+func (s *FileSystem) ReadFile(filePath string) (string, error) {
+	file, err := s.Fs.Open(filePath)
 	if err != nil {
 		return "", err
 	}
@@ -46,20 +53,20 @@ func ReadFile(filePath string) (string, error) {
 }
 
 // CreateFileIfNotExists creates a file if it does not already exist.
-func CreateFileIfNotExists(filename string) (afero.File, error) {
-	exists, err := afero.Exists(AppFs, filename)
+func (s *FileSystem) CreateFileIfNotExists(filename string) (afero.File, error) {
+	exists, err := afero.Exists(s.Fs, filename)
 	if err != nil {
 		return nil, err
 	}
 	if !exists {
-		return CreateFile(filename)
+		return s.CreateFile(filename)
 	}
 	return nil, nil
 }
 
 // CreateFile creates or truncates the named file.
-func CreateFile(filename string) (afero.File, error) {
-	file, err := AppFs.Create(filename)
+func (s *FileSystem) CreateFile(filename string) (afero.File, error) {
+	file, err := s.Fs.Create(filename)
 	if err != nil {
 		return file, err
 	}
@@ -67,26 +74,17 @@ func CreateFile(filename string) (afero.File, error) {
 }
 
 // WriteFile writes a string to a file, overwriting it if it already exists.
-func WriteFile(filename string, content string) error {
-	// Open the file with write permissions, create if not exists, truncate if exists
-	// Use os.FileMode directly
-	file, err := AppFs.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
+func (s *FileSystem) WriteFile(filename string, content string) error {
+	err := afero.WriteFile(s.Fs, filename, []byte(content), os.ModePerm)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
-
-	_, err = file.WriteString(content)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
 // ReadDir reads the directory named by path and returns a slice of file names.
-func ReadDir(path string) ([]string, error) {
-	entries, err := afero.ReadDir(AppFs, path)
+func (s *FileSystem) ReadDir(path string) ([]string, error) {
+	entries, err := afero.ReadDir(s.Fs, path)
 	if err != nil {
 		return nil, err
 	}

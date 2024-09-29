@@ -7,24 +7,24 @@ import (
 	"github.com/gookit/color"
 )
 
-func HeaderPrint(text string) {
+func (h *Helpers) HeaderPrint(text string) {
 	fmt.Println()
 	color.New(color.FgWhite, color.BgMagenta).Println(" - " + text + " - ")
 }
 
-func CheckMarkPrint(text string) {
+func (h *Helpers) CheckMarkPrint(text string) {
 	color.Gray.Println("  ✅ " + text)
 }
 
-func CrossMarkPrint(text string) {
+func (h *Helpers) CrossMarkPrint(text string) {
 	color.Gray.Println("  ❌ " + text)
 }
 
-func ErrorPrint(text string) {
+func (h *Helpers) ErrorPrint(text string) {
 	color.Red.Println(text)
 }
 
-func DebugPrint(header, text string) {
+func (h *Helpers) DebugPrint(header, text string) {
 	fmt.Println()
 	if debug.Debug {
 		color.New(color.FgBlack, color.BgYellow).Println(" - " + header + " - ")

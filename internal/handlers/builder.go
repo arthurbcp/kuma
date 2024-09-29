@@ -47,7 +47,7 @@ func NewBuilderHandler(builder *domain.Builder) *BuilderHandler {
 //	An error if the build process fails, otherwise nil.
 func (h *BuilderHandler) Build(vars map[string]interface{}) error {
 	h.vars = vars
-	helpers.HeaderPrint("APPLYING TEMPLATES")
+	h.builder.Helpers.HeaderPrint("APPLYING TEMPLATES")
 
 	// Start recursive creation of directories and files from the root.
 	err := h.createDirAndFilesRecursive("", h.builder.Data.Structure, h.builder.Config.ProjectPath)
@@ -75,7 +75,7 @@ func (h *BuilderHandler) createDirAndFilesRecursive(key string, node interface{}
 	currentPath := filepath.Join(basePath, key)
 
 	// Create the directory if it does not exist.
-	err := helpers.CreateDirectoryIfNotExists(currentPath)
+	err := h.builder.Fs.CreateDirectoryIfNotExists(currentPath)
 	if err != nil {
 		return err
 	}
@@ -89,15 +89,15 @@ func (h *BuilderHandler) createDirAndFilesRecursive(key string, node interface{}
 				// Create the file and apply the corresponding template.
 				err := h.createFileAndApplyTemplate(currentPath, childKey, childValue.(map[string]interface{}))
 				if err != nil {
-					helpers.CrossMarkPrint(filepath.Join(currentPath, childKey))
+					h.builder.Helpers.CrossMarkPrint(filepath.Join(currentPath, childKey))
 					return err
 				}
-				helpers.CheckMarkPrint(filepath.Join(currentPath, childKey))
+				h.builder.Helpers.CheckMarkPrint(filepath.Join(currentPath, childKey))
 				continue
 			}
 
 			// Replace variables in the directory name.
-			childKey, err := helpers.ReplaceVars(childKey, childValue, helpers.FuncMap)
+			childKey, err := h.builder.Helpers.ReplaceVars(childKey, childValue, helpers.FuncMap)
 			if err != nil {
 				return err
 			}
@@ -130,7 +130,7 @@ func (h *BuilderHandler) createFileAndApplyTemplate(currentPath string, fileName
 	filePath := filepath.Join(currentPath, fileName)
 
 	// Create the file.
-	file, err := helpers.CreateFile(filePath)
+	file, err := h.builder.Fs.CreateFile(filePath)
 	if err != nil {
 		return err
 	}
@@ -149,9 +149,9 @@ func (h *BuilderHandler) createFileAndApplyTemplate(currentPath string, fileName
 	if debug.Debug {
 		j, err := json.Marshal(data)
 		if err != nil {
-			helpers.CrossMarkPrint("DEBUG FAILED: " + err.Error())
+			h.builder.Helpers.CrossMarkPrint("DEBUG FAILED: " + err.Error())
 		}
-		helpers.DebugPrint(fmt.Sprintf("%s template data", fileName), helpers.PrettyJson(string(j)))
+		h.builder.Helpers.DebugPrint(fmt.Sprintf("%s template data", fileName), h.builder.Helpers.PrettyJson(string(j)))
 	}
 	// Execute the template and write to the file.
 	return t.Execute(file, data)

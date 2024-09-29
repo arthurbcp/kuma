@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 )
 
-func PrettyJson(in string) string {
+func (h *Helpers) PrettyJson(in string) string {
 	var out bytes.Buffer
 	err := json.Indent(&out, []byte(in), "", "\t")
 	if err != nil {

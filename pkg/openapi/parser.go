@@ -8,12 +8,9 @@ import (
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 )
 
-// Import necessary packages
-
-// Updated ParseToOpenAPITemplate function
 // ParseToOpenAPITemplate parses the OpenAPI file represented as a map[string]interface{}
 // into an OpenAPITemplate struct, including components and handling $ref references.
-func ParseToOpenAPITemplate(openAPIFile map[string]interface{}) OpenAPITemplate {
+func ParseToOpenAPITemplate(helpers helpers.HelpersInterface, openAPIFile map[string]interface{}) OpenAPITemplate {
 	template := OpenAPITemplate{}
 
 	// Parse OpenAPI version
@@ -79,7 +76,7 @@ func ParseToOpenAPITemplate(openAPIFile map[string]interface{}) OpenAPITemplate 
 		if schemas, ok := components["schemas"].(map[string]interface{}); ok {
 			for name, schema := range schemas {
 				if schemaMap, ok := schema.(map[string]interface{}); ok {
-					component := parseSchema(name, schemaMap)
+					component := parseSchema(helpers, name, schemaMap)
 					template.Components = append(template.Components, component)
 				}
 			}
@@ -197,7 +194,7 @@ func ParseToOpenAPITemplate(openAPIFile map[string]interface{}) OpenAPITemplate 
 }
 
 // parseSchema parses a schema map into an OpenApiTemplateComponent struct.
-func parseSchema(name string, schemaMap map[string]interface{}) OpenApiTemplateComponent {
+func parseSchema(helpers helpers.HelpersInterface, name string, schemaMap map[string]interface{}) OpenApiTemplateComponent {
 	component := OpenApiTemplateComponent{
 		Name: name,
 	}
@@ -222,7 +219,7 @@ func parseSchema(name string, schemaMap map[string]interface{}) OpenApiTemplateC
 	if properties, ok := schemaMap["properties"].(map[string]interface{}); ok {
 		for propName, propValue := range properties {
 			if propMap, ok := propValue.(map[string]interface{}); ok {
-				property := parseProperty(propName, propMap, required)
+				property := parseProperty(helpers, propName, propMap, required)
 				component.Properties = append(component.Properties, property)
 			}
 		}
@@ -232,7 +229,7 @@ func parseSchema(name string, schemaMap map[string]interface{}) OpenApiTemplateC
 }
 
 // parseProperty parses a property map into an OpenAPITemplateComponentProperty struct.
-func parseProperty(name string, propMap map[string]interface{}, required []interface{}) OpenAPITemplateComponentProperty {
+func parseProperty(helpers helpers.HelpersInterface, name string, propMap map[string]interface{}, required []interface{}) OpenAPITemplateComponentProperty {
 	property := OpenAPITemplateComponentProperty{
 		Name: name,
 	}
@@ -316,7 +313,7 @@ func parseProperty(name string, propMap map[string]interface{}, required []inter
 		}
 		// Recursive parsing for nested items
 		if nestedItems, ok := items["items"].(map[string]interface{}); ok {
-			nestedProperty := parseProperty(name, nestedItems, required)
+			nestedProperty := parseProperty(helpers, name, nestedItems, required)
 			itemProperty.Items = append(itemProperty.Items, nestedProperty)
 		}
 		property.Items = append(property.Items, itemProperty)

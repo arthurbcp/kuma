@@ -14,8 +14,10 @@ import (
 
 	"github.com/arthurbcp/kuma-cli/cmd/shared"
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
+	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
 	"github.com/arthurbcp/kuma-cli/pkg/openapi"
 	"github.com/mitchellh/mapstructure"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -25,6 +27,8 @@ var OpenAPIParserCmd = &cobra.Command{
 	Use:   "openapi",
 	Short: "OpenAPI file parser",
 	Run: func(cmd *cobra.Command, args []string) {
+		helpers := helpers.NewHelpers()
+		fs := filesystem.NewFileSystem(afero.NewOsFs())
 		// Ensure that the file to parse is provided.
 		if ParserFilePath == "" {
 			fmt.Println("File to parse is required")
@@ -41,7 +45,7 @@ var OpenAPIParserCmd = &cobra.Command{
 		// Integrate the parsed configuration into the shared Kuma configuration.
 		shared.KumaConfig = config
 		if ParsedFileTargetPath != "" {
-			if err := helpers.CreateDirectoryIfNotExists(ParsedFileTargetPath); err != nil {
+			if err := fs.CreateDirectoryIfNotExists(ParsedFileTargetPath); err != nil {
 				helpers.ErrorPrint("creating target directory error: " + err.Error())
 				os.Exit(1)
 			}
@@ -49,7 +53,7 @@ var OpenAPIParserCmd = &cobra.Command{
 				ParserFilePath[strings.LastIndex(ParserFilePath, "/")+1:],
 				filepath.Ext(ParserFilePath), ".json", 1)
 			ParsedFileContent = helpers.PrettyJson(ParsedFileContent)
-			if err := helpers.WriteFile(filepath.Join(ParsedFileTargetPath, fileName), ParsedFileContent); err != nil {
+			if err := fs.WriteFile(filepath.Join(ParsedFileTargetPath, fileName), ParsedFileContent); err != nil {
 				helpers.ErrorPrint("writing file error: " + err.Error())
 				os.Exit(1)
 			}
@@ -71,10 +75,12 @@ func GetAvailableParsersString() string {
 // 4. Marshals the structured template back into JSON.
 // 5. Unmarshals the JSON into a configuration map.
 func parseOpenAPI(file string) (map[string]interface{}, error) {
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	helpers := helpers.NewHelpers()
 	helpers.HeaderPrint("Parsing OpenAPI file")
 
 	// Read the content of the OpenAPI file.
-	openAPIFile, err := helpers.ReadFile(file)
+	openAPIFile, err := fs.ReadFile(file)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +92,7 @@ func parseOpenAPI(file string) (map[string]interface{}, error) {
 	}
 
 	// Parse the generic map into a structured OpenAPI template.
-	fileStruct := openapi.ParseToOpenAPITemplate(fileData)
+	fileStruct := openapi.ParseToOpenAPITemplate(helpers, fileData)
 
 	// Marshal the structured template back into JSON.
 	j, err := json.Marshal(fileStruct)

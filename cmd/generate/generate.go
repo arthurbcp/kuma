@@ -15,6 +15,8 @@ import (
 	"github.com/arthurbcp/kuma-cli/internal/domain"
 	"github.com/arthurbcp/kuma-cli/internal/handlers"
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
+	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
@@ -40,6 +42,7 @@ var GenerateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate a scaffold for a project based on Go Templates",
 	Run: func(cmd *cobra.Command, args []string) {
+		helpers := helpers.NewHelpers()
 		// If a parser is specified, validate and execute parsing before building.
 		if ParserToUse != "" {
 			// Ensure that a parser file path is provided.
@@ -71,8 +74,10 @@ var GenerateCmd = &cobra.Command{
 // build initializes the Builder and triggers the build process.
 // It reads the Kuma configuration file and applies templates to generate the project structure.
 func build() {
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	helpers := helpers.NewHelpers()
 	// Initialize a new Builder with the provided configurations.
-	builder, err := domain.NewBuilder(KumaConfigFilePath, shared.KumaConfig, domain.NewConfig(ProjectPath, KumaTemplatesPath))
+	builder, err := domain.NewBuilder(fs, helpers, KumaConfigFilePath, shared.KumaConfig, domain.NewConfig(ProjectPath, KumaTemplatesPath))
 	if err != nil {
 		helpers.ErrorPrint(err.Error())
 		os.Exit(1)
@@ -85,13 +90,13 @@ func build() {
 	}
 
 	if KumaConfigParsedFileTargetPath != "" {
-		if err := helpers.CreateDirectoryIfNotExists(KumaConfigParsedFileTargetPath); err != nil {
+		if err := fs.CreateDirectoryIfNotExists(KumaConfigParsedFileTargetPath); err != nil {
 			helpers.ErrorPrint("creating target directory error: " + err.Error())
 			os.Exit(1)
 		}
 		fileName := "parsed-" +
 			KumaConfigFilePath[strings.LastIndex(KumaConfigFilePath, "/")+1:]
-		if err := helpers.WriteFile(filepath.Join(KumaConfigParsedFileTargetPath, fileName), builder.ParsedFile); err != nil {
+		if err := fs.WriteFile(filepath.Join(KumaConfigParsedFileTargetPath, fileName), builder.ParsedFile); err != nil {
 			helpers.ErrorPrint("writing file error: " + err.Error())
 			os.Exit(1)
 		}

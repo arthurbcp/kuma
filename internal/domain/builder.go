@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
+	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v3"
 )
@@ -32,6 +33,12 @@ type Builder struct {
 
 	// ParsedFile holds the parsed file content.
 	ParsedFile string
+
+	// Fs is the file system service used to interact with the file system.
+	Fs filesystem.FileSystemInterface
+
+	// Helpers is a helper service used to perform common operations.
+	Helpers helpers.HelpersInterface
 }
 
 // NewBuilder initializes a new Builder instance.
@@ -44,8 +51,10 @@ type Builder struct {
 // Returns:
 //
 //	A pointer to a Builder instance if successful, or an error if initialization fails.
-func NewBuilder(file string, vars map[string]interface{}, config *Config) (*Builder, error) {
+func NewBuilder(fs filesystem.FileSystemInterface, helpers helpers.HelpersInterface, file string, vars map[string]interface{}, config *Config) (*Builder, error) {
 	builder := Builder{}
+	builder.Fs = fs
+	builder.Helpers = helpers
 	err := builder.SetBuilderData(file, vars)
 	if err != nil {
 		return nil, err
@@ -67,18 +76,18 @@ func NewBuilder(file string, vars map[string]interface{}, config *Config) (*Buil
 //
 //	An error if parsing fails, otherwise nil.
 func (b *Builder) SetBuilderData(file string, vars map[string]interface{}) error {
-	helpers.HeaderPrint("PARSING CONFIG")
+	b.Helpers.HeaderPrint("PARSING CONFIG")
 
 	// Read the content of the configuration file.
-	configData, err := helpers.ReadFile(file)
+	configData, err := b.Fs.ReadFile(file)
 	if err != nil {
 		return err
 	}
 
 	// Replace variables in the configuration data.
-	configData, err = helpers.ReplaceVars(configData, vars, helpers.FuncMap)
+	configData, err = b.Helpers.ReplaceVars(configData, vars, helpers.FuncMap)
 	b.ParsedFile = string(configData)
-	helpers.DebugPrint("Config file", b.ParsedFile)
+	b.Helpers.DebugPrint("Config file", b.ParsedFile)
 	if err != nil {
 		return err
 	}
