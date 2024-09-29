@@ -118,8 +118,7 @@ func (b *Builder) SetConfig(config *Config) error {
 //	A pointer to BuilderData and an error if unmarshaling fails.
 func UnmarshalJsonConfig(configData []byte) (*BuilderData, error) {
 	config := BuilderData{}
-	c := map[interface{}]interface{}{}
-	err := json.Unmarshal(configData, &c)
+	err := json.Unmarshal(configData, &config)
 	if err != nil {
 		return &config, err
 	}

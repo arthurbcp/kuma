@@ -121,8 +121,7 @@ func Unmarshal(file string, configData []byte) (map[string]interface{}, error) {
 //	A pointer to BuilderData and an error if unmarshaling fails.
 func UnmarshalJsonConfig(configData []byte) (map[string]interface{}, error) {
 	fileData := make(map[string]interface{})
-	c := map[interface{}]interface{}{}
-	err := json.Unmarshal(configData, &c)
+	err := json.Unmarshal(configData, &fileData)
 	if err != nil {
 		return fileData, err
 	}
@@ -146,7 +145,7 @@ func UnmarshalYamlConfig(configData []byte) (map[string]interface{}, error) {
 		return fileData, err
 	}
 	// Decode the map into BuilderData using mapstructure.
-	err = mapstructure.Decode(c, fileData)
+	err = mapstructure.Decode(c, &fileData)
 	if err != nil {
 		return fileData, err
 	}
