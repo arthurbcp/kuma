@@ -35,6 +35,9 @@ var (
 
 	//KumaConfigParsedFileTargetPath specifies the target directory for the parsed file.
 	KumaConfigParsedFileTargetPath string
+
+	//VariableFilePath specifies the path to the variables file.
+	VariableFilePath string
 )
 
 // GenerateCmd represents the 'generate' subcommand.
@@ -42,9 +45,9 @@ var GenerateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate a scaffold for a project based on Go Templates",
 	Run: func(cmd *cobra.Command, args []string) {
-		if ParserToUse == "" && KumaConfigFilePath == "" {
-			fmt.Println("You must specify a config file or a parser to use")
-			cmd.Help()
+		if ParserToUse == "" && VariableFilePath == "" {
+			fmt.Println("You must specify a parser or a variables file to use")
+			os.Exit(1)
 		}
 		helpers := helpers.NewHelpers()
 		// If a parser is specified, validate and execute parsing before building.
@@ -52,14 +55,14 @@ var GenerateCmd = &cobra.Command{
 			// Ensure that a parser file path is provided.
 			if parser.ParserFilePath == "" {
 				fmt.Println("File to parse is required")
-				return
+				os.Exit(1)
 			}
 
 			// Check if the specified parser is available.
 			if !helpers.StringContains(parser.AvailableParsers, ParserToUse) {
 				fmt.Printf("Parser %s not found!\nAvailable parsers:\n - %s",
 					ParserToUse, parser.GetAvailableParsersString())
-				return
+				os.Exit(1)
 			}
 
 			// Execute the specified parser command.
@@ -71,6 +74,14 @@ var GenerateCmd = &cobra.Command{
 
 			// Proceed to build the project after parsing.
 			build()
+		} else if VariableFilePath != "" {
+			vars, err := shared.UnmarshalFile(VariableFilePath)
+			if err != nil {
+				helpers.ErrorPrint("parsing file error: " + err.Error())
+				os.Exit(1)
+			}
+			shared.TemplateVariables = vars
+			build()
 		}
 	},
 }
@@ -81,14 +92,14 @@ func build() {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	helpers := helpers.NewHelpers()
 	// Initialize a new Builder with the provided configurations.
-	builder, err := domain.NewBuilder(fs, helpers, KumaConfigFilePath, shared.KumaConfig, domain.NewConfig(ProjectPath, KumaTemplatesPath))
+	builder, err := domain.NewBuilder(fs, helpers, KumaConfigFilePath, shared.TemplateVariables, domain.NewConfig(ProjectPath, KumaTemplatesPath))
 	if err != nil {
 		helpers.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
 
 	// Execute the build process using the BuilderHandler.
-	if err = handlers.NewBuilderHandler(builder).Build(map[string]interface{}{}); err != nil {
+	if err = handlers.NewBuilderHandler(builder).Build(); err != nil {
 		helpers.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
@@ -117,6 +128,7 @@ func init() {
 	// Generate-related flags.
 	// Target file directory
 	GenerateCmd.Flags().StringVarP(&KumaConfigParsedFileTargetPath, "target-dir", "", "", "target directory for the kuma parsed config file")
+	GenerateCmd.Flags().StringVarP(&VariableFilePath, "variables-file", "v", "", "path to the variables file")
 	GenerateCmd.Flags().StringVarP(&KumaConfigFilePath, "config", "c", "kuma-config.yaml", "Path to the Kuma config file")
 	GenerateCmd.Flags().StringVarP(&ProjectPath, "project-path", "p", "kuma-generated", "Path to the project you want to generate")
 	GenerateCmd.Flags().StringVarP(&KumaTemplatesPath, "templates-path", "t", "kuma-templates", "Path to the Kuma templates")

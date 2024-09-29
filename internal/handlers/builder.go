@@ -17,9 +17,6 @@ import (
 type BuilderHandler struct {
 	// builder is the domain Builder responsible for providing structure and template data.
 	builder *domain.Builder
-
-	// vars holds the variables for template replacement during the build process.
-	vars map[string]interface{}
 }
 
 // NewBuilderHandler creates and returns a new BuilderHandler instance.
@@ -39,14 +36,10 @@ func NewBuilderHandler(builder *domain.Builder) *BuilderHandler {
 // Build initiates the building process by applying templates and creating
 // directories and files as defined in the Builder's data.
 //
-// Parameters:
-//   - vars: A map of variables to replace placeholders in templates.
-//
 // Returns:
 //
 //	An error if the build process fails, otherwise nil.
-func (h *BuilderHandler) Build(vars map[string]interface{}) error {
-	h.vars = vars
+func (h *BuilderHandler) Build() error {
 	h.builder.Helpers.HeaderPrint("APPLYING TEMPLATES")
 
 	// Start recursive creation of directories and files from the root.

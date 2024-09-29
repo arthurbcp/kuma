@@ -29,7 +29,6 @@ go.work.sum
 /kuma-config.yaml
 kuma-generated/** 
 kuma-templates/**
-swagger.json
-swagger.yaml
-kuma-swagger.json
-parsed-kuma-config.yaml
+swagger.*
+kuma-swagger.*
+parsed-kuma-config.*

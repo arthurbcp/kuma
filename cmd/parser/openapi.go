@@ -16,10 +16,8 @@ import (
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
 	"github.com/arthurbcp/kuma-cli/pkg/openapi"
-	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 )
 
 // OpenAPIParserCmd represents the 'openapi' parser subcommand.
@@ -43,7 +41,7 @@ var OpenAPIParserCmd = &cobra.Command{
 		}
 
 		// Integrate the parsed configuration into the shared Kuma configuration.
-		shared.KumaConfig = config
+		shared.TemplateVariables = config
 		if ParsedFileTargetPath != "" {
 			if err := fs.CreateDirectoryIfNotExists(ParsedFileTargetPath); err != nil {
 				helpers.ErrorPrint("creating target directory error: " + err.Error())
@@ -67,26 +65,9 @@ func GetAvailableParsersString() string {
 	return strings.Join(AvailableParsers, "\n - ") + "\n"
 }
 
-// parseOpenAPI processes the OpenAPI specification file and returns the configuration map.
-// It performs the following steps:
-// 1. Reads the OpenAPI file content.
-// 2. Unmarshals the JSON content into a generic map.
-// 3. Converts the generic map into a structured OpenAPI template.
-// 4. Marshals the structured template back into JSON.
-// 5. Unmarshals the JSON into a configuration map.
 func parseOpenAPI(file string) (map[string]interface{}, error) {
-	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	helpers := helpers.NewHelpers()
-	helpers.HeaderPrint("Parsing OpenAPI file")
-
-	// Read the content of the OpenAPI file.
-	openAPIFile, err := fs.ReadFile(file)
-	if err != nil {
-		return nil, err
-	}
-
-	// Unmarshal the JSON or YAML content into a generic map.
-	fileData, err := Unmarshal(file, []byte(openAPIFile))
+	fileData, err := shared.UnmarshalFile(file)
 	if err != nil {
 		return nil, err
 	}
@@ -111,65 +92,4 @@ func parseOpenAPI(file string) (map[string]interface{}, error) {
 	// Indicate successful parsing to the user.
 	helpers.CheckMarkPrint("OpenAPI file parsed successfully!")
 	return config, nil
-}
-
-func Unmarshal(file string, configData []byte) (map[string]interface{}, error) {
-	// Determine the file type based on its extension and unmarshal accordingly.
-	switch filepath.Ext(file) {
-	case ".yaml", ".yml":
-		data, err := UnmarshalYamlConfig([]byte(configData))
-		if err != nil {
-			return nil, err
-		}
-		return data, nil
-	case ".json":
-		data, err := UnmarshalJsonConfig([]byte(configData))
-		if err != nil {
-			return nil, err
-		}
-		return data, nil
-	default:
-		return nil, fmt.Errorf("invalid file extension: %s", file)
-	}
-}
-
-// UnmarshalJsonConfig parses JSON configuration data into BuilderData.
-//
-// Parameters:
-//   - configData: A byte slice containing JSON-formatted configuration data.
-//
-// Returns:
-//
-//	A pointer to BuilderData and an error if unmarshaling fails.
-func UnmarshalJsonConfig(configData []byte) (map[string]interface{}, error) {
-	fileData := make(map[string]interface{})
-	err := json.Unmarshal(configData, &fileData)
-	if err != nil {
-		return fileData, err
-	}
-	// Note: The original code does not populate BuilderData from 'c'.
-	return fileData, nil
-}
-
-// UnmarshalYamlConfig parses YAML configuration data into BuilderData.
-//
-// Parameters:
-//   - configData: A byte slice containing YAML-formatted configuration data.
-//
-// Returns:
-//
-//	A pointer to BuilderData and an error if unmarshaling fails.
-func UnmarshalYamlConfig(configData []byte) (map[string]interface{}, error) {
-	fileData := make(map[string]interface{})
-	c := map[interface{}]interface{}{}
-	err := yaml.Unmarshal(configData, &c)
-	if err != nil {
-		return fileData, err
-	}
-	// Decode the map into BuilderData using mapstructure.
-	err = mapstructure.Decode(c, &fileData)
-	if err != nil {
-		return fileData, err
-	}
-	return fileData, nil
 }

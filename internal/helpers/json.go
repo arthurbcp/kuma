@@ -13,3 +13,11 @@ func (h *Helpers) PrettyJson(in string) string {
 	}
 	return out.String()
 }
+
+func (h *Helpers) PrettyMarshal(data interface{}) (string, error) {
+	j, err := json.Marshal(data)
+	if err != nil {
+		return "", err
+	}
+	return h.PrettyJson(string(j)), nil
+}

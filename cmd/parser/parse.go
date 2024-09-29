@@ -57,7 +57,7 @@ func init() {
 	// Define a persistent flag for specifying the file to parse.
 	ParseCmd.PersistentFlags().StringVarP(&ParserFilePath, "file", "f", "", "Path to the file you want to parse")
 	// Target file directory
-	ParseCmd.PersistentFlags().StringVarP(&ParsedFileTargetPath, "target-dir", "t", "", "target directory for the parsed file")
+	ParseCmd.PersistentFlags().StringVarP(&ParsedFileTargetPath, "out-dir", "o", "", "output directory for the parsed file")
 
 	// Mark the 'file' flag as required.
 	if err := ParseCmd.MarkPersistentFlagRequired("file"); err != nil {

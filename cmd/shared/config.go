@@ -1,5 +1,5 @@
 package shared
 
 var (
-	KumaConfig map[string]interface{}
+	TemplateVariables map[string]interface{}
 )

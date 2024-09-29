@@ -13,6 +13,7 @@ type HelpersInterface interface {
 	DebugPrint(header, text string)
 	ReplaceVars(text string, vars interface{}, funcs template.FuncMap) (string, error)
 	PrettyJson(in string) string
+	PrettyMarshal(data interface{}) (string, error)
 }
 
 type Helpers struct {
