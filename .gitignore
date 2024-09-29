@@ -31,3 +31,4 @@ kuma-generated/**
 kuma-templates/**
 swagger.json
 swagger.yaml
+kuma-swagger.json

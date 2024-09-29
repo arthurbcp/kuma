@@ -40,6 +40,21 @@ var OpenAPIParserCmd = &cobra.Command{
 
 		// Integrate the parsed configuration into the shared Kuma configuration.
 		shared.KumaConfig = config
+		if ParsedFileTargetDir != "" {
+			if err := helpers.CreateDirectoryIfNotExists(ParsedFileTargetDir); err != nil {
+				helpers.ErrorPrint("creating target directory error: " + err.Error())
+				os.Exit(1)
+			}
+			fileName := "kuma-" + strings.Replace(
+				ParserFilePath[strings.LastIndex(ParserFilePath, "/")+1:],
+				filepath.Ext(ParserFilePath), ".json", 1)
+			ParsedFileContent = helpers.PrettyJson(ParsedFileContent)
+			if err := helpers.WriteFile(filepath.Join(ParsedFileTargetDir, fileName), ParsedFileContent); err != nil {
+				helpers.ErrorPrint("writing file error: " + err.Error())
+				os.Exit(1)
+			}
+			helpers.CheckMarkPrint(fmt.Sprintf("File %s written successfully!", fileName))
+		}
 	},
 }
 
@@ -75,6 +90,7 @@ func parseOpenAPI(file string) (map[string]interface{}, error) {
 
 	// Marshal the structured template back into JSON.
 	j, err := json.Marshal(fileStruct)
+	ParsedFileContent = string(j)
 	if err != nil {
 		return nil, err
 	}

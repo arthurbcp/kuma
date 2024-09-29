@@ -54,11 +54,8 @@ func CreateFile(filename string) (*os.File, error) {
 }
 
 func WriteFile(filename string, content string) error {
-	err := os.Remove(filename)
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(filename, []byte(content), os.ModePerm)
+	os.Remove(filename)
+	err := os.WriteFile(filename, []byte(content), os.ModePerm)
 	if err != nil {
 		return err
 	}
