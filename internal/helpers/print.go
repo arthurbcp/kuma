@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/arthurbcp/kuma-cli/internal/debug"
 	"github.com/gookit/color"
@@ -10,7 +9,7 @@ import (
 
 func HeaderPrint(text string) {
 	fmt.Println()
-	color.New(color.FgWhite, color.BgMagenta).Println(" - " + strings.ToUpper(text) + " - ")
+	color.New(color.FgWhite, color.BgMagenta).Println(" - " + text + " - ")
 }
 
 func CheckMarkPrint(text string) {

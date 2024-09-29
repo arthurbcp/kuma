@@ -17,6 +17,9 @@ type BuilderData struct {
 
 	// Templates defines the templates to be applied to the generated files.
 	Templates map[string]interface{}
+
+	// Global defines the global variables to be used in all the templates.
+	Global map[string]interface{}
 }
 
 // Builder is responsible for managing the configuration and data required to build the project structure.
@@ -26,6 +29,9 @@ type Builder struct {
 
 	// Data holds the parsed structure and templates data.
 	Data *BuilderData
+
+	// ParsedFile holds the parsed file content.
+	ParsedFile string
 }
 
 // NewBuilder initializes a new Builder instance.
@@ -71,7 +77,8 @@ func (b *Builder) SetBuilderData(file string, vars map[string]interface{}) error
 
 	// Replace variables in the configuration data.
 	configData, err = helpers.ReplaceVars(configData, vars, helpers.FuncMap)
-	fmt.Print(string(configData))
+	b.ParsedFile = string(configData)
+	helpers.DebugPrint("Config file", b.ParsedFile)
 	if err != nil {
 		return err
 	}

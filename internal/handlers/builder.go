@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"path/filepath"
 	"strings"
 
+	"github.com/arthurbcp/kuma-cli/internal/debug"
 	"github.com/arthurbcp/kuma-cli/internal/domain"
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 )
@@ -139,13 +141,18 @@ func (h *BuilderHandler) createFileAndApplyTemplate(currentPath string, fileName
 	if err != nil {
 		return err
 	}
-
 	// Prepare the data for template execution.
 	data = map[string]interface{}{
-		"Data": data,
-		// TODO: Add Global Logic
+		"Data":   data["Data"],
+		"Global": h.builder.Data.Global,
 	}
-
+	if debug.Debug {
+		j, err := json.Marshal(data)
+		if err != nil {
+			helpers.CrossMarkPrint("DEBUG FAILED: " + err.Error())
+		}
+		helpers.DebugPrint(fmt.Sprintf("Variables to template %s", fileName), helpers.PrettyJson(string(j)))
+	}
 	// Execute the template and write to the file.
 	return t.Execute(file, data)
 }
