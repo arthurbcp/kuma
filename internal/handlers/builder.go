@@ -151,7 +151,7 @@ func (h *BuilderHandler) createFileAndApplyTemplate(currentPath string, fileName
 		if err != nil {
 			helpers.CrossMarkPrint("DEBUG FAILED: " + err.Error())
 		}
-		helpers.DebugPrint(fmt.Sprintf("Variables to template %s", fileName), helpers.PrettyJson(string(j)))
+		helpers.DebugPrint(fmt.Sprintf("%s template data", fileName), helpers.PrettyJson(string(j)))
 	}
 	// Execute the template and write to the file.
 	return t.Execute(file, data)
