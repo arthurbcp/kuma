@@ -180,13 +180,7 @@ func ParseToOpenAPITemplate(helpers helpers.HelpersInterface, openAPIFile map[st
 		}
 	}
 
-	// Optionally, implement getBasePath logic if you intend to use BasePath
 	for _, controller := range controllerMap {
-		if len(controller.Endpoints) > 0 {
-			path := controller.Endpoints[0].Route
-			// Assign BasePath based on the first endpoint's path
-			controller.BasePath = getBasePath(path)
-		}
 		template.Controllers = append(template.Controllers, *controller)
 	}
 

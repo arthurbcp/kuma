@@ -29,7 +29,6 @@ type OpenApiTemplateVariable struct {
 // OpenApiTemplateController groups endpoints under a controller (based on tags).
 type OpenApiTemplateController struct {
 	Name      string                    `json:"Name,omitempty"`
-	BasePath  string                    `json:"BasePath,omitempty"`
 	Endpoints []OpenApiTemplateEndpoint `json:"Endpoints,omitempty"`
 }
 
