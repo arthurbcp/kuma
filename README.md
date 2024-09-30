@@ -1,5 +1,3 @@
-const readmeContent = `
-
 # Kuma CLI
 
 <!--![Kuma Logo](path_to_your_logo.png)  Replace with your actual logo path if available -->
