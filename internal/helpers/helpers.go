@@ -1,6 +1,6 @@
 package helpers
 
-import "html/template"
+import "text/template"
 
 //go:generate mockgen -source=helpers.go -destination=../mocks/helpers.go -package=mocks
 type HelpersInterface interface {

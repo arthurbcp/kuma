@@ -2,8 +2,8 @@ package helpers
 
 import (
 	"encoding/json"
-	"html/template"
 	"strings"
+	"text/template"
 	"unicode"
 
 	"gopkg.in/yaml.v3"

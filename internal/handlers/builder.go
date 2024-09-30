@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"github.com/arthurbcp/kuma-cli/internal/debug"
 	"github.com/arthurbcp/kuma-cli/internal/domain"
