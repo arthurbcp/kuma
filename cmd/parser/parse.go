@@ -11,15 +11,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// OpenAPIParser is a constant representing the OpenAPI V3.0 parser.
-const OpenAPIParser3 = "openapi3"
-
 // OpenAPIParser is a constant representing the OpenAPI V2.0 parser.
 const OpenAPIParser2 = "openapi2"
 
 // AvailableParsers lists all supported parser helpers.
 var AvailableParsers = []string{
-	OpenAPIParser3,
+	OpenAPIParser2,
 }
 
 var (
@@ -38,9 +35,9 @@ var ParseCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
 			switch args[0] {
-			case OpenAPIParser3:
+			case OpenAPIParser2:
 				// Execute the OpenAPI parser subcommand.
-				OpenAPI3ParserCmd.Run(cmd, args)
+				OpenAPI2ParserCmd.Run(cmd, args)
 			default:
 				// Notify the user if the specified parser is not available.
 				fmt.Printf("Parser %s not found!\nAvailable parsers:\n - %s", args[0], GetAvailableParsersString())
@@ -61,7 +58,7 @@ func GetAvailableParsersString() string {
 // and setting up persistent flags.
 func init() {
 	// Add the OpenAPI parser as a subcommand.
-	ParseCmd.AddCommand(OpenAPI3ParserCmd)
+	ParseCmd.AddCommand(OpenAPI2ParserCmd)
 
 	// Define a persistent flag for specifying the file to parse.
 	ParseCmd.PersistentFlags().StringVarP(&ParserFilePath, "file", "f", "", "Path to the file you want to parse")
