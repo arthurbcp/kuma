@@ -1,4 +1,4 @@
-package openapi
+package openapi3
 
 // OpenAPITemplate represents the overall structure of the parsed OpenAPI specification.
 type OpenAPITemplate struct {

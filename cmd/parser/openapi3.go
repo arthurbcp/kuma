@@ -1,4 +1,4 @@
-// openapi.go
+// openapi3.go
 //
 // Package parser defines the OpenAPI parser subcommand for the Kuma CLI.
 // It processes OpenAPI specification files and integrates the parsed configuration
@@ -15,14 +15,14 @@ import (
 	"github.com/arthurbcp/kuma-cli/cmd/shared"
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
-	"github.com/arthurbcp/kuma-cli/pkg/openapi"
+	openapi3 "github.com/arthurbcp/kuma-cli/pkg/openapi/v3"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
-// OpenAPIParserCmd represents the 'openapi' parser subcommand.
-var OpenAPIParserCmd = &cobra.Command{
-	Use:   "openapi",
+// OpenAPI3ParserCmd represents the 'openapi' parser subcommand.
+var OpenAPI3ParserCmd = &cobra.Command{
+	Use:   "openapi3",
 	Short: "OpenAPI file parser",
 	Run: func(cmd *cobra.Command, args []string) {
 		helpers := helpers.NewHelpers()
@@ -34,7 +34,7 @@ var OpenAPIParserCmd = &cobra.Command{
 		}
 
 		// Parse the OpenAPI file and handle errors.
-		config, err := parseOpenAPI(ParserFilePath)
+		config, err := parseOpenAPI3(ParserFilePath)
 		if err != nil {
 			helpers.ErrorPrint("parsing file error: " + err.Error())
 			os.Exit(1)
@@ -60,12 +60,7 @@ var OpenAPIParserCmd = &cobra.Command{
 	},
 }
 
-// GetAvailableParsersString returns a formatted string of available parsers.
-func GetAvailableParsersString() string {
-	return strings.Join(AvailableParsers, "\n - ") + "\n"
-}
-
-func parseOpenAPI(file string) (map[string]interface{}, error) {
+func parseOpenAPI3(file string) (map[string]interface{}, error) {
 	helpers := helpers.NewHelpers()
 	fileData, err := shared.UnmarshalFile(file)
 	if err != nil {
@@ -73,7 +68,7 @@ func parseOpenAPI(file string) (map[string]interface{}, error) {
 	}
 
 	// Parse the generic map into a structured OpenAPI template.
-	fileStruct := openapi.ParseToOpenAPITemplate(helpers, fileData)
+	fileStruct := openapi3.ParseToOpenAPITemplate(helpers, fileData)
 
 	// Marshal the structured template back into JSON.
 	j, err := json.Marshal(fileStruct)
