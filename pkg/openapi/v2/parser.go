@@ -58,16 +58,18 @@ func ParseToOpenAPITemplate(openAPIFile map[string]interface{}) OpenAPITemplate 
 
 	// Parse Paths
 	if paths, ok := openAPIFile["paths"].(map[string]interface{}); ok {
-		for _, pathItem := range paths {
+		for pathKey, pathItem := range paths {
 			if pathMap, ok := pathItem.(map[string]interface{}); ok {
+				// Initialize an operation struct with the route
+				operationStruct := OpenApiTemplateOperation{
+					Route: pathKey,
+				}
 				// Iterate over HTTP methods
 				for method, operation := range pathMap {
 					// HTTP methods in OpenAPI 2.0 are lowercase: get, post, put, delete, etc.
 					if isHTTPMethod(method) {
 						if opMap, ok := operation.(map[string]interface{}); ok {
-							operationStruct := OpenApiTemplateOperation{
-								HTTPMethod: strings.ToUpper(method),
-							}
+							operationStruct.HTTPMethod = strings.ToLower(method)
 
 							// OperationId, Summary, Description
 							if opID, ok := opMap["operationId"].(string); ok {
@@ -260,7 +262,7 @@ func parseSchema(name string, schemaMap map[string]interface{}) OpenApiTemplateS
 
 	// Items (for arrays)
 	if items, ok := schemaMap["items"].(map[string]interface{}); ok {
-		itemSchema := parseSchema(name+"Item", items)
+		itemSchema := parseSchema("", items)
 		schema.Items = &itemSchema
 	}
 
@@ -330,6 +332,14 @@ func parseParameter(paramMap map[string]interface{}) struct {
 	if typ, ok := paramMap["type"].(string); ok {
 		result.Schema.Type = typ
 		result.Header.Type = typ
+
+		// Handle Items if the type is 'array'
+		if typ == "array" {
+			if items, ok := paramMap["items"].(map[string]interface{}); ok {
+				itemSchema := parseSchema("", items)
+				result.Schema.Items = &itemSchema
+			}
+		}
 	}
 	if format, ok := paramMap["format"].(string); ok {
 		result.Schema.Format = format
@@ -422,7 +432,7 @@ func parseResponse(respMap map[string]interface{}, statusCode string) OpenApiTem
 
 // isHTTPMethod checks if a given method string is a valid HTTP method.
 func isHTTPMethod(method string) bool {
-	httpMethods := []string{"get", "post", "put", "delete", "patch", "head", "options"}
+	httpMethods := []string{"get", "post", "put", "delete", "patch", "head", "options", "trace"}
 	method = strings.ToLower(method)
 	for _, m := range httpMethods {
 		if method == m {

@@ -28,13 +28,13 @@ type OpenApiTemplateOperationGroup struct {
 
 // OpenApiTemplateOperation represents an API operation (e.g., GET, POST).
 type OpenApiTemplateOperation struct {
-	HTTPMethod  string `json:"HttpMethod,omitempty"`
-	Name        string `json:"Name,omitempty"`
-	Summary     string `json:"Summary,omitempty"`
-	Description string `json:"Description,omitempty"`
-
-	Consumes []string `json:"Consumes,omitempty"`
-	Produces []string `json:"Produces,omitempty"`
+	HTTPMethod  string   `json:"HttpMethod,omitempty"`
+	Name        string   `json:"Name,omitempty"`
+	Summary     string   `json:"Summary,omitempty"`
+	Description string   `json:"Description,omitempty"`
+	Route       string   `json:"Route,omitempty"`
+	Consumes    []string `json:"Consumes,omitempty"`
+	Produces    []string `json:"Produces,omitempty"`
 
 	// Params are grouped by type (query, path, body, header)
 	Headers     []OpenApiTemplateHeader `json:"Headers,omitempty"`
