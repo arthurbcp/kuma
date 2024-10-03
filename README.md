@@ -15,10 +15,6 @@ Kuma CLI is a powerful command-line tool designed to generate project scaffolds 
   - [Generate a Project Scaffold](#generate-a-project-scaffold)
     - [Flags](#flags)
     - [Example](#example)
-  - [Parsing Configuration Files](#parsing-configuration-files)
-    - [Supported Parsers](#supported-parsers)
-    - [Flags](#flags-1)
-    - [Example](#example-1)
 - [Configuration](#configuration)
   - [KumaConfig File](#kumaconfig-file)
     - [Structure](#structure)
@@ -34,9 +30,7 @@ Kuma CLI is a powerful command-line tool designed to generate project scaffolds 
 ## Features
 
 - **Automated Scaffold Generation**: Quickly generate project structures with predefined templates.
-- **Flexible Parsing**: Supports multiple parsers like OpenAPI to process various configuration files.
 - **Customizable Templates**: Easily define and modify Go templates to suit your project's needs.
-- **Extensible Architecture**: Add new parsers and templates with minimal effort.
 
 ## Prerequisites
 
@@ -100,8 +94,6 @@ kuma generate [flags]
 
 #### Flags
 
-- \`--parser\`, \`-p\`: Specify the parser helper to use (e.g., \`openapi\`).
-- \`--p-file\`: Path to the file you want to parse.
 - \`--config\`, \`-c\`: Path to the Kuma config file. (Default: \`kuma-config.yaml\`)
 - \`--project-path\`, \`-p\`: Path to the directory where the project will be generated. (Default: \`kuma-generated\`)
 - \`--templates-path\`, \`-t\`: Path to the directory containing Kuma templates. (Default: \`kuma-templates\`)
@@ -109,29 +101,7 @@ kuma generate [flags]
 #### Example
 
 ```bash
-kuma generate --parser openapi --p-file api-spec.yaml --config kuma-config.yaml --project-path ./myproject --templates-path ./templates
-```
-
-### Parsing Configuration Files
-
-The \`parse\` command allows you to process configuration files using specified parsers.
-
-```bash
-kuma parse [parser] [flags]
-```
-
-#### Supported Parsers
-
-- \`openapi\`: Parses OpenAPI specification files.
-
-#### Flags
-
-- \`--file\`, \`-f\`: Path to the file you want to parse. **(Required)**
-
-#### Example
-
-```bash
-kuma parse openapi --file api-spec.yaml
+kuma generate --config kuma-config.yaml --project-path ./myproject --templates-path ./templates
 ```
 
 ## Configuration

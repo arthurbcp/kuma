@@ -28,10 +28,10 @@ func (s *FileSystem) CreateDirectoryIfNotExists(path string) error {
 		// Use os.FileMode directly
 		err := s.Fs.MkdirAll(path, os.ModePerm)
 		if err != nil {
-			color.Gray.Printf("  ❌ " + path + "\n")
+			color.Gray.Printf("  ❌ %s \n ", path)
 			return err
 		}
-		color.Gray.Printf("  ✅ " + path + "\n")
+		color.Gray.Printf("  ✅ %s \n ", path)
 	}
 	return nil
 }
