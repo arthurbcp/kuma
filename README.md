@@ -136,14 +136,14 @@ Structure:
           http_mock_provider.ts:
             Template: HttpMockProvider.gtpl
       services:
-        {{range .Controllers }}{{ toSnake .Name }}:
+        {{range .Controllers }}{{ snakecase .Name }}:
           service.ts:
             Template: Service.gtpl
             Includes:
              - Index.gtpl
             Data:
               Name: {{ .Name }}
-              FileName: {{ toSnake .Name }}_service.ts
+              FileName: {{ snakecase .Name }}_service.ts
               Endpoints:
                 {{ range yaml .Endpoints }}{{ . }}
                 {{ end }}
@@ -151,17 +151,17 @@ Structure:
             Template: ServiceInterface.gtpl
             Data:
               Name: {{ .Name }}
-              FileName: {{ toSnake .Name }}_service_interface.ts
+              FileName: {{ snakecase .Name }}_service_interface.ts
 
           service_mock.ts:
             Template: ServiceMock.gtpl
             Data:
               Name: {{ .Name }}
-              FileName: {{ toSnake .Name }}_service_mock.ts
+              FileName: {{ snakecase .Name }}_service_mock.ts
 
         {{end}}
       dto:
-        {{ range .Components }}{{ toSnake .Name }}.ts:
+        {{ range .Components }}{{ snakecase .Name }}.ts:
           Template: DTO.gtpl
 
         {{end}}

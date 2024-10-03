@@ -37,7 +37,7 @@ var GenerateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		helpers := helpers.NewHelpers()
 		if VariableFilePath != "" {
-			vars, err := shared.UnmarshalFile(VariableFilePath)
+			vars, err := helpers.UnmarshalFile(VariableFilePath)
 			if err != nil {
 				helpers.ErrorPrint("parsing file error: " + err.Error())
 				os.Exit(1)

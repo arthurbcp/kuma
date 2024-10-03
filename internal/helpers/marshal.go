@@ -1,18 +1,16 @@
-package shared
+package helpers
 
 import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
 
-	"github.com/arthurbcp/kuma-cli/internal/debug"
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 )
 
-func UnmarshalFile(fileName string) (map[string]interface{}, error) {
+func (h *Helpers) UnmarshalFile(fileName string) (map[string]interface{}, error) {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	// Read the content of the OpenAPI file.
 	fileContent, err := fs.ReadFile(fileName)
@@ -21,32 +19,24 @@ func UnmarshalFile(fileName string) (map[string]interface{}, error) {
 	}
 
 	// Unmarshal the JSON or YAML content into a generic map.
-	fileData, err := UnmarshalByExt(fileName, []byte(fileContent))
+	fileData, err := h.UnmarshalByExt(fileName, []byte(fileContent))
 	if err != nil {
 		return nil, err
-	}
-	if debug.Debug {
-		helpers := helpers.NewHelpers()
-		j, err := helpers.PrettyMarshal(fileData)
-		if err != nil {
-			return nil, err
-		}
-		helpers.DebugPrint(fmt.Sprintf("JSON from %s", fileName), j)
 	}
 	return fileData, nil
 }
 
-func UnmarshalByExt(file string, configData []byte) (map[string]interface{}, error) {
+func (h *Helpers) UnmarshalByExt(file string, configData []byte) (map[string]interface{}, error) {
 	// Determine the file type based on its extension and unmarshal accordingly.
 	switch filepath.Ext(file) {
-	case ".yaml", ".yml":
-		data, err := UnmarshalYaml(configData)
+	case ".yaml":
+		data, err := h.UnmarshalYaml(configData)
 		if err != nil {
 			return nil, err
 		}
 		return data, nil
 	case ".json":
-		data, err := UnmarshalJson(configData)
+		data, err := h.UnmarshalJson(configData)
 		if err != nil {
 			return nil, err
 		}
@@ -64,7 +54,7 @@ func UnmarshalByExt(file string, configData []byte) (map[string]interface{}, err
 // Returns:
 //
 //	A pointer to BuilderData and an error if unmarshaling fails.
-func UnmarshalJson(configData []byte) (map[string]interface{}, error) {
+func (h *Helpers) UnmarshalJson(configData []byte) (map[string]interface{}, error) {
 	fileData := make(map[string]interface{})
 	err := json.Unmarshal(configData, &fileData)
 	if err != nil {
@@ -81,7 +71,7 @@ func UnmarshalJson(configData []byte) (map[string]interface{}, error) {
 // Returns:
 //
 //	A pointer to BuilderData and an error if unmarshaling fails.
-func UnmarshalYaml(configData []byte) (map[string]interface{}, error) {
+func (h *Helpers) UnmarshalYaml(configData []byte) (map[string]interface{}, error) {
 	fileData := make(map[string]interface{})
 	err := yaml.Unmarshal(configData, &fileData)
 	if err != nil {

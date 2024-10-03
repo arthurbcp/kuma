@@ -9,7 +9,6 @@ import (
 
 	"github.com/arthurbcp/kuma-cli/internal/debug"
 	"github.com/arthurbcp/kuma-cli/internal/domain"
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
 )
 
 // BuilderHandler manages the building process of the project structure.
@@ -90,7 +89,7 @@ func (h *BuilderHandler) createDirAndFilesRecursive(key string, node interface{}
 			}
 
 			// Replace variables in the directory name.
-			childKey, err := h.builder.Helpers.ReplaceVars(childKey, childValue, helpers.FuncMap)
+			childKey, err := h.builder.Helpers.ReplaceVars(childKey, childValue, h.builder.Helpers.GetFuncMap())
 			if err != nil {
 				return err
 			}
@@ -183,5 +182,5 @@ func (h *BuilderHandler) getTemplate(data map[string]interface{}) (*template.Tem
 	}
 
 	// Parse all template files with the provided function map.
-	return template.New(templateName).Funcs(helpers.FuncMap).ParseFiles(allTemplates...)
+	return template.New(templateName).Funcs(h.builder.Helpers.GetFuncMap()).ParseFiles(allTemplates...)
 }
