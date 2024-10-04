@@ -48,12 +48,12 @@ export class {{toPascalCase .Data.name}}Service {
       {{- if $query }}query?: { {{ range $query }}
         {{ .name }}{{- if not .required -}}?{{- end -}}: {{- block "TypeResolver" . }}{{end}},
       {{- end -}} },{{- end -}}
-      {{- if $body }}body?: { {{ range $body }}
-        {{ .name }}{{- if not .required -}}?{{- end -}}: {{- block "TypeResolver" .schema  }}{{end}},
-      {{- end -}} },{{- end -}}
+      {{- if $body }}body?: {{ range $body }}
+        {{- block "TypeResolver" .schema  }}{{end}},
+      {{- end -}}{{- end -}}
     },   config?: AxiosRequestConfig):
      
-    {{- $responses := list -}}
+      {{- $responses := list -}}
       {{- range $index, $response := $data.responses -}}
       {{- if $response.schema -}}
         {{- $inResponse := $responses | has $response.schema -}}
