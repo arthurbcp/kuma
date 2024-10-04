@@ -26,9 +26,8 @@ go.work.sum
 
 
 # Kuma files
-/kuma-config.yaml
+#/kuma-config.yaml
 kuma-generated/** 
-kuma-templates/**
-swagger.*
-kuma-swagger.*
-/mylib/** 
+#kuma-templates/**
+#swagger.*
+#kuma-swagger.*
