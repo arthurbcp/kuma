@@ -3,12 +3,18 @@
 Global:
   ProjectName: "myproject"
   ProjectRepository: "gihub.com/arthurbcp/ts-test-services"
+  ProjectDescription: "This is a sample project"
 
 # structure of folders and files that will be generated
 Structure:
   src:
+      index.ts:
+        Template: Index.gtpl
       providers:
         http:
+          index.ts:
+            Template: ProviderExporter.gtpl
+            
           http_provider.ts:
             Template: HttpProvider.gtpl
           http_provider_interface.ts:
@@ -16,6 +22,13 @@ Structure:
           dto.ts:
             Template: HttpProviderDTO.gtpl
       dto:
+        index.ts:
+          Template: DTOExporter.gtpl
+          Data: 
+            {{range $name, $prop := $base.definitions }}{{ if eq $prop.type "object" }}
+              - {{ $name }}
+            {{end}}{{end}}
+            
         {{range $name, $prop := $base.definitions }}{{ if eq $prop.type "object" }}{{ toSnakeCase $name }}.ts:
           Template: DTO.gtpl
           Includes:
@@ -26,6 +39,19 @@ Structure:
             {{end}}
         {{end}}{{end}}
       services:
+        builder.ts:
+          Template: ServiceBuilder.gtpl
+          Data:
+            {{range $base.tags}}
+            - {{.name}} 
+            {{end}}
+        index.ts:
+          Template: ServiceExporter.gtpl
+          Data:
+            {{range $base.tags}}
+            - {{.name}}
+            {{end}}
+
         {{range $base.tags}}{{.name}}:
           {{$tag := .name}}
           service.ts:
@@ -43,8 +69,6 @@ Structure:
               {{end}}
         {{end}}
 
-  index.ts:
-    Template: Index.gtpl
   package.json:
     Template: PackageJson.gtpl
   tsconfig.json:

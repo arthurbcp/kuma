@@ -20,7 +20,7 @@ import { {{toPascalCase $import}} } from "../../dto/{{ toSnakeCase $import }}"{{
         {{- $hasImport := $imports | has $import }}
         {{- if not $hasImport -}}
            {{- $imports = $imports | append $import -}}
-           import { {{toPascalCase $import}} } from "../../dto/{{ toSnakeCase $import }}"{{"\n"}}
+import { {{toPascalCase $import}} } from "../../dto/{{ toSnakeCase $import }}"{{"\n"}}
         {{- end -}}
       {{- end -}}
     {{- end -}}
@@ -55,13 +55,13 @@ export class {{toPascalCase .Data.name}}Service {
      
       {{- $responses := list -}}
       {{- range $index, $response := $data.responses -}}
-      {{- if $response.schema -}}
-        {{- $inResponse := $responses | has $response.schema -}}
-        {{- if not $inResponse -}}
-          {{- $responses = $responses | append $response.schema -}}
+        {{- if $response.schema -}}
+          {{- $inResponse := $responses | has $response.schema -}}
+          {{- if not $inResponse -}}
+            {{- $responses = $responses | append $response.schema -}}
+          {{- end -}}
         {{- end -}}
       {{- end -}}
-    {{- end -}}
     Promise<AxiosResponse<{{- block "ResponseTypeResolver" $responses -}}{{end}}>> {
       return await this.http.request<{{- block "ResponseTypeResolver" $responses -}}{{end}}>("{{ toLower $method }}","{{ $path }}", data, config);
     }

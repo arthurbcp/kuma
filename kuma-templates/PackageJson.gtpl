@@ -1,7 +1,7 @@
 {
-  "name": "{{ .Configs.Global.ProjectName }}",
+  "name": "{{ .Global.ProjectName }}",
   "version": "1.0.0",
-  "description": "{{ .Configs.Global.ProjectDescription }}",
+  "description": "{{ .Global.ProjectDescription }}",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -23,9 +23,9 @@
   "author": "",
   "license": "",
   "bugs": {
-    "url": "{{ .Configs.Global.RepositoryUrl }}/issues"
+    "url": "{{ .Global.ProjectRepository }}/issues"
   },
-  "homepage": "{{ .Configs.Global.RepositoryUrl }}#readme",
+  "homepage": "{{ .Global.ProjectName }}#readme",
   "devDependencies": {
     "@types/jest": "^29.0.0",
     "@typescript-eslint/eslint-plugin": "^5.0.0",

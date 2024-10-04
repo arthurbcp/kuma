@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { IHttpProvider } from "./http_provider_interface";
+import { RequestData } from "./dto"
 
 export class HttpProvider implements IHttpProvider {
   private client: AxiosInstance;
