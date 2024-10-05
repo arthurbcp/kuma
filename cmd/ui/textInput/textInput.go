@@ -78,7 +78,6 @@ func (m model) Init() tea.Cmd {
 // and for Ctrl+C or Esc to close the program.
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
-
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.Type {

@@ -12,8 +12,9 @@ import (
 
 	"github.com/arthurbcp/kuma-cli/cmd/shared"
 	"github.com/arthurbcp/kuma-cli/cmd/steps"
-	"github.com/arthurbcp/kuma-cli/cmd/ui/multiInput"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/selectInput"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/textInput"
+
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
 	tea "github.com/charmbracelet/bubbletea"
@@ -72,6 +73,18 @@ func handleInput(input map[string]interface{}) {
 		helpers.ErrorPrint("out is required for input")
 		os.Exit(1)
 	}
+	other := false
+	skippable := false
+	if o, ok := input["other"]; ok {
+		other = o.(bool)
+	}
+	if s, ok := input["skippable"]; ok {
+		skippable = s.(bool)
+	}
+	if !ok {
+		helpers.ErrorPrint("out is required for input")
+		os.Exit(1)
+	}
 	if mapOptions, ok := input["options"].([]interface{}); ok {
 		options := make([]steps.Item, len(mapOptions))
 		for i, option := range mapOptions {
@@ -80,8 +93,8 @@ func handleInput(input map[string]interface{}) {
 				Value: option.(map[string]interface{})["value"].(string),
 			}
 		}
-		output := &multiInput.Selection{}
-		p := tea.NewProgram(multiInput.InitialModelMulti(options, output, label, false))
+		output := &selectInput.Selection{}
+		p := tea.NewProgram(selectInput.InitialSelectInputModel(options, output, label, other, skippable, false))
 		_, err := p.Run()
 		if err != nil {
 			helpers.ErrorPrint("error running program: " + err.Error())
