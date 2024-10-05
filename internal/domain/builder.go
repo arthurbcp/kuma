@@ -76,7 +76,7 @@ func NewBuilder(fs filesystem.FileSystemInterface, helpers helpers.HelpersInterf
 //
 //	An error if parsing fails, otherwise nil.
 func (b *Builder) SetBuilderData(file string, vars map[string]interface{}) error {
-	b.Helpers.HeaderPrint("parsing config...")
+	b.Helpers.TitlePrint("parsing config...")
 
 	// Read the content of the configuration file.
 	configData, err := b.Fs.ReadFile(file)

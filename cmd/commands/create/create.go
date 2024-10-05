@@ -1,8 +1,8 @@
-// generate.go
+// create.go
 //
-// Package generate defines the 'generate' subcommand for the Kuma CLI.
+// Package create defines the 'create' subcommand for the Kuma CLI.
 // It handles generating project scaffolds based on Go templates.
-package generate
+package create
 
 import (
 	"fmt"
@@ -22,47 +22,51 @@ import (
 )
 
 var (
-	// ProjectPath defines the directory where the project will be generated.
+	// ProjectPath defines the directory where the project will be created.
 	ProjectPath string
 
 	//VariablesFile specifies the path to the variables file.
 	VariablesFile string
 )
 
-// GenerateCmd represents the 'generate' subcommand.
-var GenerateCmd = &cobra.Command{
-	Use:   "generate",
-	Short: "Generate a scaffold for a project based on Go Templates",
+// CreateCmd represents the 'create' subcommand.
+var CreateCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a scaffold for a project based on Go Templates",
 	Run: func(cmd *cobra.Command, args []string) {
-		helpers := helpers.NewHelpers()
-		fs := filesystem.NewFileSystem(afero.NewOsFs())
-		if VariablesFile != "" {
-			var vars interface{}
-			_, err := url.ParseRequestURI(VariablesFile)
-			if err != nil {
-				vars, err = helpers.UnmarshalFile(VariablesFile, fs)
-				if err != nil {
-					helpers.ErrorPrint("parsing file error: " + err.Error())
-					os.Exit(1)
-				}
-			} else {
-				helpers.HeaderPrint("downloading variables file")
-				varsContent, err := readFileFromURL(VariablesFile)
-				if err != nil {
-					helpers.ErrorPrint("reading file error: " + err.Error())
-					os.Exit(1)
-				}
-				splitURL := strings.Split(VariablesFile, "/")
-				vars, err = helpers.UnmarshalByExt(splitURL[len(splitURL)-1], []byte(varsContent))
-				if err != nil {
-					helpers.ErrorPrint("parsing file error: " + err.Error())
-					os.Exit(1)
-				}
-			}
-			shared.TemplateVariables = vars.(map[string]interface{})
-			build()
-		}
+		create()
 	},
+}
+
+func create() {
+	helpers := helpers.NewHelpers()
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	if VariablesFile != "" {
+		var vars interface{}
+		_, err := url.ParseRequestURI(VariablesFile)
+		if err != nil {
+			vars, err = helpers.UnmarshalFile(VariablesFile, fs)
+			if err != nil {
+				helpers.ErrorPrint("parsing file error: " + err.Error())
+				os.Exit(1)
+			}
+		} else {
+			helpers.TitlePrint("downloading variables file")
+			varsContent, err := readFileFromURL(VariablesFile)
+			if err != nil {
+				helpers.ErrorPrint("reading file error: " + err.Error())
+				os.Exit(1)
+			}
+			splitURL := strings.Split(VariablesFile, "/")
+			vars, err = helpers.UnmarshalByExt(splitURL[len(splitURL)-1], []byte(varsContent))
+			if err != nil {
+				helpers.ErrorPrint("parsing file error: " + err.Error())
+				os.Exit(1)
+			}
+		}
+		shared.TemplateVariables = vars.(map[string]interface{})
+		build()
+	}
 }
 
 func readFileFromURL(url string) (string, error) {
@@ -89,7 +93,7 @@ func readFileFromURL(url string) (string, error) {
 }
 
 // build initializes the Builder and triggers the build process.
-// It reads the Kuma configuration file and applies templates to generate the project structure.
+// It reads the Kuma configuration file and applies templates to create the project structure.
 func build() {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	helpers := helpers.NewHelpers()
@@ -107,9 +111,9 @@ func build() {
 	}
 }
 
-// init sets up flags for the 'generate' subcommand and binds them to variables.
+// init sets up flags for the 'create' subcommand and binds them to variables.
 func init() {
 	// Target file directory
-	GenerateCmd.Flags().StringVarP(&VariablesFile, "variables-file", "v", "", "path or URL to the variables file")
-	GenerateCmd.Flags().StringVarP(&ProjectPath, "project-path", "p", ".", "Path to the project you want to generate")
+	CreateCmd.Flags().StringVarP(&VariablesFile, "variables-file", "v", "", "path or URL to the variables file")
+	CreateCmd.Flags().StringVarP(&ProjectPath, "project-path", "p", ".", "Path to the project you want to create")
 }
