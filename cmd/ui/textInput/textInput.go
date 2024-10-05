@@ -1,20 +1,14 @@
 // Package textinput provides functions that
 // help define and draw a text-input step
-package textinput
+package textInput
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 
+	"github.com/arthurbcp/kuma-cli/pkg/style"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-)
-
-var (
-	titleStyle = lipgloss.NewStyle().Background(lipgloss.Color("#01FAC6")).Foreground(lipgloss.Color("#030303")).Bold(true).Padding(0, 1, 0)
-	errorStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#FF8700")).Bold(true).Padding(0, 0, 0)
 )
 
 type (
@@ -60,31 +54,18 @@ func InitialTextInputModel(output *Output, header string, exit bool) model {
 	ti.Width = 20
 	ti.Validate = sanitizeInput
 
-	return model{
+	m := model{
 		textInput: ti,
 		err:       nil,
 		output:    output,
-		header:    titleStyle.Render(header),
 		exit:      &exit,
 	}
-}
 
-// CreateErrorInputModel creates a textinput step
-// with the given error
-func CreateErrorInputModel(err error) model {
-	ti := textinput.New()
-	ti.Focus()
-	ti.CharLimit = 156
-	ti.Width = 20
-	exit := true
-
-	return model{
-		textInput: ti,
-		err:       errors.New(errorStyle.Render(err.Error())),
-		output:    nil,
-		header:    "",
-		exit:      &exit,
+	if header != "" {
+		m.header = style.TitleStyle.Render(header)
 	}
+
+	return m
 }
 
 // Init is called at the beginning of a textinput step

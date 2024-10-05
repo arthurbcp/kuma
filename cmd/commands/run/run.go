@@ -5,16 +5,18 @@
 package run
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/arthurbcp/kuma-cli/cmd/shared"
+	"github.com/arthurbcp/kuma-cli/cmd/steps"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/multiInput"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/textInput"
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
-	"github.com/gookit/color"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -39,12 +41,12 @@ func ExecRun(name string) {
 	data, err := helpers.UnmarshalFile(shared.KumaRunsPath, fs)
 	if err != nil {
 		helpers.ErrorPrint("parsing file error: " + err.Error())
-		os.Exit(0)
+		os.Exit(1)
 	}
 	run, ok := data[name]
 	if !ok {
 		helpers.ErrorPrint("run not found: " + name)
-		os.Exit(0)
+		os.Exit(1)
 	}
 	for _, step := range run.([]interface{}) {
 		step := step.(map[string]interface{})
@@ -59,27 +61,43 @@ func ExecRun(name string) {
 }
 
 func handleInput(input map[string]interface{}) {
-	var helpers = helpers.NewHelpers()
-	msg, ok := input["msg"].(string)
+	helpers := helpers.NewHelpers()
+	label, ok := input["label"].(string)
 	if !ok {
-		helpers.ErrorPrint("msg is required for input")
-		os.Exit(0)
+		helpers.ErrorPrint("label is required for input")
+		os.Exit(1)
 	}
 	out, ok := input["out"].(string)
 	if !ok {
 		helpers.ErrorPrint("out is required for input")
-		os.Exit(0)
+		os.Exit(1)
 	}
-
-	fmt.Print(msg)
-
-	// Create a reader to read input from stdin (standard input)
-	reader := bufio.NewReader(os.Stdin)
-
-	// Read the full line of input (until the user presses enter)
-	outValue, _ := reader.ReadString('\n')
-
-	Variables[out] = strings.TrimSpace(outValue)
+	if mapOptions, ok := input["options"].([]interface{}); ok {
+		options := make([]steps.Item, len(mapOptions))
+		for i, option := range mapOptions {
+			options[i] = steps.Item{
+				Label: option.(map[string]interface{})["label"].(string),
+				Value: option.(map[string]interface{})["value"].(string),
+			}
+		}
+		output := &multiInput.Selection{}
+		p := tea.NewProgram(multiInput.InitialModelMulti(options, output, label, false))
+		_, err := p.Run()
+		if err != nil {
+			helpers.ErrorPrint("error running program: " + err.Error())
+			os.Exit(1)
+		}
+		Variables[out] = output.Choice
+	} else {
+		output := &textInput.Output{}
+		p := tea.NewProgram(textInput.InitialTextInputModel(output, label, false))
+		_, err := p.Run()
+		if err != nil {
+			helpers.ErrorPrint("error running program: " + err.Error())
+			os.Exit(1)
+		}
+		Variables[out] = output.Output
+	}
 }
 
 func handleCommand(cmdStr string) {
@@ -88,9 +106,9 @@ func handleCommand(cmdStr string) {
 	cmdStr, err = helpers.ReplaceVars(cmdStr, Variables, helpers.GetFuncMap())
 	if err != nil {
 		helpers.ErrorPrint("parsing command error: " + err.Error())
-		os.Exit(0)
+		os.Exit(1)
 	}
-	color.Gray.Printf("running: %s\n", cmdStr)
+	helpers.LogPrint(fmt.Sprintf("running: %s", cmdStr))
 	cmdArgs := strings.Split(cmdStr, " ")
 	execCmd := exec.Command(cmdArgs[0], cmdArgs[1:]...)
 	// Set the command's standard output to the console
@@ -101,7 +119,7 @@ func handleCommand(cmdStr string) {
 	err = execCmd.Run()
 	if err != nil {
 		helpers.ErrorPrint("command error: " + err.Error())
-		os.Exit(0)
+		os.Exit(1)
 	}
 }
 

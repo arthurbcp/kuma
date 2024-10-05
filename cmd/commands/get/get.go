@@ -45,25 +45,25 @@ func download(cmd *cobra.Command) {
 	if Template == "" && Repo == "" {
 		cmd.Help()
 		fmt.Println("\nplease specify a template or a repository")
-		os.Exit(0)
+		os.Exit(1)
 	}
 
 	repo, ok := Templates[Template]
 	if !ok {
 		repo = Repo
 	}
-	helpers.HeaderPrint("getting templates from github repository...")
+	helpers.TitlePrint("getting templates from github repository...")
 	splitRepo := strings.Split(repo, "/")
 	if len(splitRepo) != 2 {
-		helpers.ErrorPrint("invalid repository name: " + Repo)
-		os.Exit(0)
+		helpers.TitlePrint("invalid repository name: " + Repo)
+		os.Exit(1)
 	}
 	org := splitRepo[0]
 	repoName := splitRepo[1]
 	downloadRepo(client, org, repoName, "", ".kuma-files")
 	helpers.CheckMarkPrint("templates downloaded successfully!")
 	run.ExecRun("initial")
-	os.Exit(1)
+	os.Exit(0)
 }
 
 // downloadFile writes the content of the file to the local file system

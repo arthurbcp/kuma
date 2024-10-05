@@ -6,17 +6,10 @@ import (
 	"fmt"
 
 	"github.com/arthurbcp/kuma-cli/cmd/steps"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/textInput"
+	"github.com/arthurbcp/kuma-cli/internal/helpers"
+	"github.com/arthurbcp/kuma-cli/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-)
-
-// Change this
-var (
-	focusedStyle          = lipgloss.NewStyle().Foreground(lipgloss.Color("#01FAC6")).Bold(true)
-	titleStyle            = lipgloss.NewStyle().Background(lipgloss.Color("#01FAC6")).Foreground(lipgloss.Color("#030303")).Bold(true).Padding(0, 1, 0)
-	selectedItemStyle     = lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("170")).Bold(true)
-	selectedItemDescStyle = lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("170"))
-	descriptionStyle      = lipgloss.NewStyle().Foreground(lipgloss.Color("#40BDA3"))
 )
 
 // A Selection represents a choice made in a multiInput step
@@ -52,7 +45,7 @@ func InitialModelMulti(choices []steps.Item, selection *Selection, header string
 		choices:  choices,
 		selected: make(map[int]struct{}),
 		choice:   selection,
-		header:   titleStyle.Render(header),
+		header:   style.TitleStyle.Render(header),
 		exit:     &exit,
 	}
 }
@@ -61,6 +54,7 @@ func InitialModelMulti(choices []steps.Item, selection *Selection, header string
 // important keystrokes to signal when to quit, change selection,
 // and confirm the selection.
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	helpers := helpers.NewHelpers()
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -88,11 +82,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "y":
 			if len(m.selected) == 1 {
 				for selectedKey := range m.selected {
-					m.choice.Update(m.choices[selectedKey].Title)
+					m.choice.Update(m.choices[selectedKey].Value)
 					m.cursor = selectedKey
 				}
 				return m, tea.Quit
 			}
+		case "o":
+			textValue := &textInput.Output{}
+			p := tea.NewProgram(textInput.InitialTextInputModel(textValue, "", false))
+			_, err := p.Run()
+			if err != nil {
+				helpers.ErrorPrint("error running program: " + err.Error())
+				*m.exit = true
+				return m, tea.Quit
+			}
+			m.choice.Update(textValue.Output)
+			return m, tea.Quit
 		}
 	}
 	return m, nil
@@ -105,22 +110,20 @@ func (m model) View() string {
 	for i, choice := range m.choices {
 		cursor := " "
 		if m.cursor == i {
-			cursor = focusedStyle.Render(">")
-			choice.Title = selectedItemStyle.Render(choice.Title)
-			choice.Desc = selectedItemDescStyle.Render(choice.Desc)
+			cursor = style.FocusedStyle.Render(">")
+			choice.Label = style.SelectedItemStyle.Render(choice.Label)
 		}
 
 		checked := " "
 		if _, ok := m.selected[i]; ok {
-			checked = focusedStyle.Render("x")
+			checked = style.FocusedStyle.Render("x")
 		}
+		label := style.FocusedStyle.Render(choice.Label)
 
-		title := focusedStyle.Render(choice.Title)
-		description := descriptionStyle.Render(choice.Desc)
-
-		s += fmt.Sprintf("%s [%s] %s\n%s\n\n", cursor, checked, title, description)
+		s += fmt.Sprintf("%s [%s] %s\n\n", cursor, checked, label)
 	}
 
-	s += fmt.Sprintf("Press %s to confirm choice.\n\n", focusedStyle.Render("y"))
+	s += fmt.Sprintf("Press %s to confirm choice.\n\n", style.FocusedStyle.Render("y"))
+	s += fmt.Sprintf("Press %s to text another option.\n\n", style.FocusedStyle.Render("o"))
 	return s
 }

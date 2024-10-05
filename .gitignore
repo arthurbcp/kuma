@@ -32,3 +32,9 @@ kuma-templates/**
 .kuma-files/**
 swagger.*
 mylib/**
+package.json
+package-lock.json
+tsconfig.json
+node_modules/**
+dist/**
+src/**

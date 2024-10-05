@@ -34,35 +34,39 @@ var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a scaffold for a project based on Go Templates",
 	Run: func(cmd *cobra.Command, args []string) {
-		helpers := helpers.NewHelpers()
-		fs := filesystem.NewFileSystem(afero.NewOsFs())
-		if VariablesFile != "" {
-			var vars interface{}
-			_, err := url.ParseRequestURI(VariablesFile)
-			if err != nil {
-				vars, err = helpers.UnmarshalFile(VariablesFile, fs)
-				if err != nil {
-					helpers.ErrorPrint("parsing file error: " + err.Error())
-					os.Exit(1)
-				}
-			} else {
-				helpers.HeaderPrint("downloading variables file")
-				varsContent, err := readFileFromURL(VariablesFile)
-				if err != nil {
-					helpers.ErrorPrint("reading file error: " + err.Error())
-					os.Exit(1)
-				}
-				splitURL := strings.Split(VariablesFile, "/")
-				vars, err = helpers.UnmarshalByExt(splitURL[len(splitURL)-1], []byte(varsContent))
-				if err != nil {
-					helpers.ErrorPrint("parsing file error: " + err.Error())
-					os.Exit(1)
-				}
-			}
-			shared.TemplateVariables = vars.(map[string]interface{})
-			build()
-		}
+		create()
 	},
+}
+
+func create() {
+	helpers := helpers.NewHelpers()
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	if VariablesFile != "" {
+		var vars interface{}
+		_, err := url.ParseRequestURI(VariablesFile)
+		if err != nil {
+			vars, err = helpers.UnmarshalFile(VariablesFile, fs)
+			if err != nil {
+				helpers.ErrorPrint("parsing file error: " + err.Error())
+				os.Exit(1)
+			}
+		} else {
+			helpers.TitlePrint("downloading variables file")
+			varsContent, err := readFileFromURL(VariablesFile)
+			if err != nil {
+				helpers.ErrorPrint("reading file error: " + err.Error())
+				os.Exit(1)
+			}
+			splitURL := strings.Split(VariablesFile, "/")
+			vars, err = helpers.UnmarshalByExt(splitURL[len(splitURL)-1], []byte(varsContent))
+			if err != nil {
+				helpers.ErrorPrint("parsing file error: " + err.Error())
+				os.Exit(1)
+			}
+		}
+		shared.TemplateVariables = vars.(map[string]interface{})
+		build()
+	}
 }
 
 func readFileFromURL(url string) (string, error) {
