@@ -25,12 +25,6 @@ var (
 	// ProjectPath defines the directory where the project will be generated.
 	ProjectPath string
 
-	// KumaConfigFilePath specifies the path to the Kuma configuration file.
-	KumaConfigFilePath string = ".kuma-files/kuma-config.yaml"
-
-	// KumaTemplatesPath defines the path to the directory containing Kuma templates.
-	KumaTemplatesPath string = ".kuma-files/kuma-templates"
-
 	//VariablesFile specifies the path to the variables file.
 	VariablesFile string
 )
@@ -43,7 +37,7 @@ var GenerateCmd = &cobra.Command{
 		helpers := helpers.NewHelpers()
 		fs := filesystem.NewFileSystem(afero.NewOsFs())
 		if VariablesFile != "" {
-			var vars map[string]interface{}
+			var vars map[interface{}]interface{}
 			_, err := url.ParseRequestURI(VariablesFile)
 			if err != nil {
 				vars, err = helpers.UnmarshalFile(VariablesFile, fs)
@@ -100,7 +94,7 @@ func build() {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	helpers := helpers.NewHelpers()
 	// Initialize a new Builder with the provided configurations.
-	builder, err := domain.NewBuilder(fs, helpers, KumaConfigFilePath, shared.TemplateVariables, domain.NewConfig(ProjectPath, KumaTemplatesPath))
+	builder, err := domain.NewBuilder(fs, helpers, shared.KumaConfigFilePath, shared.TemplateVariables, domain.NewConfig(ProjectPath, shared.KumaTemplatesPath))
 	if err != nil {
 		helpers.ErrorPrint(err.Error())
 		os.Exit(1)
