@@ -38,7 +38,7 @@ func NewBuilderHandler(builder *domain.Builder) *BuilderHandler {
 //
 //	An error if the build process fails, otherwise nil.
 func (h *BuilderHandler) Build() error {
-	h.builder.Helpers.HeaderPrint("APPLYING TEMPLATES")
+	h.builder.Helpers.HeaderPrint("applying templates...")
 
 	// Start recursive creation of directories and files from the root.
 	err := h.createDirAndFilesRecursive("", h.builder.Data.Structure, h.builder.Config.ProjectPath)

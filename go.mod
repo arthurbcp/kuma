@@ -4,6 +4,7 @@ go 1.23
 
 require (
 	github.com/go-sprout/sprout v0.6.0
+	github.com/google/go-github v17.0.0+incompatible
 	github.com/gookit/color v1.5.4
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/spf13/afero v1.11.0
@@ -16,6 +17,9 @@ require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/google/go-github/v65 v65.0.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
