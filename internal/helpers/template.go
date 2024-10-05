@@ -75,7 +75,6 @@ func (h *Helpers) GetFuncMap() template.FuncMap {
 }
 
 func (h *Helpers) ReplaceVars(text string, vars interface{}, funcs template.FuncMap) (string, error) {
-
 	t, err := template.New("").Funcs(h.GetFuncMap()).Parse(text)
 	if err != nil {
 		return "", err

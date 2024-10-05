@@ -62,7 +62,10 @@ func download(cmd *cobra.Command) {
 	repoName := splitRepo[1]
 	downloadRepo(client, org, repoName, "", ".kuma-files")
 	helpers.CheckMarkPrint("templates downloaded successfully!")
-	run.ExecRun("initial")
+	vars := map[string]interface{}{
+		"data": map[string]interface{}{},
+	}
+	run.ExecRun("initial", vars)
 	os.Exit(0)
 }
 
