@@ -1,0 +1,75 @@
+{{$base := . }}
+#  Global variables to be used in all the templates.
+Global:
+  ProjectName: "myproject"
+  ProjectRepository: "gihub.com/arthurbcp/ts-test-services"
+  ProjectDescription: "This is a sample project"
+
+# structure of folders and files that will be generated
+Structure:
+  src:
+      index.ts:
+        Template: Index.gtpl
+      providers:
+        http:
+          index.ts:
+            Template: ProviderExporter.gtpl
+            
+          http_provider.ts:
+            Template: HttpProvider.gtpl
+          http_provider_interface.ts:
+            Template: HttpProviderInterface.gtpl
+          dto.ts:
+            Template: HttpProviderDTO.gtpl
+      dto:
+        index.ts:
+          Template: DTOExporter.gtpl
+          Data: 
+            {{range $name, $prop := $base.definitions }}{{ if eq $prop.type "object" }}
+              - {{ $name }}
+            {{end}}{{end}}
+            
+        {{range $name, $prop := $base.definitions }}{{ if eq $prop.type "object" }}{{ toSnakeCase $name }}.ts:
+          Template: DTO.gtpl
+          Includes:
+            - TypeResolver.gtpl
+          Data:
+            name: {{ $name }}
+            {{ range toYaml . }}{{ . }}
+            {{end}}
+        {{end}}{{end}}
+      services:
+        builder.ts:
+          Template: ServiceBuilder.gtpl
+          Data:
+            {{range $base.tags}}
+            - {{.name}} 
+            {{end}}
+        index.ts:
+          Template: ServiceExporter.gtpl
+          Data:
+            {{range $base.tags}}
+            - {{.name}}
+            {{end}}
+
+        {{range $base.tags}}{{.name}}:
+          {{$tag := .name}}
+          service.ts:
+            Template: Service.gtpl
+            Includes:
+              - TypeResolver.gtpl
+              - ResponseTypeResolver.gtpl
+            Data:
+              name: {{$tag}}
+              operations:
+              {{range $path, $req := getPathsByTag $base.paths $tag}}
+                {{$path}}: 
+                    {{range toYaml $req}}{{.}}
+                    {{end}}
+              {{end}}
+        {{end}}
+
+  package.json:
+    Template: PackageJson.gtpl
+  tsconfig.json:
+    Template: TsConfig.gtpl

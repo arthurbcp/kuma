@@ -1,15 +1,13 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"strings"
 	"text/template"
 
-	"github.com/arthurbcp/kuma-cli/internal/debug"
 	"github.com/arthurbcp/kuma-cli/internal/domain"
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
+	"github.com/spf13/afero"
 )
 
 // BuilderHandler manages the building process of the project structure.
@@ -90,7 +88,7 @@ func (h *BuilderHandler) createDirAndFilesRecursive(key string, node interface{}
 			}
 
 			// Replace variables in the directory name.
-			childKey, err := h.builder.Helpers.ReplaceVars(childKey, childValue, helpers.FuncMap)
+			childKey, err := h.builder.Helpers.ReplaceVars(childKey, childValue, h.builder.Helpers.GetFuncMap())
 			if err != nil {
 				return err
 			}
@@ -139,13 +137,6 @@ func (h *BuilderHandler) createFileAndApplyTemplate(currentPath string, fileName
 		"Data":   data["Data"],
 		"Global": h.builder.Data.Global,
 	}
-	if debug.Debug {
-		j, err := json.Marshal(data)
-		if err != nil {
-			h.builder.Helpers.CrossMarkPrint("DEBUG FAILED: " + err.Error())
-		}
-		h.builder.Helpers.DebugPrint(fmt.Sprintf("%s template data", fileName), h.builder.Helpers.PrettyJson(string(j)))
-	}
 	// Execute the template and write to the file.
 	return t.Execute(file, data)
 }
@@ -182,6 +173,24 @@ func (h *BuilderHandler) getTemplate(data map[string]interface{}) (*template.Tem
 		}
 	}
 
-	// Parse all template files with the provided function map.
-	return template.New(templateName).Funcs(helpers.FuncMap).ParseFiles(allTemplates...)
+	// Create a new template object
+	tmpl := template.New(templateName).Funcs(h.builder.Helpers.GetFuncMap())
+
+	// Iterate through all the template paths, read them from the afero filesystem, and parse them
+	for _, tmplFile := range allTemplates {
+		// Read the template file using afero
+		content, err := afero.ReadFile(h.builder.Fs.GetAferoFs(), tmplFile)
+		if err != nil {
+			return nil, fmt.Errorf("error reading template file %s: %w", tmplFile, err)
+		}
+
+		// Parse the template content
+		_, err = tmpl.Parse(string(content))
+		if err != nil {
+			return nil, fmt.Errorf("error parsing template file %s: %w", tmplFile, err)
+		}
+	}
+
+	// Return the parsed template
+	return tmpl, nil
 }

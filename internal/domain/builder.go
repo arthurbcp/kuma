@@ -85,7 +85,7 @@ func (b *Builder) SetBuilderData(file string, vars map[string]interface{}) error
 	}
 
 	// Replace variables in the configuration data.
-	configData, err = b.Helpers.ReplaceVars(configData, vars, helpers.FuncMap)
+	configData, err = b.Helpers.ReplaceVars(configData, vars, b.Helpers.GetFuncMap())
 	b.ParsedFile = string(configData)
 	b.Helpers.DebugPrint("Config file", b.ParsedFile)
 	if err != nil {

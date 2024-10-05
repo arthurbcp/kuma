@@ -36,8 +36,9 @@ var GenerateCmd = &cobra.Command{
 	Short: "Generate a scaffold for a project based on Go Templates",
 	Run: func(cmd *cobra.Command, args []string) {
 		helpers := helpers.NewHelpers()
+		fs := filesystem.NewFileSystem(afero.NewOsFs())
 		if VariableFilePath != "" {
-			vars, err := shared.UnmarshalFile(VariableFilePath)
+			vars, err := helpers.UnmarshalFile(VariableFilePath, fs)
 			if err != nil {
 				helpers.ErrorPrint("parsing file error: " + err.Error())
 				os.Exit(1)

@@ -1,48 +1,15 @@
 package helpers
 
 import (
-	"encoding/json"
+	"fmt"
 	"strings"
 	"text/template"
-	"unicode"
 
+	"github.com/go-sprout/sprout/sprigin"
 	"gopkg.in/yaml.v3"
 )
 
-var FuncMap = template.FuncMap{
-	"startsWith": strings.HasPrefix,
-	"toUpper":    strings.ToUpper,
-	"toLower":    strings.ToLower,
-	"toSnake":    ToSnakeCase,
-	"toPascal":   ToPascalCase,
-	"yaml":       ParseYamlTemplate,
-	"json":       ParseJsonTemplate,
-}
-
-func ToSnakeCase(str string) string {
-	var result []rune
-	for i, r := range str {
-		if i == 0 {
-			result = append(result, unicode.ToLower(r))
-			continue
-		}
-		if unicode.IsUpper(r) {
-			result = append(result, '_')
-		}
-		result = append(result, unicode.ToLower(r))
-	}
-	return string(result)
-}
-
-func ToPascalCase(str string) string {
-	if len(str) == 0 {
-		return str
-	}
-
-	return strings.ToUpper(string(str[0])) + str[1:]
-}
-
-func ParseYamlTemplate(data interface{}) []string {
+func ToYaml(data interface{}) []string {
 	yamlData, err := yaml.Marshal(data)
 	if err != nil {
 		panic("Error parsing YAML template: " + err.Error())
@@ -51,16 +18,69 @@ func ParseYamlTemplate(data interface{}) []string {
 	return lines
 }
 
-func ParseJsonTemplate(data interface{}) string {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		panic("Error parsing JSON template: " + err.Error())
+func GetRefFrom(object map[string]interface{}) string {
+	ref, ok := object["$ref"].(string)
+	if !ok {
+		return ""
 	}
-	return string(jsonData)
+	const refPrefix = "#/definitions/"
+	if strings.HasPrefix(ref, refPrefix) {
+		return strings.TrimPrefix(ref, refPrefix)
+	}
+	return ""
+}
+
+func GetParamsByType(params []interface{}, paramType string) []interface{} {
+	filteredParams := make([]interface{}, 0)
+	for _, param := range params {
+		if paramMap, ok := param.(map[string]interface{}); ok {
+			if paramTypeStr, ok := paramMap["in"].(string); ok {
+				if paramTypeStr == paramType {
+					filteredParams = append(filteredParams, param)
+				}
+			}
+		}
+	}
+	return filteredParams
+}
+
+func GetPathsByTag(paths map[string]interface{}, tag string) map[string]interface{} {
+	filteredPaths := make(map[string]interface{})
+	for path, pathItem := range paths {
+		if pathMap, ok := pathItem.(map[string]interface{}); ok {
+			for _, operation := range pathMap {
+				if operationMap, ok := operation.(map[string]interface{}); ok {
+					if pathTags, ok := operationMap["tags"].([]interface{}); ok {
+						for _, tagItem := range pathTags {
+							if tagStr, ok := tagItem.(string); ok {
+								if tagStr == tag {
+									filteredPaths[path] = pathItem
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	h := Helpers{}
+	str, _ := h.PrettyMarshal(filteredPaths)
+	fmt.Println(str)
+	return filteredPaths
+}
+
+func (h *Helpers) GetFuncMap() template.FuncMap {
+	fnMap := sprigin.TxtFuncMap()
+	fnMap["toYaml"] = ToYaml
+	fnMap["getRefFrom"] = GetRefFrom
+	fnMap["getPathsByTag"] = GetPathsByTag
+	fnMap["getParamsByType"] = GetParamsByType
+	return fnMap
 }
 
 func (h *Helpers) ReplaceVars(text string, vars interface{}, funcs template.FuncMap) (string, error) {
-	t, err := template.New("").Funcs(funcs).Parse(text)
+
+	t, err := template.New("").Funcs(h.GetFuncMap()).Parse(text)
 	if err != nil {
 		return "", err
 	}
