@@ -27,7 +27,7 @@ func (h *Helpers) UnmarshalFile(fileName string, fs filesystem.FileSystemInterfa
 func (h *Helpers) UnmarshalByExt(file string, configData []byte) (map[string]interface{}, error) {
 	// Determine the file type based on its extension and unmarshal accordingly.
 	switch filepath.Ext(file) {
-	case ".yaml":
+	case ".yaml", ".yml":
 		data, err := h.UnmarshalYaml(configData)
 		if err != nil {
 			return nil, err

@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"fmt"
 	"strings"
 	"text/template"
 
@@ -63,9 +62,6 @@ func GetPathsByTag(paths map[string]interface{}, tag string) map[string]interfac
 			}
 		}
 	}
-	h := Helpers{}
-	str, _ := h.PrettyMarshal(filteredPaths)
-	fmt.Println(str)
 	return filteredPaths
 }
 
