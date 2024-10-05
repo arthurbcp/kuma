@@ -9,7 +9,7 @@ import (
 
 func (h *Helpers) HeaderPrint(text string) {
 	fmt.Println()
-	color.New(color.FgWhite, color.BgMagenta).Println(" - " + text + " - ")
+	color.New(color.FgWhite, color.BgMagenta).Println(" " + text + " ")
 }
 
 func (h *Helpers) CheckMarkPrint(text string) {

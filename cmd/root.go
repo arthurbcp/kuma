@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/arthurbcp/kuma-cli/cmd/generate"
+	"github.com/arthurbcp/kuma-cli/cmd/get"
 	"github.com/arthurbcp/kuma-cli/internal/debug"
 	"github.com/spf13/cobra"
 )
@@ -69,4 +70,5 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&debug.Debug, "debug", "", false, "Enable debug mode")
 	// Add subcommands to the root command.
 	rootCmd.AddCommand(generate.GenerateCmd)
+	rootCmd.AddCommand(get.GetCmd)
 }
