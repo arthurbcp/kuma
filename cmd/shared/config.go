@@ -2,7 +2,7 @@ package shared
 
 var (
 	// TemplateVariables holds the variables for template replacement during the generate process.
-	TemplateVariables map[interface{}]interface{}
+	TemplateVariables map[string]interface{}
 
 	// KumaConfigFilePath specifies the path to the Kuma configuration file.
 	KumaConfigFilePath string = ".kuma-files/kuma-config.yaml"

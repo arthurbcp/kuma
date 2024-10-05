@@ -37,7 +37,7 @@ var GenerateCmd = &cobra.Command{
 		helpers := helpers.NewHelpers()
 		fs := filesystem.NewFileSystem(afero.NewOsFs())
 		if VariablesFile != "" {
-			var vars map[interface{}]interface{}
+			var vars interface{}
 			_, err := url.ParseRequestURI(VariablesFile)
 			if err != nil {
 				vars, err = helpers.UnmarshalFile(VariablesFile, fs)
@@ -59,7 +59,7 @@ var GenerateCmd = &cobra.Command{
 					os.Exit(1)
 				}
 			}
-			shared.TemplateVariables = vars
+			shared.TemplateVariables = vars.(map[string]interface{})
 			build()
 		}
 	},

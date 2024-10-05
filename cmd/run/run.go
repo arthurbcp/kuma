@@ -21,7 +21,7 @@ import (
 
 var (
 	Run       string
-	Variables map[interface{}]interface{}
+	Variables = make(map[string]interface{})
 )
 
 // RunCmd represents the 'run' subcommand.
@@ -47,19 +47,18 @@ func ExecRun(name string) {
 		os.Exit(0)
 	}
 	for _, step := range run.([]interface{}) {
-		step := step.(map[interface{}]interface{})
+		step := step.(map[string]interface{})
 		for key, value := range step {
-			color.Gray.Printf("executing: %s %s\n", key, value)
 			if key == "cmd" {
 				handleCommand(value.(string))
 			} else if key == "input" {
-				handleInput(value.(map[interface{}]interface{}))
+				handleInput(value.(map[string]interface{}))
 			}
 		}
 	}
 }
 
-func handleInput(input map[interface{}]interface{}) {
+func handleInput(input map[string]interface{}) {
 	var helpers = helpers.NewHelpers()
 	msg, ok := input["msg"].(string)
 	if !ok {
@@ -72,21 +71,26 @@ func handleInput(input map[interface{}]interface{}) {
 		os.Exit(0)
 	}
 
+	fmt.Print(msg)
+
 	// Create a reader to read input from stdin (standard input)
 	reader := bufio.NewReader(os.Stdin)
-
-	// Prompt the user for input
-	fmt.Print(msg)
 
 	// Read the full line of input (until the user presses enter)
 	outValue, _ := reader.ReadString('\n')
 
 	Variables[out] = strings.TrimSpace(outValue)
-	fmt.Println(outValue)
 }
 
 func handleCommand(cmdStr string) {
+	var err error
 	helpers := helpers.NewHelpers()
+	cmdStr, err = helpers.ReplaceVars(cmdStr, Variables, helpers.GetFuncMap())
+	if err != nil {
+		helpers.ErrorPrint("parsing command error: " + err.Error())
+		os.Exit(0)
+	}
+	color.Gray.Printf("running: %s\n", cmdStr)
 	cmdArgs := strings.Split(cmdStr, " ")
 	execCmd := exec.Command(cmdArgs[0], cmdArgs[1:]...)
 	// Set the command's standard output to the console
@@ -94,7 +98,7 @@ func handleCommand(cmdStr string) {
 	execCmd.Stderr = os.Stderr
 
 	// Execute the command
-	err := execCmd.Run()
+	err = execCmd.Run()
 	if err != nil {
 		helpers.ErrorPrint("command error: " + err.Error())
 		os.Exit(0)

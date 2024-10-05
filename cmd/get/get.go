@@ -62,6 +62,8 @@ func download(cmd *cobra.Command) {
 	repoName := splitRepo[1]
 	downloadRepo(client, org, repoName, "", ".kuma-files")
 	helpers.CheckMarkPrint("templates downloaded successfully!")
+	run.ExecRun("initial")
+	os.Exit(1)
 }
 
 // downloadFile writes the content of the file to the local file system
@@ -120,10 +122,8 @@ func downloadRepo(client *github.Client, owner, repo, path, baseDir string) erro
 			if err != nil {
 				return err
 			}
-			run.ExecRun("initial")
 		}
 	}
-
 	return nil
 }
 
