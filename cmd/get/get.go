@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/arthurbcp/kuma-cli/cmd/run"
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/google/go-github/github"
 	"github.com/gookit/color"
@@ -61,10 +62,12 @@ func download(cmd *cobra.Command) {
 	repoName := splitRepo[1]
 	downloadRepo(client, org, repoName, "", ".kuma-files")
 	helpers.CheckMarkPrint("templates downloaded successfully!")
+	run.ExecRun("initial")
+	os.Exit(1)
 }
 
 // downloadFile writes the content of the file to the local file system
-func downloadFile(content *github.RepositoryContent, baseDir string, client *github.Client) error {
+func downloadFile(content *github.RepositoryContent, baseDir string) error {
 	// Ensure the content is a file
 	if *content.Type == "file" {
 		// Create file path
@@ -115,13 +118,12 @@ func downloadRepo(client *github.Client, owner, repo, path, baseDir string) erro
 			}
 		} else if *content.Type == "file" {
 			// If it's a file, download it
-			err = downloadFile(content, baseDir, client)
+			err = downloadFile(content, baseDir)
 			if err != nil {
 				return err
 			}
 		}
 	}
-
 	return nil
 }
 
