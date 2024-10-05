@@ -5,7 +5,12 @@
 package generate
 
 import (
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
 	"os"
+	"strings"
 
 	"github.com/arthurbcp/kuma-cli/cmd/shared"
 	"github.com/arthurbcp/kuma-cli/internal/domain"
@@ -26,8 +31,8 @@ var (
 	// KumaTemplatesPath defines the path to the directory containing Kuma templates.
 	KumaTemplatesPath string
 
-	//VariableFilePath specifies the path to the variables file.
-	VariableFilePath string
+	//VariablesFile specifies the path to the variables file.
+	VariablesFile string
 )
 
 // GenerateCmd represents the 'generate' subcommand.
@@ -37,16 +42,56 @@ var GenerateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		helpers := helpers.NewHelpers()
 		fs := filesystem.NewFileSystem(afero.NewOsFs())
-		if VariableFilePath != "" {
-			vars, err := helpers.UnmarshalFile(VariableFilePath, fs)
+		if VariablesFile != "" {
+			vars := make(map[string]interface{})
+			_, err := url.ParseRequestURI(VariablesFile)
 			if err != nil {
-				helpers.ErrorPrint("parsing file error: " + err.Error())
-				os.Exit(1)
+				vars, err = helpers.UnmarshalFile(VariablesFile, fs)
+				if err != nil {
+					helpers.ErrorPrint("parsing file error: " + err.Error())
+					os.Exit(1)
+				}
+			} else {
+				helpers.HeaderPrint("downloading variables file")
+				varsContent, err := readFileFromURL(VariablesFile)
+				if err != nil {
+					helpers.ErrorPrint("reading file error: " + err.Error())
+					os.Exit(1)
+				}
+				splitURL := strings.Split(VariablesFile, "/")
+				vars, err = helpers.UnmarshalByExt(splitURL[len(splitURL)-1], []byte(varsContent))
+				if err != nil {
+					helpers.ErrorPrint("parsing file error: " + err.Error())
+					os.Exit(1)
+				}
 			}
 			shared.TemplateVariables = vars
 			build()
 		}
 	},
+}
+
+func readFileFromURL(url string) (string, error) {
+	// Send the HTTP GET request
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// Check if request succeeded
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("bad status: %s", resp.Status)
+	}
+
+	// Read the body into a byte slice
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	// Convert the byte slice to a string
+	return string(bodyBytes), nil
 }
 
 // build initializes the Builder and triggers the build process.
@@ -71,8 +116,8 @@ func build() {
 // init sets up flags for the 'generate' subcommand and binds them to variables.
 func init() {
 	// Target file directory
-	GenerateCmd.Flags().StringVarP(&VariableFilePath, "variables-file", "v", "", "path to the variables file")
-	GenerateCmd.Flags().StringVarP(&KumaConfigFilePath, "config", "c", "kuma-config.yaml", "Path to the Kuma config file")
-	GenerateCmd.Flags().StringVarP(&ProjectPath, "project-path", "p", "kuma-generated", "Path to the project you want to generate")
-	GenerateCmd.Flags().StringVarP(&KumaTemplatesPath, "templates-path", "t", "kuma-templates", "Path to the Kuma templates")
+	GenerateCmd.Flags().StringVarP(&VariablesFile, "variables-file", "v", "", "path or URL to the variables file")
+	GenerateCmd.Flags().StringVarP(&KumaConfigFilePath, "config", "c", ".kuma-files/kuma-config.yaml", "Path to the Kuma config file")
+	GenerateCmd.Flags().StringVarP(&ProjectPath, "project-path", "p", ".", "Path to the project you want to generate")
+	GenerateCmd.Flags().StringVarP(&KumaTemplatesPath, "templates-path", "t", ".kuma-files/kuma-templates", "Path to the Kuma templates")
 }
