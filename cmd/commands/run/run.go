@@ -59,6 +59,8 @@ func ExecRun(name string) {
 				handleInput(value.(map[string]interface{}))
 			} else if key == "log" {
 				handleLog(value.(string))
+			} else if key == "run" {
+				ExecRun(value.(string))
 			}
 		}
 	}
