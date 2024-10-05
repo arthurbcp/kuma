@@ -5,27 +5,33 @@ import (
 
 	"github.com/arthurbcp/kuma-cli/internal/debug"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/gookit/color"
 )
 
+var (
+	CheckStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color(style.SuccessColor)).Bold(true).Padding(0, 1, 0)
+	CrossMarkStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(style.ErrorColor)).Bold(true).Padding(0, 1, 0)
+)
+
 func (h *Helpers) TitlePrint(text string) {
-	fmt.Println(style.TitleStyle.Render(text))
+	fmt.Println(style.TitleStyle.Render(text) + "\n")
 }
 
 func (h *Helpers) LogPrint(text string) {
-	fmt.Println(style.LogStyle.Render(text))
+	fmt.Println(style.LogStyle.Render(text) + "\n")
 }
 
 func (h *Helpers) CheckMarkPrint(text string) {
-	color.Gray.Println("  ✅ " + text)
+	fmt.Println(CheckStyle.Render("✔") + text)
 }
 
 func (h *Helpers) CrossMarkPrint(text string) {
-	color.Gray.Println("  ❌ " + text)
+	fmt.Println(CrossMarkStyle.Render("✖") + text)
 }
 
 func (h *Helpers) ErrorPrint(text string) {
-	fmt.Println(style.ErrorStyle.Render(text))
+	fmt.Println(style.ErrorStyle.Render(text) + "\n")
 }
 
 func (h *Helpers) DebugPrint(header, text string) {
