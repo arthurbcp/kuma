@@ -6,12 +6,10 @@ import (
 	"path/filepath"
 
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
-	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 )
 
-func (h *Helpers) UnmarshalFile(fileName string) (map[string]interface{}, error) {
-	fs := filesystem.NewFileSystem(afero.NewOsFs())
+func (h *Helpers) UnmarshalFile(fileName string, fs filesystem.FileSystemInterface) (map[string]interface{}, error) {
 	// Read the content of the OpenAPI file.
 	fileContent, err := fs.ReadFile(fileName)
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/arthurbcp/kuma-cli/internal/domain"
+	"github.com/spf13/afero"
 )
 
 // BuilderHandler manages the building process of the project structure.
@@ -172,6 +173,24 @@ func (h *BuilderHandler) getTemplate(data map[string]interface{}) (*template.Tem
 		}
 	}
 
-	// Parse all template files with the provided function map.
-	return template.New(templateName).Funcs(h.builder.Helpers.GetFuncMap()).ParseFiles(allTemplates...)
+	// Create a new template object
+	tmpl := template.New(templateName).Funcs(h.builder.Helpers.GetFuncMap())
+
+	// Iterate through all the template paths, read them from the afero filesystem, and parse them
+	for _, tmplFile := range allTemplates {
+		// Read the template file using afero
+		content, err := afero.ReadFile(h.builder.Fs.GetAferoFs(), tmplFile)
+		if err != nil {
+			return nil, fmt.Errorf("error reading template file %s: %w", tmplFile, err)
+		}
+
+		// Parse the template content
+		_, err = tmpl.Parse(string(content))
+		if err != nil {
+			return nil, fmt.Errorf("error parsing template file %s: %w", tmplFile, err)
+		}
+	}
+
+	// Return the parsed template
+	return tmpl, nil
 }

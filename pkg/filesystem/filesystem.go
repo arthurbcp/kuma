@@ -96,3 +96,7 @@ func (s *FileSystem) ReadDir(path string) ([]string, error) {
 
 	return fileNames, nil
 }
+
+func (s *FileSystem) GetAferoFs() afero.Fs {
+	return s.Fs
+}
