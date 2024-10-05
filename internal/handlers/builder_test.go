@@ -24,7 +24,7 @@ func TestBuild(t *testing.T) {
 		{
 			name:            "Template with includes",
 			includeContent:  `{{define "include"}}{{ .include}}{{end}}`,
-			templateContent: `{{.Data.key}} {{ block "include" .Data }}{{end}}`,
+			templateContent: `{{.data.key}} {{ block "include" .data }}{{end}}`,
 			structure: map[string]interface{}{
 				"dir": map[string]interface{}{
 					"file.txt": map[string]interface{}{
@@ -55,7 +55,7 @@ func TestBuild(t *testing.T) {
 		},
 		{
 			name:            "Missing include file",
-			templateContent: `{{.Data.key}} {{ block "include" .Data }}{{end}}`,
+			templateContent: `{{.data.key}} {{ block "include" .data }}{{end}}`,
 			includeContent:  "",
 			structure: map[string]interface{}{
 				"file.txt": map[string]interface{}{
@@ -79,7 +79,7 @@ func TestBuild(t *testing.T) {
 		},
 		{
 			name:            "Invalid include type",
-			templateContent: `{{.Data.key}}`,
+			templateContent: `{{.data.key}}`,
 			includeContent:  "",
 			structure: map[string]interface{}{
 				"file.txt": map[string]interface{}{
@@ -92,7 +92,7 @@ func TestBuild(t *testing.T) {
 		},
 		{
 			name:            "Invalid template syntax",
-			templateContent: "{{.Data.key} {{ block include .Data }}{{end}}",
+			templateContent: "{{.data.key} {{ block include .data }}{{end}}",
 			includeContent:  "",
 			structure: map[string]interface{}{
 				"file.txt": map[string]interface{}{

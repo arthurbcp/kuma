@@ -134,8 +134,8 @@ func (h *BuilderHandler) createFileAndApplyTemplate(currentPath string, fileName
 	}
 	// Prepare the data for template execution.
 	data = map[string]interface{}{
-		"Data":   data["Data"],
-		"Global": h.builder.Data.Global,
+		"data":   data["data"],
+		"global": h.builder.Data.Global,
 	}
 	// Execute the template and write to the file.
 	return t.Execute(file, data)
@@ -151,7 +151,7 @@ func (h *BuilderHandler) createFileAndApplyTemplate(currentPath string, fileName
 //	A pointer to the parsed template.Template and an error if parsing fails.
 func (h *BuilderHandler) getTemplate(data map[string]interface{}) (*template.Template, error) {
 	// Extract the main template name from the data.
-	templateName, ok := data["Template"].(string)
+	templateName, ok := data["template"].(string)
 	if !ok || templateName == "" {
 		return nil, fmt.Errorf("template is required")
 	}
@@ -163,7 +163,7 @@ func (h *BuilderHandler) getTemplate(data map[string]interface{}) (*template.Tem
 	allTemplates := []string{templateFile}
 
 	// If there are additional templates to include, add their paths.
-	if includes, ok := data["Includes"].([]interface{}); ok {
+	if includes, ok := data["includes"].([]interface{}); ok {
 		for _, include := range includes {
 			includeStr, ok := include.(string)
 			if !ok {
