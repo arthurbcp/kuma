@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/arthurbcp/kuma-cli/cmd/commands/exec"
+	execHandlers "github.com/arthurbcp/kuma-cli/cmd/commands/exec/handlers"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
 	"github.com/google/go-github/github"
 	"github.com/gookit/color"
@@ -51,7 +51,7 @@ func download(cmd *cobra.Command) {
 	if !ok {
 		repo = Repo
 	}
-	style.TitlePrint("getting templates from github repository...")
+	style.LogPrint("getting templates from github repository...")
 	splitRepo := strings.Split(repo, "/")
 	if len(splitRepo) != 2 {
 		style.ErrorPrint("invalid repository name: " + Repo)
@@ -64,7 +64,7 @@ func download(cmd *cobra.Command) {
 	vars := map[string]interface{}{
 		"data": map[string]interface{}{},
 	}
-	exec.ExecRun("initial", vars)
+	execHandlers.HandleRun("initial", vars)
 	os.Exit(0)
 }
 

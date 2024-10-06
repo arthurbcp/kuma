@@ -52,7 +52,7 @@ func Create() {
 				os.Exit(1)
 			}
 		} else {
-			style.TitlePrint("downloading variables file")
+			style.LogPrint("downloading variables file")
 			varsContent, err := readFileFromURL(VariablesFile)
 			if err != nil {
 				style.ErrorPrint("reading file error: " + err.Error())

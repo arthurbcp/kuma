@@ -48,7 +48,7 @@ func HandleLoad(load map[string]interface{}, vars map[string]interface{}) {
 			os.Exit(1)
 		}
 	} else {
-		style.TitlePrint("downloading variables file")
+		style.LogPrint("downloading variables file")
 		varsContent, err := fs.ReadFileFromURL(from)
 		if err != nil {
 			style.ErrorPrint("reading file error: " + err.Error())
