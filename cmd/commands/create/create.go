@@ -17,6 +17,7 @@ import (
 	"github.com/arthurbcp/kuma-cli/internal/handlers"
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
+	"github.com/arthurbcp/kuma-cli/pkg/style"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -34,11 +35,11 @@ var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a scaffold for a project based on Go Templates",
 	Run: func(cmd *cobra.Command, args []string) {
-		create()
+		Create()
 	},
 }
 
-func create() {
+func Create() {
 	helpers := helpers.NewHelpers()
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	if VariablesFile != "" {
@@ -47,20 +48,20 @@ func create() {
 		if err != nil {
 			vars, err = helpers.UnmarshalFile(VariablesFile, fs)
 			if err != nil {
-				helpers.ErrorPrint("parsing file error: " + err.Error())
+				style.ErrorPrint("parsing file error: " + err.Error())
 				os.Exit(1)
 			}
 		} else {
-			helpers.TitlePrint("downloading variables file")
+			style.TitlePrint("downloading variables file")
 			varsContent, err := readFileFromURL(VariablesFile)
 			if err != nil {
-				helpers.ErrorPrint("reading file error: " + err.Error())
+				style.ErrorPrint("reading file error: " + err.Error())
 				os.Exit(1)
 			}
 			splitURL := strings.Split(VariablesFile, "/")
 			vars, err = helpers.UnmarshalByExt(splitURL[len(splitURL)-1], []byte(varsContent))
 			if err != nil {
-				helpers.ErrorPrint("parsing file error: " + err.Error())
+				style.ErrorPrint("parsing file error: " + err.Error())
 				os.Exit(1)
 			}
 		}
@@ -98,15 +99,16 @@ func build() {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	helpers := helpers.NewHelpers()
 	// Initialize a new Builder with the provided configurations.
-	builder, err := domain.NewBuilder(fs, helpers, shared.KumaConfigFilePath, shared.TemplateVariables, domain.NewConfig(ProjectPath, shared.KumaTemplatesPath))
+	builder, err := domain.NewBuilder(fs, helpers, domain.NewConfig(ProjectPath, shared.KumaTemplatesPath))
+	builder.SetBuilderDataFromFile(shared.KumaConfigFilePath, shared.TemplateVariables)
 	if err != nil {
-		helpers.ErrorPrint(err.Error())
+		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
 
 	// Execute the build process using the BuilderHandler.
 	if err = handlers.NewBuilderHandler(builder).Build(); err != nil {
-		helpers.ErrorPrint(err.Error())
+		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
 }

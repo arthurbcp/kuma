@@ -1,10 +1,12 @@
 package filesystem
 
 import (
+	"fmt"
 	"io"
+	"net/http"
 	"os" // Import the os package
 
-	"github.com/gookit/color"
+	"github.com/arthurbcp/kuma-cli/pkg/style"
 	"github.com/spf13/afero"
 )
 
@@ -28,10 +30,10 @@ func (s *FileSystem) CreateDirectoryIfNotExists(path string) error {
 		// Use os.FileMode directly
 		err := s.Fs.MkdirAll(path, os.ModePerm)
 		if err != nil {
-			color.Gray.Printf("  ❌ %s \n ", path)
+			style.CrossMarkPrint(path)
 			return err
 		}
-		color.Gray.Printf("  ✅ %s \n ", path)
+		style.CheckMarkPrint(path)
 	}
 	return nil
 }
@@ -99,4 +101,27 @@ func (s *FileSystem) ReadDir(path string) ([]string, error) {
 
 func (s *FileSystem) GetAferoFs() afero.Fs {
 	return s.Fs
+}
+
+func (s *FileSystem) ReadFileFromURL(url string) (string, error) {
+	// Send the HTTP GET request
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// Check if request succeeded
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("bad status: %s", resp.Status)
+	}
+
+	// Read the body into a byte slice
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	// Convert the byte slice to a string
+	return string(bodyBytes), nil
 }

@@ -9,8 +9,8 @@ import (
 	"os"
 
 	"github.com/arthurbcp/kuma-cli/cmd/commands/create"
+	execRun "github.com/arthurbcp/kuma-cli/cmd/commands/exec"
 	"github.com/arthurbcp/kuma-cli/cmd/commands/get"
-	"github.com/arthurbcp/kuma-cli/cmd/commands/run"
 	"github.com/arthurbcp/kuma-cli/internal/debug"
 	"github.com/spf13/cobra"
 )
@@ -52,5 +52,5 @@ func init() {
 	// Add subcommands to the root command.
 	rootCmd.AddCommand(create.CreateCmd)
 	rootCmd.AddCommand(get.GetCmd)
-	rootCmd.AddCommand(run.RunCmd)
+	rootCmd.AddCommand(execRun.ExecRunCmd)
 }

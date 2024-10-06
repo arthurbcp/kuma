@@ -13,8 +13,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/arthurbcp/kuma-cli/cmd/commands/run"
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
+	"github.com/arthurbcp/kuma-cli/cmd/commands/exec"
+	"github.com/arthurbcp/kuma-cli/pkg/style"
 	"github.com/google/go-github/github"
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
@@ -39,12 +39,11 @@ var GetCmd = &cobra.Command{
 }
 
 func download(cmd *cobra.Command) {
-	helpers := helpers.NewHelpers()
 	client := github.NewClient(nil)
 
 	if Template == "" && Repo == "" {
 		cmd.Help()
-		fmt.Println("\nplease specify a template or a repository")
+		style.LogPrint("\nplease specify a template or a repository")
 		os.Exit(1)
 	}
 
@@ -52,17 +51,20 @@ func download(cmd *cobra.Command) {
 	if !ok {
 		repo = Repo
 	}
-	helpers.TitlePrint("getting templates from github repository...")
+	style.TitlePrint("getting templates from github repository...")
 	splitRepo := strings.Split(repo, "/")
 	if len(splitRepo) != 2 {
-		helpers.TitlePrint("invalid repository name: " + Repo)
+		style.ErrorPrint("invalid repository name: " + Repo)
 		os.Exit(1)
 	}
 	org := splitRepo[0]
 	repoName := splitRepo[1]
 	downloadRepo(client, org, repoName, "", ".kuma-files")
-	helpers.CheckMarkPrint("templates downloaded successfully!")
-	run.ExecRun("initial")
+	style.CheckMarkPrint("templates downloaded successfully!\n")
+	vars := map[string]interface{}{
+		"data": map[string]interface{}{},
+	}
+	exec.ExecRun("initial", vars)
 	os.Exit(0)
 }
 

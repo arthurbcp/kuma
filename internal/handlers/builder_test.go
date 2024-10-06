@@ -28,12 +28,12 @@ func TestBuild(t *testing.T) {
 			structure: map[string]interface{}{
 				"dir": map[string]interface{}{
 					"file.txt": map[string]interface{}{
-						"Template": "template.txt",
-						"Data": map[string]interface{}{
+						"template": "template.txt",
+						"data": map[string]interface{}{
 							"key":     "value",
 							"include": "include value",
 						},
-						"Includes": []interface{}{"include.txt"},
+						"includes": []interface{}{"include.txt"},
 					},
 				},
 			},
@@ -47,8 +47,8 @@ func TestBuild(t *testing.T) {
 			includeContent:  "",
 			structure: map[string]interface{}{
 				"file.txt": map[string]interface{}{
-					"Template": "non_existent.txt",
-					"Data":     map[string]interface{}{},
+					"template": "non_existent.txt",
+					"data":     map[string]interface{}{},
 				},
 			},
 			expectedError: "open templates/non_existent.txt: file does not exist",
@@ -59,9 +59,9 @@ func TestBuild(t *testing.T) {
 			includeContent:  "",
 			structure: map[string]interface{}{
 				"file.txt": map[string]interface{}{
-					"Template": "template.txt",
-					"Data":     map[string]interface{}{"key": "value"},
-					"Includes": []interface{}{"non_existent.txt"},
+					"template": "template.txt",
+					"data":     map[string]interface{}{"key": "value"},
+					"includes": []interface{}{"non_existent.txt"},
 				},
 			},
 			expectedError: "open templates/non_existent.txt: file does not exist",
@@ -72,7 +72,7 @@ func TestBuild(t *testing.T) {
 			includeContent:  "",
 			structure: map[string]interface{}{
 				"file.txt": map[string]interface{}{
-					"Data": map[string]interface{}{},
+					"data": map[string]interface{}{},
 				},
 			},
 			expectedError: "template is required",
@@ -83,9 +83,9 @@ func TestBuild(t *testing.T) {
 			includeContent:  "",
 			structure: map[string]interface{}{
 				"file.txt": map[string]interface{}{
-					"Template": "template.txt",
-					"Data":     map[string]interface{}{"key": "value"},
-					"Includes": []interface{}{123}, // Invalid include type
+					"template": "template.txt",
+					"data":     map[string]interface{}{"key": "value"},
+					"includes": []interface{}{123}, // Invalid include type
 				},
 			},
 			expectedError: "invalid include type: 123",
@@ -96,8 +96,8 @@ func TestBuild(t *testing.T) {
 			includeContent:  "",
 			structure: map[string]interface{}{
 				"file.txt": map[string]interface{}{
-					"Template": "template.txt",
-					"Data":     map[string]interface{}{"key": "value"},
+					"template": "template.txt",
+					"data":     map[string]interface{}{"key": "value"},
 				},
 			},
 			expectedError: "error parsing template file templates/template.txt",
