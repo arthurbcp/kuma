@@ -2,10 +2,11 @@
 //
 // Package run defines the 'run' subcommand for the Kuma CLI.
 // It handles generating project scaffolds based on Go templates.
-package run
+package exec
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 	"strings"
@@ -16,6 +17,8 @@ import (
 	"github.com/arthurbcp/kuma-cli/cmd/ui/selectInput"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/textInput"
 
+	"github.com/arthurbcp/kuma-cli/internal/domain"
+	"github.com/arthurbcp/kuma-cli/internal/handlers"
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
 	tea "github.com/charmbracelet/bubbletea"
@@ -27,9 +30,9 @@ var (
 	Run string
 )
 
-// RunCmd represents the 'run' subcommand.
-var RunCmd = &cobra.Command{
-	Use:   "run",
+// ExecRunCmd represents the 'run' subcommand.
+var ExecRunCmd = &cobra.Command{
+	Use:   "exec",
 	Short: "Run a specific pipeline",
 	Run: func(cmd *cobra.Command, args []string) {
 		vars := map[string]interface{}{
@@ -63,6 +66,10 @@ func ExecRun(name string, vars map[string]interface{}) {
 				handleLog(value.(string), vars)
 			} else if key == "run" {
 				ExecRun(value.(string), vars)
+			} else if key == "create" {
+				handleCreate(value.(map[string]interface{}), vars)
+			} else if key == "load" {
+				handleLoad(value.(map[string]interface{}), vars)
 			}
 		}
 	}
@@ -181,9 +188,81 @@ func handleCommand(cmdStr string, vars map[string]interface{}) {
 	}
 }
 
+func handleCreate(data map[string]interface{}, vars map[string]interface{}) {
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	helpers := helpers.NewHelpers()
+	// Initialize a new Builder with the provided configurations.
+	builder, err := domain.NewBuilder(fs, helpers, domain.NewConfig(".", shared.KumaTemplatesPath))
+	if err != nil {
+		helpers.ErrorPrint(err.Error())
+		os.Exit(1)
+	}
+	from, ok := data["from"].(string)
+	if !ok {
+		helpers.ErrorPrint("from is required")
+		os.Exit(1)
+	}
+	err = builder.SetBuilderDataFromFile(from, vars)
+	if err != nil {
+		helpers.ErrorPrint(err.Error())
+		os.Exit(1)
+	}
+
+	// Execute the build process using the BuilderHandler.
+	if err = handlers.NewBuilderHandler(builder).Build(); err != nil {
+		helpers.ErrorPrint(err.Error())
+		os.Exit(1)
+	}
+}
+
+func handleLoad(load map[string]interface{}, vars map[string]interface{}) {
+	var err error
+	data := vars["data"].(map[string]interface{})
+	helpers := helpers.NewHelpers()
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	from, ok := load["from"].(string)
+	if !ok {
+		helpers.ErrorPrint("from is required")
+		os.Exit(1)
+	}
+	from, err = helpers.ReplaceVars(from, vars, helpers.GetFuncMap())
+	if err != nil {
+		helpers.ErrorPrint("parsing from error: " + err.Error())
+		os.Exit(1)
+	}
+	out, ok := load["out"].(string)
+	if !ok {
+		helpers.ErrorPrint("out is required")
+		os.Exit(1)
+	}
+	var fileVars map[string]interface{}
+	_, err = url.ParseRequestURI(from)
+	if err != nil {
+		fileVars, err = helpers.UnmarshalFile(from, fs)
+		if err != nil {
+			helpers.ErrorPrint("parsing file error: " + err.Error())
+			os.Exit(1)
+		}
+	} else {
+		helpers.TitlePrint("downloading variables file")
+		varsContent, err := fs.ReadFileFromURL(from)
+		if err != nil {
+			helpers.ErrorPrint("reading file error: " + err.Error())
+			os.Exit(1)
+		}
+		splitURL := strings.Split(from, "/")
+		fileVars, err = helpers.UnmarshalByExt(splitURL[len(splitURL)-1], []byte(varsContent))
+		if err != nil {
+			helpers.ErrorPrint("parsing file error: " + err.Error())
+			os.Exit(1)
+		}
+	}
+	data[out] = fileVars
+}
+
 // init sets up flags for the 'run' subcommand and binds them to variables.
 func init() {
 	// Repository name
-	RunCmd.Flags().StringVarP(&Run, "name", "n", "", "run to use")
-	RunCmd.MarkFlagRequired("name")
+	ExecRunCmd.Flags().StringVarP(&Run, "run", "r", "", "run to use")
+	ExecRunCmd.MarkFlagRequired("run")
 }

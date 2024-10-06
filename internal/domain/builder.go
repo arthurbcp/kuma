@@ -31,8 +31,8 @@ type Builder struct {
 	// Data holds the parsed structure and templates data.
 	Data *BuilderData
 
-	// ParsedFile holds the parsed file content.
-	ParsedFile string
+	// ParsedData holds the parsed file content.
+	ParsedData string
 
 	// Fs is the file system service used to interact with the file system.
 	Fs filesystem.FileSystemInterface
@@ -51,22 +51,18 @@ type Builder struct {
 // Returns:
 //
 //	A pointer to a Builder instance if successful, or an error if initialization fails.
-func NewBuilder(fs filesystem.FileSystemInterface, helpers helpers.HelpersInterface, file string, vars map[string]interface{}, config *Config) (*Builder, error) {
+func NewBuilder(fs filesystem.FileSystemInterface, helpers helpers.HelpersInterface, config *Config) (*Builder, error) {
 	builder := Builder{}
 	builder.Fs = fs
 	builder.Helpers = helpers
-	err := builder.SetBuilderData(file, vars)
-	if err != nil {
-		return nil, err
-	}
-	err = builder.setConfig(config)
+	err := builder.setConfig(config)
 	if err != nil {
 		return nil, err
 	}
 	return &builder, nil
 }
 
-// SetBuilderData parses the configuration file and populates the BuilderData.
+// SetBuilderDataFromFile parses the configuration file and populates the BuilderData.
 //
 // Parameters:
 //   - file: The path to the configuration file.
@@ -75,7 +71,7 @@ func NewBuilder(fs filesystem.FileSystemInterface, helpers helpers.HelpersInterf
 // Returns:
 //
 //	An error if parsing fails, otherwise nil.
-func (b *Builder) SetBuilderData(file string, vars map[string]interface{}) error {
+func (b *Builder) SetBuilderDataFromFile(file string, vars map[string]interface{}) error {
 	b.Helpers.TitlePrint("parsing config...")
 
 	// Read the content of the configuration file.
@@ -86,8 +82,8 @@ func (b *Builder) SetBuilderData(file string, vars map[string]interface{}) error
 
 	// Replace variables in the configuration data.
 	configData, err = b.Helpers.ReplaceVars(configData, vars, b.Helpers.GetFuncMap())
-	b.ParsedFile = string(configData)
-	b.Helpers.DebugPrint("Config file", b.ParsedFile)
+	b.ParsedData = string(configData)
+	b.Helpers.DebugPrint("Config file", b.ParsedData)
 	if err != nil {
 		return err
 	}
@@ -100,6 +96,7 @@ func (b *Builder) SetBuilderData(file string, vars map[string]interface{}) error
 			return err
 		}
 		b.Data = data
+
 	case ".json":
 		data, err := unmarshalJsonConfig([]byte(configData))
 		if err != nil {

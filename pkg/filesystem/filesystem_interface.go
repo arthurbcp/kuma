@@ -11,4 +11,5 @@ type FileSystemInterface interface {
 	CreateFile(filename string) (afero.File, error)
 	WriteFile(filename string, content string) error
 	ReadDir(path string) ([]string, error)
+	ReadFileFromURL(url string) (string, error)
 }

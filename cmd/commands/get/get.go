@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/arthurbcp/kuma-cli/cmd/commands/run"
+	"github.com/arthurbcp/kuma-cli/cmd/commands/exec"
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/google/go-github/github"
 	"github.com/gookit/color"
@@ -44,7 +44,7 @@ func download(cmd *cobra.Command) {
 
 	if Template == "" && Repo == "" {
 		cmd.Help()
-		fmt.Println("\nplease specify a template or a repository")
+		helpers.ErrorPrint("\nplease specify a template or a repository")
 		os.Exit(1)
 	}
 
@@ -65,7 +65,7 @@ func download(cmd *cobra.Command) {
 	vars := map[string]interface{}{
 		"data": map[string]interface{}{},
 	}
-	run.ExecRun("initial", vars)
+	exec.ExecRun("initial", vars)
 	os.Exit(0)
 }
 

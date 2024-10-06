@@ -34,11 +34,11 @@ var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a scaffold for a project based on Go Templates",
 	Run: func(cmd *cobra.Command, args []string) {
-		create()
+		Create()
 	},
 }
 
-func create() {
+func Create() {
 	helpers := helpers.NewHelpers()
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	if VariablesFile != "" {
@@ -98,7 +98,8 @@ func build() {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	helpers := helpers.NewHelpers()
 	// Initialize a new Builder with the provided configurations.
-	builder, err := domain.NewBuilder(fs, helpers, shared.KumaConfigFilePath, shared.TemplateVariables, domain.NewConfig(ProjectPath, shared.KumaTemplatesPath))
+	builder, err := domain.NewBuilder(fs, helpers, domain.NewConfig(ProjectPath, shared.KumaTemplatesPath))
+	builder.SetBuilderDataFromFile(shared.KumaConfigFilePath, shared.TemplateVariables)
 	if err != nil {
 		helpers.ErrorPrint(err.Error())
 		os.Exit(1)

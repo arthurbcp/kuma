@@ -17,30 +17,19 @@ func TestNewBuilder(t *testing.T) {
 	aferoFs.Create("test.yaml")
 	tests := []struct {
 		name    string
-		file    string
-		vars    map[string]interface{}
 		config  *Config
 		wantErr bool
 	}{
 		{
 			name:    "Successful initialization",
-			file:    "test.yaml",
-			vars:    map[string]interface{}{"key": "value"},
 			config:  &Config{ProjectPath: "path"},
 			wantErr: false,
-		},
-		{
-			name:    "File read error",
-			file:    "nonexistent.yaml",
-			vars:    map[string]interface{}{},
-			config:  &Config{},
-			wantErr: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewBuilder(mockFs, h, tt.file, tt.vars, tt.config)
+			got, err := NewBuilder(mockFs, h, tt.config)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewBuilder() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -124,7 +113,7 @@ func TestBuilder_SetBuilderData(t *testing.T) {
 				Fs:      mockFs,
 				Helpers: h,
 			}
-			err = b.SetBuilderData(tt.file, tt.vars)
+			err = b.SetBuilderDataFromFile(tt.file, tt.vars)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Builder.SetBuilderData() error = %v, wantErr %v", err, tt.wantErr)
 				return
