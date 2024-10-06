@@ -16,4 +16,6 @@ var (
 	LogStyle          = lipgloss.NewStyle().Foreground(lipgloss.Color(FgColor))
 	FocusedStyle      = lipgloss.NewStyle().Foreground(lipgloss.Color(BgColor)).Bold(true)
 	SelectedItemStyle = lipgloss.NewStyle().PaddingLeft(1).Foreground(FgColor).Bold(true)
+	CheckStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color(SuccessColor)).Bold(true).Padding(0, 1, 0)
+	CrossMarkStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color(ErrorColor)).Bold(true).Padding(0, 1, 0)
 )

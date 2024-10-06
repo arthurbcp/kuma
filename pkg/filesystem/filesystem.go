@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os" // Import the os package
 
-	"github.com/gookit/color"
+	"github.com/arthurbcp/kuma-cli/pkg/style"
 	"github.com/spf13/afero"
 )
 
@@ -30,10 +30,10 @@ func (s *FileSystem) CreateDirectoryIfNotExists(path string) error {
 		// Use os.FileMode directly
 		err := s.Fs.MkdirAll(path, os.ModePerm)
 		if err != nil {
-			color.Gray.Printf("  ❌ %s \n ", path)
+			style.CrossMarkPrint(path)
 			return err
 		}
-		color.Gray.Printf("  ✅ %s \n ", path)
+		style.CheckMarkPrint(path)
 	}
 	return nil
 }

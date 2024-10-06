@@ -7,6 +7,7 @@ import (
 
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
+	"github.com/arthurbcp/kuma-cli/pkg/style"
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v3"
 )
@@ -72,7 +73,7 @@ func NewBuilder(fs filesystem.FileSystemInterface, helpers helpers.HelpersInterf
 //
 //	An error if parsing fails, otherwise nil.
 func (b *Builder) SetBuilderDataFromFile(file string, vars map[string]interface{}) error {
-	b.Helpers.TitlePrint("parsing config...")
+	style.TitlePrint("parsing config...")
 
 	// Read the content of the configuration file.
 	configData, err := b.Fs.ReadFile(file)
@@ -83,7 +84,7 @@ func (b *Builder) SetBuilderDataFromFile(file string, vars map[string]interface{
 	// Replace variables in the configuration data.
 	configData, err = b.Helpers.ReplaceVars(configData, vars, b.Helpers.GetFuncMap())
 	b.ParsedData = string(configData)
-	b.Helpers.DebugPrint("Config file", b.ParsedData)
+	style.DebugPrint("Config file", b.ParsedData)
 	if err != nil {
 		return err
 	}

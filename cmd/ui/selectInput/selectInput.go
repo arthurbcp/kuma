@@ -7,7 +7,6 @@ import (
 
 	"github.com/arthurbcp/kuma-cli/cmd/steps"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/textInput"
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -59,7 +58,6 @@ func InitialSelectInputModel(choices []steps.Item, selection *Selection, header 
 // important keystrokes to signal when to quit, change selection,
 // and confirm the selection.
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	helpers := helpers.NewHelpers()
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -98,7 +96,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				p := tea.NewProgram(textInput.InitialTextInputModel(textValue, "", false))
 				_, err := p.Run()
 				if err != nil {
-					helpers.ErrorPrint("error running program: " + err.Error())
+					style.ErrorPrint("error running program: " + err.Error())
 					*m.exit = true
 					return m, tea.Quit
 				}

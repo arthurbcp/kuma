@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/arthurbcp/kuma-cli/internal/domain"
+	"github.com/arthurbcp/kuma-cli/pkg/style"
 	"github.com/spf13/afero"
 )
 
@@ -38,7 +39,7 @@ func NewBuilderHandler(builder *domain.Builder) *BuilderHandler {
 //
 //	An error if the build process fails, otherwise nil.
 func (h *BuilderHandler) Build() error {
-	h.builder.Helpers.TitlePrint("applying templates...")
+	style.TitlePrint("applying templates...")
 	// Start recursive creation of directories and files from the root.
 	err := h.createDirAndFilesRecursive("", h.builder.Data.Structure, h.builder.Config.ProjectPath)
 	if err != nil {
@@ -79,10 +80,10 @@ func (h *BuilderHandler) createDirAndFilesRecursive(key string, node interface{}
 				// Create the file and apply the corresponding template.
 				err := h.createFileAndApplyTemplate(currentPath, childKey, childValue.(map[string]interface{}))
 				if err != nil {
-					h.builder.Helpers.CrossMarkPrint(filepath.Join(currentPath, childKey))
+					style.CrossMarkPrint(filepath.Join(currentPath, childKey))
 					return err
 				}
-				h.builder.Helpers.CheckMarkPrint(filepath.Join(currentPath, childKey))
+				style.CheckMarkPrint(filepath.Join(currentPath, childKey))
 				continue
 			}
 
