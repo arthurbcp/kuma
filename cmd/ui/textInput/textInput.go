@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/arthurbcp/kuma-cli/cmd/program"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -33,7 +34,7 @@ type model struct {
 	err       error
 	output    *Output
 	header    string
-	exit      *bool
+	program   *program.Program
 }
 
 // sanitizeInput verifies that an input text string gets validated
@@ -47,7 +48,7 @@ func sanitizeInput(input string) error {
 
 // InitialTextInputModel initializes a textinput step
 // with the given data
-func InitialTextInputModel(output *Output, header string, exit bool) model {
+func InitialTextInputModel(output *Output, header string, program *program.Program) model {
 	ti := textinput.New()
 	ti.Focus()
 	ti.CharLimit = 156
@@ -58,7 +59,7 @@ func InitialTextInputModel(output *Output, header string, exit bool) model {
 		textInput: ti,
 		err:       nil,
 		output:    output,
-		exit:      &exit,
+		program:   program,
 	}
 
 	if header != "" {
@@ -87,14 +88,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 			}
 		case tea.KeyCtrlC, tea.KeyEsc:
-			*m.exit = true
+			m.program.Exit = true
 			return m, tea.Quit
 		}
 
 	// We handle errors just like any other message
 	case errMsg:
 		m.err = msg
-		*m.exit = true
+		m.program.Exit = true
 		return m, nil
 	}
 

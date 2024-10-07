@@ -22,7 +22,7 @@ var ExecRunCmd = &cobra.Command{
 		vars := map[string]interface{}{
 			"data": map[string]interface{}{},
 		}
-		execHandlers.HandleRun("initial", vars)
+		execHandlers.HandleRun(Run, vars)
 	},
 }
 

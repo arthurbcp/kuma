@@ -5,6 +5,7 @@ package multiSelectInput
 import (
 	"fmt"
 
+	"github.com/arthurbcp/kuma-cli/cmd/program"
 	"github.com/arthurbcp/kuma-cli/cmd/steps"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
@@ -29,7 +30,7 @@ type model struct {
 	selected map[int]struct{}
 	choices  *Selection
 	header   string
-	exit     *bool
+	program  program.Program
 }
 
 func (m model) Init() tea.Cmd {
@@ -38,13 +39,13 @@ func (m model) Init() tea.Cmd {
 
 // InitialModelMulti initializes a multiSelect step with
 // the given data
-func InitialMultiSelectInputModel(options []steps.Item, selection *Selection, header string, exit bool) model {
+func InitialMultiSelectInputModel(options []steps.Item, selection *Selection, header string, program *program.Program) model {
 	return model{
 		options:  options,
 		selected: make(map[int]struct{}),
 		choices:  selection,
 		header:   style.TitleStyle.Render(header),
-		exit:     &exit,
+		program:  *program,
 	}
 }
 
@@ -56,7 +57,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
-			*m.exit = true
+			m.program.Exit = true
 			return m, tea.Quit
 		case "up", "k":
 			if m.cursor > 0 {

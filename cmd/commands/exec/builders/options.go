@@ -3,6 +3,7 @@ package execBuilders
 import (
 	"os"
 
+	"github.com/arthurbcp/kuma-cli/cmd/program"
 	"github.com/arthurbcp/kuma-cli/cmd/steps"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/multiSelectInput"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/selectInput"
@@ -11,7 +12,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func BuildOptions(mapOptions []interface{}, other bool, multi bool, label string, vars map[string]interface{}) (interface{}, error) {
+func BuildOptions(program *program.Program, mapOptions []interface{}, other bool, multi bool, label string, vars map[string]interface{}) (interface{}, error) {
 	var err error
 
 	options, err := getOptions(mapOptions, vars)
@@ -26,8 +27,11 @@ func BuildOptions(mapOptions []interface{}, other bool, multi bool, label string
 		output := &multiSelectInput.Selection{
 			Choices: choices,
 		}
-		p := tea.NewProgram(multiSelectInput.InitialMultiSelectInputModel(options, output, label, false))
+		p := tea.NewProgram(multiSelectInput.InitialMultiSelectInputModel(options, output, label, program))
 		_, err := p.Run()
+
+		program.ExitCLI(p)
+
 		if err != nil {
 			return nil, err
 		}
@@ -41,8 +45,11 @@ func BuildOptions(mapOptions []interface{}, other bool, multi bool, label string
 		return selectedChoices, nil
 	}
 	output := &selectInput.Selection{}
-	p := tea.NewProgram(selectInput.InitialSelectInputModel(options, output, label, other, false))
+	p := tea.NewProgram(selectInput.InitialSelectInputModel(options, output, label, other, program))
 	_, err = p.Run()
+
+	program.ExitCLI(p)
+
 	if err != nil {
 		style.ErrorPrint("error running program: " + err.Error())
 		os.Exit(1)

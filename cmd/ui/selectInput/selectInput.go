@@ -5,6 +5,7 @@ package selectInput
 import (
 	"fmt"
 
+	"github.com/arthurbcp/kuma-cli/cmd/program"
 	"github.com/arthurbcp/kuma-cli/cmd/steps"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/textInput"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
@@ -30,8 +31,8 @@ type model struct {
 	selected map[int]struct{}
 	choice   *Selection
 	header   string
-	other    *bool
-	exit     *bool
+	other    bool
+	program  *program.Program
 }
 
 func (m model) Init() tea.Cmd {
@@ -40,14 +41,14 @@ func (m model) Init() tea.Cmd {
 
 // InitialSelectInputModel initializes a multiInput step with
 // the given data
-func InitialSelectInputModel(choices []steps.Item, selection *Selection, header string, other, exit bool) model {
+func InitialSelectInputModel(choices []steps.Item, selection *Selection, header string, other bool, program *program.Program) model {
 	m := model{
 		choices:  choices,
 		selected: make(map[int]struct{}),
 		choice:   selection,
 		header:   style.TitleStyle.Render(header),
-		exit:     &exit,
-		other:    &other,
+		program:  program,
+		other:    other,
 	}
 	return m
 }
@@ -60,7 +61,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
-			*m.exit = true
+			m.program.Exit = true
 			return m, tea.Quit
 		case "up", "k":
 			if m.cursor > 0 {
@@ -89,13 +90,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 			}
 		case "o":
-			if *m.other {
+			if m.other {
 				textValue := &textInput.Output{}
-				p := tea.NewProgram(textInput.InitialTextInputModel(textValue, "", false))
+				p := tea.NewProgram(textInput.InitialTextInputModel(textValue, "", m.program))
 				_, err := p.Run()
 				if err != nil {
 					style.ErrorPrint("error running program: " + err.Error())
-					*m.exit = true
+					m.program.Exit = true
 					return m, tea.Quit
 				}
 				m.choice.Update(textValue.Output)
@@ -126,7 +127,7 @@ func (m model) View() string {
 	}
 
 	s += fmt.Sprintf("Press %s to confirm choice.\n", style.FocusedStyle.Render("y"))
-	if *m.other {
+	if m.other {
 		s += fmt.Sprintf("Press %s to text another option.\n", style.FocusedStyle.Render("o"))
 	}
 	s += fmt.Sprintf("Press %s to quit.\n", style.FocusedStyle.Render("q"))
