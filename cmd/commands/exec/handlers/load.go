@@ -40,7 +40,7 @@ func HandleLoad(load map[string]interface{}, vars map[string]interface{}) {
 	}
 
 	var fileVars map[string]interface{}
-	_, err = url.ParseRequestURI(from)
+	parsedURI, err := url.ParseRequestURI(from)
 	if err != nil {
 		fileVars, err = helpers.UnmarshalFile(from, fs)
 		if err != nil {
@@ -54,8 +54,8 @@ func HandleLoad(load map[string]interface{}, vars map[string]interface{}) {
 			style.ErrorPrint("reading file error: " + err.Error())
 			os.Exit(1)
 		}
-		splitURL := strings.Split(from, "/")
-		fileVars, err = helpers.UnmarshalByExt(splitURL[len(splitURL)-1], []byte(varsContent))
+		splitURIPath := strings.Split(parsedURI.Path, "/")
+		fileVars, err = helpers.UnmarshalByExt(splitURIPath[len(splitURIPath)-1], []byte(varsContent))
 		if err != nil {
 			style.ErrorPrint("parsing file error: " + err.Error())
 			os.Exit(1)
