@@ -25,14 +25,13 @@ func (s *Selection) Update(value string) {
 //
 // It has the required methods that make it a bubbletea.Model
 type model struct {
-	cursor    int
-	choices   []steps.Item
-	selected  map[int]struct{}
-	choice    *Selection
-	header    string
-	other     *bool
-	skippable *bool
-	exit      *bool
+	cursor   int
+	choices  []steps.Item
+	selected map[int]struct{}
+	choice   *Selection
+	header   string
+	other    *bool
+	exit     *bool
 }
 
 func (m model) Init() tea.Cmd {
@@ -41,15 +40,14 @@ func (m model) Init() tea.Cmd {
 
 // InitialSelectInputModel initializes a multiInput step with
 // the given data
-func InitialSelectInputModel(choices []steps.Item, selection *Selection, header string, other, skippable, exit bool) model {
+func InitialSelectInputModel(choices []steps.Item, selection *Selection, header string, other, exit bool) model {
 	m := model{
-		choices:   choices,
-		selected:  make(map[int]struct{}),
-		choice:    selection,
-		header:    style.TitleStyle.Render(header),
-		exit:      &exit,
-		other:     &other,
-		skippable: &skippable,
+		choices:  choices,
+		selected: make(map[int]struct{}),
+		choice:   selection,
+		header:   style.TitleStyle.Render(header),
+		exit:     &exit,
+		other:    &other,
 	}
 	return m
 }
@@ -103,10 +101,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.choice.Update(textValue.Output)
 				return m, tea.Quit
 			}
-		case "s":
-			if *m.skippable {
-				return m, tea.Quit
-			}
 		}
 	}
 	return m, nil
@@ -134,9 +128,6 @@ func (m model) View() string {
 	s += fmt.Sprintf("Press %s to confirm choice.\n", style.FocusedStyle.Render("y"))
 	if *m.other {
 		s += fmt.Sprintf("Press %s to text another option.\n", style.FocusedStyle.Render("o"))
-	}
-	if *m.skippable {
-		s += fmt.Sprintf("Press %s to skip.\n", style.FocusedStyle.Render("s"))
 	}
 	s += fmt.Sprintf("Press %s to quit.\n", style.FocusedStyle.Render("q"))
 	s += "\n"

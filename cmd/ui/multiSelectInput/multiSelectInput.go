@@ -24,13 +24,12 @@ func (s *Selection) Update(optionName string, value bool) {
 //
 // It has the required methods that make it a bubbletea.Model
 type model struct {
-	cursor    int
-	options   []steps.Item
-	selected  map[int]struct{}
-	choices   *Selection
-	header    string
-	skippable *bool
-	exit      *bool
+	cursor   int
+	options  []steps.Item
+	selected map[int]struct{}
+	choices  *Selection
+	header   string
+	exit     *bool
 }
 
 func (m model) Init() tea.Cmd {
@@ -39,14 +38,13 @@ func (m model) Init() tea.Cmd {
 
 // InitialModelMulti initializes a multiSelect step with
 // the given data
-func InitialMultiSelectInputModel(options []steps.Item, selection *Selection, header string, skippable, exit bool) model {
+func InitialMultiSelectInputModel(options []steps.Item, selection *Selection, header string, exit bool) model {
 	return model{
-		options:   options,
-		selected:  make(map[int]struct{}),
-		choices:   selection,
-		header:    style.TitleStyle.Render(header),
-		skippable: &skippable,
-		exit:      &exit,
+		options:  options,
+		selected: make(map[int]struct{}),
+		choices:  selection,
+		header:   style.TitleStyle.Render(header),
+		exit:     &exit,
 	}
 }
 
@@ -81,10 +79,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor = selectedKey
 			}
 			return m, tea.Quit
-		case "s":
-			if *m.skippable {
-				return m, tea.Quit
-			}
 		}
 	}
 	return m, nil
@@ -112,9 +106,6 @@ func (m model) View() string {
 	}
 
 	s += fmt.Sprintf("Press %s to confirm choice.\n", style.FocusedStyle.Render("y"))
-	if *m.skippable {
-		s += fmt.Sprintf("Press %s to skip.\n", style.FocusedStyle.Render("s"))
-	}
 	s += fmt.Sprintf("Press %s to quit.\n", style.FocusedStyle.Render("q"))
 	s += "\n"
 	return s

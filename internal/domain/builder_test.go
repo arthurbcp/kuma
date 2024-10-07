@@ -4,14 +4,12 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
 	"github.com/spf13/afero"
 )
 
 var aferoFs = afero.NewMemMapFs()
 var mockFs = filesystem.NewFileSystem(aferoFs)
-var h = helpers.NewHelpers()
 
 func TestNewBuilder(t *testing.T) {
 	aferoFs.Create("test.yaml")
@@ -29,7 +27,7 @@ func TestNewBuilder(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewBuilder(mockFs, h, tt.config)
+			got, err := NewBuilder(mockFs, tt.config)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewBuilder() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -110,8 +108,7 @@ func TestBuilder_SetBuilderData(t *testing.T) {
 			}
 
 			b := &Builder{
-				Fs:      mockFs,
-				Helpers: h,
+				Fs: mockFs,
 			}
 			err = b.SetBuilderDataFromFile(tt.file, tt.vars)
 			if (err != nil) != tt.wantErr {

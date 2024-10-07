@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/arthurbcp/kuma-cli/internal/domain"
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -125,11 +124,9 @@ func TestBuild(t *testing.T) {
 			}
 
 			fs := filesystem.NewFileSystem(aferoFs)
-			h := helpers.NewHelpers()
 
 			builder := &domain.Builder{
-				Fs:      fs,
-				Helpers: h,
+				Fs: fs,
 				Data: &domain.BuilderData{
 					Structure: tt.structure,
 				},

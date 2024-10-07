@@ -11,7 +11,6 @@ import (
 )
 
 func HandleRun(name string, vars map[string]interface{}) {
-	helpers := helpers.NewHelpers()
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	data, err := helpers.UnmarshalFile(shared.KumaRunsPath, fs)
 	if err != nil {
@@ -24,21 +23,6 @@ func HandleRun(name string, vars map[string]interface{}) {
 		style.ErrorPrint("run not found: " + name)
 		os.Exit(1)
 	}
-
-	// skip := false
-	// skipVal, ok := runParams["skip"].(string)
-	// if ok {
-	// 	skipVal, err = helpers.ReplaceVars(skipVal, vars, helpers.GetFuncMap())
-	// 	if err != nil {
-	// 		style.ErrorPrint("parsing skip error: " + err.Error())
-	// 		os.Exit(1)
-	// 	}
-	// 	skip, err = strconv.ParseBool(skipVal)
-	// 	if err != nil {
-	// 		style.ErrorPrint("parsing skip error: " + err.Error())
-	// 		os.Exit(1)
-	// 	}
-	// }
 
 	for _, step := range run.([]interface{}) {
 		step := step.(map[string]interface{})
