@@ -122,8 +122,13 @@ func (m model) View() string {
 			checked = style.FocusedStyle.Render("x")
 		}
 		label := style.FocusedStyle.Render(choice.Label)
+		description := choice.Description
 
-		s += fmt.Sprintf("%s [%s] %s\n\n", cursor, checked, label)
+		if choice.Description != "" {
+			s += fmt.Sprintf("%s [%s] %s\n\t%s\n\n", cursor, checked, label, description)
+		} else {
+			s += fmt.Sprintf("%s [%s] %s\n\n", cursor, checked, label)
+		}
 	}
 
 	s += fmt.Sprintf("Press %s to confirm choice.\n", style.FocusedStyle.Render("y"))

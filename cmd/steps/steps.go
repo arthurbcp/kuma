@@ -19,5 +19,5 @@ type Steps struct {
 // An Item contains the data for each option
 // in a StepSchema.Options
 type Item struct {
-	Label, Value string
+	Label, Value, Description string
 }

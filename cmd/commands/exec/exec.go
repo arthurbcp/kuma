@@ -5,8 +5,19 @@
 package exec
 
 import (
-	execHandlers "github.com/arthurbcp/kuma-cli/cmd/commands/exec/handlers"
+	"os"
 
+	execHandlers "github.com/arthurbcp/kuma-cli/cmd/commands/exec/handlers"
+	"github.com/arthurbcp/kuma-cli/cmd/program"
+	"github.com/arthurbcp/kuma-cli/cmd/shared"
+	"github.com/arthurbcp/kuma-cli/cmd/steps"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/selectInput"
+	"github.com/arthurbcp/kuma-cli/internal/services"
+	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
+	"github.com/arthurbcp/kuma-cli/pkg/style"
+	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
@@ -19,6 +30,9 @@ var ExecRunCmd = &cobra.Command{
 	Use:   "exec",
 	Short: "Run a specific pipeline",
 	Run: func(cmd *cobra.Command, args []string) {
+		if Run == "" {
+			Run = handleTea()
+		}
 		vars := map[string]interface{}{
 			"data": map[string]interface{}{},
 		}
@@ -26,9 +40,39 @@ var ExecRunCmd = &cobra.Command{
 	},
 }
 
+func handleTea() string {
+
+	program := program.NewProgram()
+	runService := services.NewRunService(shared.KumaRunsPath, filesystem.NewFileSystem(afero.NewOsFs()))
+	runs, err := runService.GetAll()
+	if err != nil {
+		style.ErrorPrint("getting runs error: " + err.Error())
+		os.Exit(1)
+	}
+	var options = make([]steps.Item, 0)
+	for key, run := range runs {
+		options = append(options, steps.Item{
+			Label:       key,
+			Value:       key,
+			Description: run.Description,
+		})
+	}
+
+	output := &selectInput.Selection{}
+	p := tea.NewProgram(selectInput.InitialSelectInputModel(options, output, "Select a run", false, program))
+	_, err = p.Run()
+
+	program.ExitCLI(p)
+
+	if err != nil {
+		style.ErrorPrint("error running program: " + err.Error())
+		os.Exit(1)
+	}
+	return output.Choice
+}
+
 // init sets up flags for the 'run' subcommand and binds them to variables.
 func init() {
 	// Repository name
 	ExecRunCmd.Flags().StringVarP(&Run, "run", "r", "", "run to use")
-	ExecRunCmd.MarkFlagRequired("run")
 }
