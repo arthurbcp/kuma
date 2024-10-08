@@ -14,7 +14,6 @@ import (
 	"strings"
 
 	execHandlers "github.com/arthurbcp/kuma-cli/cmd/commands/exec/handlers"
-	"github.com/arthurbcp/kuma-cli/cmd/shared"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/selectInput"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/program"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/steps"
@@ -97,7 +96,7 @@ func download(cmd *cobra.Command) {
 	}
 	org := splitRepo[0]
 	repoName := splitRepo[1]
-	downloadRepo(client, org, repoName, "", shared.KumaRunsPath)
+	downloadRepo(client, org, repoName, "", "")
 	style.CheckMarkPrint("templates downloaded successfully!\n")
 	vars := map[string]interface{}{
 		"data": map[string]interface{}{},
