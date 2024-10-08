@@ -27,8 +27,6 @@ Kuma é um poderoso framework projetado para gerar estruturas de projetos para q
 
 ## Instalação
 
-Para instalar o Kuma, utilize o comando `go install`. Siga os passos abaixo:
-
 ### Requisitos
 
 - [Go](https://golang.org/dl/) versão 1.23 ou superior.
@@ -42,7 +40,48 @@ Para instalar o Kuma, utilize o comando `go install`. Siga os passos abaixo:
    go install github.com/arthurbcp/kuma@latest
    ```
 
-2. **Verifique a instalação:**
+2. **Adicione o diretório do Go bin ao seu PATH (se ainda não estiver incluído):**
+
+   Adicione a seguinte linha ao seu arquivo de configuração de shell (`.bashrc`, `.zshrc`, etc.):
+
+   ```bash
+   export PATH=$PATH:$(go env GOPATH)/bin
+   ```
+
+   Depois, recarregue o shell ou execute:
+
+   ```bash
+   source ~/.bashrc
+   ```
+
+   _Substitua `.bashrc` pelo arquivo de configuração do seu shell, se necessário._
+
+3. **Verifique se o $GOPATH está configurado corretamente:**
+
+   Execute o seguinte comando para exibir o valor atual de $GOPATH:
+
+   ```bash
+   echo $GOPATH
+   ```
+
+   **Resultados Esperados:**
+
+   - **Se $GOPATH estiver configurado corretamente:** O comando retornará o caminho do diretório do GOPATH, geralmente algo como `/home/usuario/go` no Linux ou `C:Usersusuariogo` no Windows.
+   - **Se $GOPATH estiver vazio ou incorreto:** Você precisará configurá-lo adicionando a seguinte linha ao seu arquivo de configuração de shell:
+
+     ```bash
+     export GOPATH=$(go env GOPATH)
+     ```
+
+     Depois, recarregue o shell ou execute:
+
+     ```bash
+     source ~/.bashrc
+     ```
+
+     _Substitua `.bashrc` pelo arquivo de configuração do seu shell, se necessário._
+
+4. **Verifique a instalação:**
 
    ```bash
    kuma-cli --help
