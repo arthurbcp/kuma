@@ -12,7 +12,6 @@ import (
 
 func HandleCommand(cmdStr string, vars map[string]interface{}) {
 	var err error
-	helpers := helpers.NewHelpers()
 
 	cmdStr, err = helpers.ReplaceVars(cmdStr, vars, helpers.GetFuncMap())
 	if err != nil {

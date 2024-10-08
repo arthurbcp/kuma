@@ -40,7 +40,6 @@ var CreateCmd = &cobra.Command{
 }
 
 func Create() {
-	helpers := helpers.NewHelpers()
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	if VariablesFile != "" {
 		var vars interface{}
@@ -97,9 +96,8 @@ func readFileFromURL(url string) (string, error) {
 // It reads the Kuma configuration file and applies templates to create the project structure.
 func build() {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
-	helpers := helpers.NewHelpers()
 	// Initialize a new Builder with the provided configurations.
-	builder, err := domain.NewBuilder(fs, helpers, domain.NewConfig(ProjectPath, shared.KumaTemplatesPath))
+	builder, err := domain.NewBuilder(fs, domain.NewConfig(ProjectPath, shared.KumaTemplatesPath))
 	builder.SetBuilderDataFromFile(shared.KumaConfigFilePath, shared.TemplateVariables)
 	if err != nil {
 		style.ErrorPrint(err.Error())

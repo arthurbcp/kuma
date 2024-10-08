@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	execBuilders "github.com/arthurbcp/kuma-cli/cmd/commands/exec/builders"
 	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
@@ -14,28 +15,17 @@ import (
 func HandleLoad(load map[string]interface{}, vars map[string]interface{}) {
 	var err error
 	data := vars["data"].(map[string]interface{})
-	helpers := helpers.NewHelpers()
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 
-	from, ok := load["from"].(string)
-	if !ok {
-		style.ErrorPrint("from is required")
-		os.Exit(1)
-	}
-	from, err = helpers.ReplaceVars(from, vars, helpers.GetFuncMap())
+	from, err := execBuilders.BuildStringValue("from", load, vars)
 	if err != nil {
-		style.ErrorPrint("parsing from error: " + err.Error())
+		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
 
-	out, ok := load["out"].(string)
-	if !ok {
-		style.ErrorPrint("out is required")
-		os.Exit(1)
-	}
-	out, err = helpers.ReplaceVars(out, vars, helpers.GetFuncMap())
+	out, err := execBuilders.BuildStringValue("out", load, vars)
 	if err != nil {
-		style.ErrorPrint("parsing from error: " + err.Error())
+		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
 

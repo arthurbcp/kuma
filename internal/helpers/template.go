@@ -65,7 +65,7 @@ func GetPathsByTag(paths map[string]interface{}, tag string) map[string]interfac
 	return filteredPaths
 }
 
-func (h *Helpers) GetFuncMap() template.FuncMap {
+func GetFuncMap() template.FuncMap {
 	fnMap := sprigin.TxtFuncMap()
 	fnMap["toYaml"] = ToYaml
 	fnMap["getRefFrom"] = GetRefFrom
@@ -74,8 +74,8 @@ func (h *Helpers) GetFuncMap() template.FuncMap {
 	return fnMap
 }
 
-func (h *Helpers) ReplaceVars(text string, vars interface{}, funcs template.FuncMap) (string, error) {
-	t, err := template.New("").Funcs(h.GetFuncMap()).Parse(text)
+func ReplaceVars(text string, vars interface{}, funcs template.FuncMap) (string, error) {
+	t, err := template.New("").Funcs(GetFuncMap()).Parse(text)
 	if err != nil {
 		return "", err
 	}

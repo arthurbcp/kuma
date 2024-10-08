@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 )
 
-func (h *Helpers) PrettyJson(in string) string {
+func PrettyJson(in string) string {
 	var out bytes.Buffer
 	err := json.Indent(&out, []byte(in), "", "\t")
 	if err != nil {
@@ -14,10 +14,10 @@ func (h *Helpers) PrettyJson(in string) string {
 	return out.String()
 }
 
-func (h *Helpers) PrettyMarshal(data interface{}) (string, error) {
+func PrettyMarshal(data interface{}) (string, error) {
 	j, err := json.Marshal(data)
 	if err != nil {
 		return "", err
 	}
-	return h.PrettyJson(string(j)), nil
+	return PrettyJson(string(j)), nil
 }

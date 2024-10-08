@@ -14,7 +14,12 @@ import (
 	"strings"
 
 	execHandlers "github.com/arthurbcp/kuma-cli/cmd/commands/exec/handlers"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/selectInput"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/program"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/steps"
+	"github.com/arthurbcp/kuma-cli/internal/domain"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/go-github/github"
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
@@ -25,8 +30,12 @@ var (
 	Template string
 )
 
-var Templates = map[string]string{
-	"typescript-rest-openapi-services": "arthurbcp/typescript-rest-openapi-services",
+var Templates = map[string]domain.Template{
+	"arthurbcp/typescript-rest-openapi-services": domain.NewTemplate(
+		"typescript-rest-openapi-services",
+		"Create a library TypeScript with services typed for all endpoints described in a file Open API 2.0",
+		[]string{"typescript", "openapi", "rest", "library"},
+	),
 }
 
 // GetCmd represents the 'get' subcommand.
@@ -34,8 +43,36 @@ var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a templates repository remotely",
 	Run: func(cmd *cobra.Command, args []string) {
+		if Template == "" && Repo == "" {
+			Template = handleTea()
+		}
 		download(cmd)
 	},
+}
+
+func handleTea() string {
+	program := program.NewProgram()
+	var options = make([]steps.Item, 0)
+	for repository, template := range Templates {
+		options = append(options, steps.NewItem(
+			template.Name,
+			repository,
+			template.Description,
+			template.Tags,
+		))
+	}
+
+	output := &selectInput.Selection{}
+	p := tea.NewProgram(selectInput.InitialSelectInputModel(options, output, "Select a template or type \"o\" to use a different repository", true, program))
+	_, err := p.Run()
+
+	program.ExitCLI(p)
+
+	if err != nil {
+		style.ErrorPrint("error running program: " + err.Error())
+		os.Exit(1)
+	}
+	return output.Choice
 }
 
 func download(cmd *cobra.Command) {
@@ -47,8 +84,8 @@ func download(cmd *cobra.Command) {
 		os.Exit(1)
 	}
 
-	repo, ok := Templates[Template]
-	if !ok {
+	repo := Template
+	if _, ok := Templates[Template]; !ok {
 		repo = Repo
 	}
 	style.LogPrint("getting templates from github repository...")

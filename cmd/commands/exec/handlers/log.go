@@ -9,7 +9,6 @@ import (
 
 func HandleLog(log string, vars map[string]interface{}) {
 	var err error
-	helpers := helpers.NewHelpers()
 
 	log, err = helpers.ReplaceVars(log, vars, helpers.GetFuncMap())
 	if err != nil {
