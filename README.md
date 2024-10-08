@@ -30,7 +30,7 @@ Kuma é um poderoso framework projetado para gerar estruturas de projetos para q
 ### Requisitos
 
 - [Go](https://golang.org/dl/) versão 1.23 ou superior.
-- Git instalado e configurado no seu sistema (necessário para `go install`).
+- Git instalado e configurado no seu sistema.
 
 ### Passo a Passo
 
@@ -243,7 +243,7 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar
 2. **Crie uma branch para a sua feature:**
 
    ```bash
-   git checkout -b minha-nova-feature
+   git checkout -b feature/minha-nova-feature
    ```
 
 3. **Comite suas mudanças:**
@@ -255,7 +255,7 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar
 4. **Envie para o branch:**
 
    ```bash
-   git push origin minha-nova-feature
+   git push origin feature/minha-nova-feature
    ```
 
 5. **Abra um Pull Request.**

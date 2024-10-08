@@ -1,0 +1,13 @@
+select-runtime:
+  description: Select the runtime to use
+  steps:
+    - input:
+        label: Select a runtime
+        options:
+          - label: Node
+            value: node
+          - label: Deno 2.0
+            value: deno
+          - label: Bun
+            value: bun
+        out: runtime
