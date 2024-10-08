@@ -1,119 +1,119 @@
 # Kuma
 
-Kuma é um poderoso framework projetado para gerar estruturas de projetos para qualquer linguagem de programação com base em [templates Go](https://pkg.go.dev/text/template). Ele agiliza o processo de configuração de novos projetos, automatizando a criação de diretórios, arquivos e código base, garantindo consistência e economizando tempo valioso de desenvolvimento.
+Kuma is a powerful framework designed to generate project structures for any programming language based on [Go templates](https://pkg.go.dev/text/template). It streamlines the process of setting up new projects by automating the creation of directories, files, and base code, ensuring consistency and saving valuable development time.
 
-## Tabela de Conteúdos
+## Table of Contents
 
-- [Funcionalidades](#funcionalidades)
-- [Instalação](#instalação)
-- [Crie seus Próprios Boilerplates](#crie-seus-próprios-boilerplates)
+- [Features](#features)
+- [Installation](#installation)
+- [Create Your Own Boilerplates](#create-your-own-boilerplates)
   - [Builders](#builders)
   - [Templates](#templates)
   - [Runs](#runs)
-- [Comandos de Terminal](#comandos-de-terminal)
-  - [Criar um Boilerplate](#criar-um-boilerplate)
-  - [Executar uma Run](#executar-uma-run)
-  - [Obter Templates do GitHub](#obter-templates-do-github)
-    - [Templates Oficiais](#templates-oficiais)
-- [Contribuição](#contribuição)
-- [Licença](#licença)
+- [Terminal Commands](#terminal-commands)
+  - [Create a Boilerplate](#create-a-boilerplate)
+  - [Run a Run](#run-a-run)
+  - [Get Templates from GitHub](#get-templates-from-github)
+    - [Official Templates](#official-templates)
+- [Contribution](#contribution)
+- [License](#license)
 
-## Funcionalidades
+## Features
 
-- Estruture os diretórios e arquivos do seu projeto de maneira customizada através de [templates Go](https://pkg.go.dev/text/template).
-- Integração com GitHub para baixar templates pré-definidos pela comunidade ou para uso pessoal através de repositórios privados.
-- Possibilidade de criar workflows de comandos CLI personalizados através de um arquivo YAML usando as runs.
-- Utilização de variáveis de forma dinâmica para serem aplicadas aos templates. As variáveis podem ser extraídas de um arquivo YAML ou JSON que pode ser local ou baixado de uma URL pública. As variáveis também podem ser obtidas através de informações passadas pelo usuário durante a execução de uma run.
+- Customize your project’s directory and file structures through [Go templates](https://pkg.go.dev/text/template).
+- GitHub integration to download pre-defined templates from the community or for personal use via private repositories.
+- Ability to create custom CLI command workflows through a YAML file using runs.
+- Dynamic variable usage to be applied to templates. Variables can be extracted from a local YAML or JSON file or fetched from a public URL. They can also be obtained from user input during the execution of a run.
 
-## Instalação
+## Installation
 
-### Requisitos
+### Requirements
 
-- [Go](https://golang.org/dl/) versão 1.23 ou superior.
-- Git instalado e configurado no seu sistema.
+- [Go](https://golang.org/dl/) version 1.23 or higher.
+- Git installed and configured on your system.
 
-### Passo a Passo
+### Step by Step
 
-1. **Execute o comando de instalação:**
+1. **Run the installation command:**
 
    ```bash
    go install github.com/arthurbcp/kuma@latest
    ```
 
-2. **Adicione o diretório do Go bin ao seu PATH (se ainda não estiver incluído):**
+2. **Add the Go bin directory to your PATH (if not already included):**
 
-   Adicione a seguinte linha ao seu arquivo de configuração de shell (`.bashrc`, `.zshrc`, etc.):
+   Add the following line to your shell configuration file (`.bashrc`, `.zshrc`, etc.):
 
    ```bash
    export PATH=$PATH:$(go env GOPATH)/bin
    ```
 
-   Depois, recarregue o shell ou execute:
+   Then, reload your shell or run:
 
    ```bash
    source ~/.bashrc
    ```
 
-   _Substitua `.bashrc` pelo arquivo de configuração do seu shell, se necessário._
+   _Replace `.bashrc` with your shell configuration file if necessary._
 
-3. **Verifique se o $GOPATH está configurado corretamente:**
+3. **Verify if $GOPATH is set correctly:**
 
-   Execute o seguinte comando para exibir o valor atual de $GOPATH:
+   Run the following command to display the current value of $GOPATH:
 
    ```bash
    echo $GOPATH
    ```
 
-   **Resultados Esperados:**
+   **Expected Results:**
 
-   - **Se $GOPATH estiver configurado corretamente:** O comando retornará o caminho do diretório do GOPATH, geralmente algo como `/home/usuario/go` no Linux ou `C:Users/usuario/go` no Windows.
-   - **Se $GOPATH estiver vazio ou incorreto:** Você precisará configurá-lo adicionando a seguinte linha ao seu arquivo de configuração de shell:
+   - **If $GOPATH is set correctly:** The command will return the path to the GOPATH directory, usually something like `/home/user/go` on Linux or `C:Users/user/go` on Windows.
+   - **If $GOPATH is empty or incorrect:** You will need to set it by adding the following line to your shell configuration file:
 
      ```bash
      export GOPATH=$(go env GOPATH)
      ```
 
-     Depois, recarregue o shell ou execute:
+     Then, reload your shell or run:
 
      ```bash
      source ~/.bashrc
      ```
 
-     _Substitua `.bashrc` pelo arquivo de configuração do seu shell, se necessário._
+     _Replace `.bashrc` with your shell configuration file if necessary._
 
-4. **Verifique a instalação:**
+4. **Verify the installation:**
 
    ```bash
    kuma-cli --help
    ```
 
-   Você deve ver a ajuda do Kuma CLI, confirmando que a instalação foi bem-sucedida.
+   You should see the Kuma CLI help, confirming that the installation was successful.
 
-## Crie seus Próprios Boilerplates
+## Create Your Own Boilerplates
 
-Para o funcionamento do Kuma, todos os arquivos relacionados ao framework devem ficar dentro da pasta `.kuma`.
+For Kuma to work, all framework-related files must be inside the `.kuma` folder.
 
-O framework utiliza um parser de [templates Go](https://pkg.go.dev/text/template) que são divididos em três tipos de arquivos:
+The framework uses a parser for [Go templates](https://pkg.go.dev/text/template) divided into three file types:
 
 ### Builders
 
-Templates no formato YAML que contêm a estrutura de pastas e arquivos a serem criados.
+YAML-formatted templates that contain the folder and file structure to be created.
 
 ```yaml
 # .kuma/base.yaml
 
-# Variáveis globais a serem usadas em todos os templates.
+# Global variables to be used in all templates.
 global:
   packageName: "{{.data.packageName}}"
 
-# Estrutura de diretórios e arquivos que serão gerados
+# Directory and file structure to be generated
 structure:
   # main.go
   main.go:
-    # O template que será usado como base para a criação do arquivo main.go
+    # The template that will be used as the basis for creating the main.go file
     template: templates/Main.go
 
-    # Variáveis que serão utilizadas dentro do template
+    # Variables that will be used inside the template
     data:
       # msg: Hello, Kuma!
       msg: "{{ .data.msg }}"
@@ -121,7 +121,7 @@ structure:
 
 ### Templates
 
-[Templates Go](https://pkg.go.dev/text/template) individuais para os arquivos que serão criados.
+Individual [Go templates](https://pkg.go.dev/text/template) for the files that will be created.
 
 ```go
 package main
@@ -138,53 +138,53 @@ func main() {
 
 ### Runs
 
-Arquivo YAML contendo uma sequência de ações que serão executadas ao chamar uma `run`. Inclui logs, comandos de terminal, chamadas HTTP, inputs de texto e múltipla escolha para terminal, além de ações para criar pastas e arquivos baseados nos builders e templates.
+A YAML file containing a sequence of actions that will be executed when calling a `run`. It includes logs, terminal commands, HTTP calls, text input, and multiple-choice prompts, along with actions to create folders and files based on builders and templates.
 
-**Confira a documentação completa [aqui](cmd/commands/exec).**
+**Check the full documentation [here](cmd/commands/exec).**
 
 ```yaml
-# Nome da run que será executada assim que o repositório for obtido através do comando `kuma-cli get`
+# Name of the run that will be executed as soon as the repository is obtained via the `kuma-cli get` command
 initial:
-  # Descrição da run
-  description: "Run inicial para configurar o projeto"
+  # Description of the run
+  description: "Initial run to set up the project"
 
-  # Passos que serão executados quando a run for chamada
+  # Steps that will be executed when the run is called
   steps:
-    # Ação de input
+    # Input action
     - input:
-        label: "Qual é o nome do pacote do seu projeto?"
-        out: packageName # Exemplo: github.com/arthurbcp/kuma-hello-world
+        label: "What is the package name of your project?"
+        out: packageName # Example: github.com/arthurbcp/kuma-hello-world
 
-    # Outra ação de input
+    # Another input action
     - input:
-        label: "Qual mensagem você deseja imprimir?"
-        out: msg # Exemplo: Hello, Kuma!
+        label: "What message would you like to print?"
+        out: msg # Example: Hello, Kuma!
 
-    # Log de mensagem
-    - log: "Criando estrutura para {{.data.packageName}}" # Exemplo: Criando estrutura para github.com/arthurbcp/kuma-hello-world
+    # Log message
+    - log: "Creating structure for {{.data.packageName}}" # Example: Creating structure for github.com/arthurbcp/kuma-hello-world
 
-    # Cria a estrutura do projeto usando o builder base.yaml
+    # Create the project structure using the base.yaml builder
     - create:
         from: base.yaml
 
-    # Log de sucesso
-    - log: "Estrutura base criada com sucesso!"
+    # Success log
+    - log: "Base structure created successfully!"
 
-    # Inicializa o módulo Go
-    - cmd: go mod init {{.data.packageName}} # Exemplo: go mod init github.com/arthurbcp/kuma-hello-world
+    # Initialize the Go module
+    - cmd: go mod init {{.data.packageName}} # Example: go mod init github.com/arthurbcp/kuma-hello-world
 
-    # Instala dependências
+    # Install dependencies
     - cmd: go mod tidy
 
-    # Executa o arquivo main.go
-    - cmd: go run main.go # Exemplo: Hello, Kuma!
+    # Run the main.go file
+    - cmd: go run main.go # Example: Hello, Kuma!
 ```
 
-## Comandos de Terminal
+## Terminal Commands
 
-### Criar um Boilerplate
+### Create a Boilerplate
 
-O comando `create` é usado para criar um boilerplate baseado nos builders e templates que estão dentro da pasta `.kuma` e em um arquivo JSON ou YAML contendo as variáveis para fazer as substituições nos templates.
+The `create` command is used to create a boilerplate based on the builders and templates inside the `.kuma` folder and a JSON or YAML file containing the variables to replace in the templates.
 
 ```bash
 kuma-cli create --variables=swagger.json --project=. --from=base.yaml
@@ -192,15 +192,13 @@ kuma-cli create --variables=swagger.json --project=. --from=base.yaml
 
 **Flags:**
 
-- `--variables`, `-v`: Caminho ou URL para o arquivo de variáveis.
+- `--variables`, `-v`: Path or URL to the variables file.
+- `--project`, `-p`: Path to the project where the boilerplate will be created.
+- `--from`, `-f`: Path to the YAML file with the structure and templates.
 
-- `--project`, `-p`: Caminho para o projeto onde o boilerplate será criado.
+### Run a Run
 
-- `--from`, `-f`: Caminho para o arquivo YAML com a estrutura e templates.
-
-### Executar uma Run
-
-O comando `exec` é usado para iniciar o processo de uma run.
+The `exec` command is used to start the process of a [run](cmd/commands/exec).
 
 ```bash
 kuma-cli exec --run=initial
@@ -208,59 +206,60 @@ kuma-cli exec --run=initial
 
 **Flags:**
 
-- `--run`, `-r`: Nome da run que será executada.
+- `--run`, `-r`: Name of the run to be executed.
 
-### Obter Templates do GitHub
+### Get Templates from GitHub
 
-Obtenha templates e runs através de um repositório GitHub.
+Fetch templates and runs from a GitHub repository.
 
-Você pode obter os templates de qualquer repositório através do comando:
+You can get templates from any repository using the command:
 
 ```bash
 kuma-cli get --repo=github.com/arthurbcp/typescript-rest-openapi-services
 ```
 
-Ou utilizar um dos nossos templates oficiais com:
+Or use one of our official templates with:
 
 ```bash
 kuma-cli get --template=typescript-rest-openapi-services
 ```
 
-**PS:** Se o arquivo `.kuma/runs.yaml` conter uma **run** chamada chamada `initial`, essa **run** será executada automaticamente após a execução do comando `get`
+**Note:** If the `.kuma/runs.yaml` file contains a **run** named `initial`, this **run** will be executed automatically after the `get` command is executed.
+
 **Flags:**
 
-- `--repo`, `-r`: Nome do repositório GitHub.
-- `--template`, `-t`: Nome do template oficial.
+- `--repo`, `-r`: Name of the GitHub repository.
+- `--template`, `-t`: Name of the official template.
 
-#### Templates Oficiais
+#### Official Templates
 
-- **[OpenAPI 2.0 TypeScript Services](https://github.com/arthurbcp/typescript-rest-openapi-services):** Crie uma library TypeScript com serviços tipados para todos os endpoints descritos em um arquivo Open API 2.0.
+- **[OpenAPI 2.0 TypeScript Services](https://github.com/arthurbcp/typescript-rest-openapi-services):** Create a TypeScript library with typed services for all endpoints described in an Open API 2.0 file.
 
-## Contribuição
+## Contribution
 
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests para melhorar o Kuma.
+Contributions are welcome! Feel free to open issues or submit pull requests to improve Kuma.
 
-1. **Fork o repositório.**
-2. **Crie uma branch para a sua feature:**
-
-   ```bash
-   git checkout -b feature/minha-nova-feature
-   ```
-
-3. **Comite suas mudanças:**
+1. **Fork the repository.**
+2. **Create a branch for your feature:**
 
    ```bash
-   git commit -m "Adiciona nova feature"
+   git checkout -b feature/my-new-feature
    ```
 
-4. **Envie para o branch:**
+3. **Commit your changes:**
 
    ```bash
-   git push origin feature/minha-nova-feature
+   git commit -m "Add new feature"
    ```
 
-5. **Abra um Pull Request.**
+4. **Push to the branch:**
 
-## Licença
+   ```bash
+   git push origin feature/my-new-feature
+   ```
 
-Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+5. **Open a Pull Request.**
+
+## License
+
+This project is licensed under the MIT license. See the [LICENSE](LICENSE) file for more details.
