@@ -2,6 +2,8 @@
 // each step of the CLI
 package steps
 
+import "strings"
+
 // A StepSchema contains the data that is used
 // for an individual step of the CLI
 type StepSchema struct {
@@ -19,5 +21,21 @@ type Steps struct {
 // An Item contains the data for each option
 // in a StepSchema.Options
 type Item struct {
-	Label, Value, Description string
+	Label, Value, Description, Tags string
+}
+
+func NewItem(label, value, description string, tags []string) Item {
+	if description != "" {
+		description = "\t\t" + description
+	}
+	tagsStr := ""
+	if len(tags) > 0 {
+		tagsStr = "\t\ttags: " + strings.Join(tags, ", ")
+	}
+	return Item{
+		Label:       label,
+		Value:       value,
+		Description: description,
+		Tags:        tagsStr,
+	}
 }

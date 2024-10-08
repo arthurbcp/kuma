@@ -4,8 +4,8 @@ import (
 	"os"
 
 	execBuilders "github.com/arthurbcp/kuma-cli/cmd/commands/exec/builders"
-	"github.com/arthurbcp/kuma-cli/cmd/program"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/textInput"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/program"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 )

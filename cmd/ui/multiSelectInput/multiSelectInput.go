@@ -5,8 +5,8 @@ package multiSelectInput
 import (
 	"fmt"
 
-	"github.com/arthurbcp/kuma-cli/cmd/program"
-	"github.com/arthurbcp/kuma-cli/cmd/steps"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/program"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/steps"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -94,6 +94,8 @@ func (m model) View() string {
 		if m.cursor == i {
 			cursor = style.FocusedStyle.Render(">")
 			option.Label = style.SelectedItemStyle.Render(option.Label)
+			option.Description = style.DescriptionStyle.Render(option.Description)
+			option.Tags = style.TagsStyle.Render(option.Tags)
 		}
 
 		checked := " "
@@ -102,13 +104,10 @@ func (m model) View() string {
 		}
 
 		label := style.FocusedStyle.Render(option.Label)
-		description := option.Description
+		description := style.DescriptionStyle.Render(option.Description)
+		tags := style.TagsStyle.Render(option.Tags)
 
-		if option.Description != "" {
-			s += fmt.Sprintf("%s [%s] %s\n\t%s\n\n", cursor, checked, label, description)
-		} else {
-			s += fmt.Sprintf("%s [%s] %s\n\n", cursor, checked, label)
-		}
+		s += fmt.Sprintf("%s [%s] %s\n%s\n%s\n\n", cursor, checked, label, description, tags)
 	}
 
 	s += fmt.Sprintf("Press %s to confirm choice.\n", style.FocusedStyle.Render("y"))

@@ -8,10 +8,10 @@ import (
 	"os"
 
 	execHandlers "github.com/arthurbcp/kuma-cli/cmd/commands/exec/handlers"
-	"github.com/arthurbcp/kuma-cli/cmd/program"
 	"github.com/arthurbcp/kuma-cli/cmd/shared"
-	"github.com/arthurbcp/kuma-cli/cmd/steps"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/selectInput"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/program"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/steps"
 	"github.com/arthurbcp/kuma-cli/internal/services"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
@@ -51,11 +51,12 @@ func handleTea() string {
 	}
 	var options = make([]steps.Item, 0)
 	for key, run := range runs {
-		options = append(options, steps.Item{
-			Label:       key,
-			Value:       key,
-			Description: run.Description,
-		})
+		options = append(options, steps.NewItem(
+			key,
+			key,
+			run.Description,
+			[]string{},
+		))
 	}
 
 	output := &selectInput.Selection{}

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/arthurbcp/kuma-cli/cmd/program"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/program"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
