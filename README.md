@@ -12,7 +12,7 @@ Kuma is a powerful framework designed to generate project structures for any pro
   - [Runs](#runs)
 - [Terminal Commands](#terminal-commands)
   - [Create a Boilerplate](#create-a-boilerplate)
-  - [Run a Run](#run-a-run)
+  - [Execute a Run](#execute-a-run)
   - [Get Templates from GitHub](#get-templates-from-github)
     - [Official Templates](#official-templates)
 - [Contribution](#contribution)
