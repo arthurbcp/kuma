@@ -22,10 +22,6 @@
 
 As **Runs** no Kuma são sequências de ações definidas para automatizar tarefas repetitivas durante o desenvolvimento de projetos. Elas permitem a execução de pipelines personalizados que podem incluir desde inputs de usuário até a execução de comandos no terminal, garantindo consistência e eficiência no fluxo de trabalho.
 
-## O que são Runs?
-
-Uma **Run** é uma definição de pipeline que consiste em uma série de passos a serem executados sequencialmente. Cada passo pode realizar diferentes tipos de ações, como solicitar entradas do usuário, registrar logs, criar estruturas de projeto, executar comandos do sistema, entre outros. As Runs são definidas em arquivos YAML e podem ser personalizadas para atender às necessidades específicas de cada projeto.
-
 ## Estrutura de uma Run
 
 Uma Run é composta por uma sequência de passos que definem as ações a serem executadas. A seguir, detalhamos os principais componentes e tipos de ações que podem ser incluídos em uma Run.
