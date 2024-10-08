@@ -1,54 +1,54 @@
-# Documentação das Runs no Kuma
+# Kuma runs
 
-## Índice
+## Index
 
-- [Introdução](#introdução)
-- [Estrutura de uma Run](#estrutura-de-uma-run)
-  - [Tipos de Ações](#tipos-de-ações)
+- [Introduction](#introduction)
+- [Structure of a Run](#structure-of-a-run)
+  - [Action Types](#action-types)
     - [Input](#input)
     - [Log](#log)
     - [Create](#create)
     - [Cmd](#cmd)
     - [Load](#load)
-    - [Run Aninhada](#run-aninhada)
-- [Como Executar uma Run](#como-executar-uma-run)
-  - [Usando o Comando CLI](#usando-o-comando-cli)
-  - [Seleção Interativa de Runs](#seleção-interativa-de-runs)
-- [Exemplos de Runs](#exemplos-de-runs)
-  - [Run que extraí as variáveis de um arquivo swagger](#run-que-extraí-as-variáveis-de-um-arquivo-swagger)
-- [Licença](#licença)
+    - [Nested Run](#nested-run)
+- [How to Execute a Run](#how-to-execute-a-run)
+  - [Using the CLI Command](#using-the-cli-command)
+  - [Interactive Run Selection](#interactive-run-selection)
+- [Advanced Examples](#advanced-examples)
+  - [Run that extracts variables from a swagger file](#run-that-extracts-variables-from-a-swagger-file)
+- [License](#license)
 
-## Introdução
+## Introduction
 
-As **Runs** no Kuma são sequências de ações definidas para automatizar tarefas repetitivas durante o desenvolvimento de projetos. Elas permitem a execução de pipelines personalizados que podem incluir desde inputs de usuário até a execução de comandos no terminal, garantindo consistência e eficiência no fluxo de trabalho.
+**Runs** in Kuma are sequences of actions designed to automate repetitive tasks during project development. They enable the execution of custom pipelines, which can include everything from user inputs to terminal commands, ensuring consistency and efficiency in the workflow.
 
-## Estrutura de uma Run
+## Structure of a Run
 
-Uma Run é composta por uma sequência de passos que definem as ações a serem executadas. A seguir, detalhamos os principais componentes e tipos de ações que podem ser incluídos em uma Run.
+A Run is composed of a sequence of steps that define the actions to be executed. Below are the main components and types of actions that can be included in a Run.
 
-### Tipos de Ações
+### Action Types
 
 #### Input
 
-Solicita uma entrada do usuário durante a execução da Run.
+Prompts the user for input during the execution of the Run.
 
 ```yaml
 - input:
-    label: "Qual é o nome do pacote do seu projeto?"
-    out: packageName # Exemplo: github.com/arthurbcp/kuma-hello-world
+    label: "What is the name of your project's package?"
+    out: packageName # Example: github.com/arthurbcp/kuma-hello-world
 ```
 
-**Campos:**
+**Fields:**
 
-- `label`: A mensagem exibida para o usuário.
-- `out`: A variável onde o valor inserido será armazenado.
+- `label`: The message displayed to the user.
+- `out`: The variable where the entered value will be stored.
 
-**Opções Adicionais:**
+**Additional Options:**
 
-- `options`: Lista de opções para seleção.
-- `multi`: Flag que permite selecionar mais de uma opção. Retorna um array no `out`.
-- `other`: Se nenhuma option for selecionada, exibe um atalho com a tecla **o** para abrir um input de texto
-  **Exemplo com Opções e Seleção Múltipla:**
+- `options`: A list of options for selection.
+- `multi`: Flag to allow selecting more than one option. Returns an array in `out`.
+- `other`: If no option is selected, displays a shortcut with the **o** key to open a text input.
+  **Example with Options and Multiple Selection:**
 
 ```yaml
 select-runtime:
@@ -69,44 +69,44 @@ select-runtime:
 
 #### Log
 
-Registra uma mensagem no console.
+Logs a message to the console.
 
 ```yaml
-- log: "Criando estrutura para {{.data.packageName}}" # Exemplo: Criando estrutura para github.com/arthurbcp/kuma-hello-world
+- log: "Creating structure for {{.data.packageName}}" # Example: Creating structure for github.com/arthurbcp/kuma-hello-world
 ```
 
-**Campos:**
+**Fields:**
 
-- `log`: A mensagem a ser registrada. Pode incluir variáveis dinâmicas.
+- `log`: The message to be logged. Can include dynamic variables.
 
 #### Create
 
-Cria a estrutura do projeto com base em um builder definido.
+Creates the project structure based on a defined builder.
 
 ```yaml
 - create:
     from: base.yaml
 ```
 
-**Campos:**
+**Fields:**
 
-- `from`: O arquivo YAML que define a estrutura e os templates a serem usados.
+- `from`: The YAML file defining the structure and templates to be used.
 
 #### Cmd
 
-Executa um comando no terminal.
+Executes a command in the terminal.
 
 ```yaml
 - cmd: npm install
 ```
 
-**Campos:**
+**Fields:**
 
-- `cmd`: O comando a ser executado. Pode incluir variáveis dinâmicas.
+- `cmd`: The command to be executed. Can include dynamic variables.
 
 #### Load
 
-Carrega variáveis a partir de um arquivo local ou URL.
+Loads variables from a local file or URL.
 
 ```yaml
 - load:
@@ -114,14 +114,14 @@ Carrega variáveis a partir de um arquivo local ou URL.
     out: vars
 ```
 
-**Campos:**
+**Fields:**
 
-- `from`: Caminho ou URL para o arquivo JSON ou YAML contendo a estrutura que será armazada dentro da variável `out`. Pode incluir variáveis dinâmicas.
-- `out`: A variável onde os dados carregados serão armazenados.
+- `from`: Path or URL to the JSON or YAML file containing the structure that will be stored in the `out` variable. Can include dynamic variables.
+- `out`: The variable where the loaded data will be stored.
 
-#### Run Aninhada
+#### Nested Run
 
-Executa uma run dentro de outra run. As variáveis de uma run são passadas automaticamente para as runs aninhadas.
+Executes one run within another. Variables from a run are automatically passed to nested runs.
 
 ```yaml
 main:
@@ -136,15 +136,15 @@ nested:
     - log: "Executing nested run"
 ```
 
-**Campos:**
+**Fields:**
 
-- `run`: Nome da Run a ser executada.
+- `run`: Name of the Run to be executed.
 
-## Como Executar uma Run
+## How to Execute a Run
 
-### Usando o Comando CLI
+### Using the CLI Command
 
-Para executar uma Run específica, utilize o comando `exec` seguido do nome da Run.
+To execute a specific Run, use the `exec` command followed by the name of the Run.
 
 ```bash
 kuma-cli exec --run=initial
@@ -152,26 +152,26 @@ kuma-cli exec --run=initial
 
 **Flags:**
 
-- `--run`, `-r`: Nome da Run que será executada.
+- `--run`, `-r`: Name of the Run to be executed.
 
-### Seleção Interativa de Runs
+### Interactive Run Selection
 
-Se o nome da Run não for especificado, o Kuma CLI apresentará uma interface interativa para selecionar qual Run deseja executar.
+If the name of the Run is not specified, Kuma CLI will present an interactive interface to select which Run you want to execute.
 
 ```bash
 kuma-cli exec
 ```
 
-**Passos:**
+**Steps:**
 
-1. **Seleção de Run:** Uma lista de Runs disponíveis será exibida para seleção.
-2. **Execução:** A Run selecionada será executada com base nos passos definidos.
+1. **Run Selection:** A list of available Runs will be displayed for selection.
+2. **Execution:** The selected Run will be executed based on the defined steps.
 
-## Exemplos avançados
+## Advanced Examples
 
-### Run que extraí as variáveis de um arquivo swagger
+### Run that extracts variables from a swagger file
 
-Confira os builders e templates utilizados clonando esse [repositório](https://github.com/arthurbcp/typescript-rest-openapi-services) ou através do comando `kuma-cli get -t typescript-rest-openapi-services`
+Check out the builders and templates used by cloning this [repository](https://github.com/arthurbcp/typescript-rest-openapi-services) or via the command `kuma-cli get -t typescript-rest-openapi-services`.
 
 ```yaml
 initial:
@@ -198,6 +198,6 @@ initial:
     - cmd: npm run format
 ```
 
-## Licença
+## License
 
-Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+This project is licensed under the MIT license. See the [LICENSE](LICENSE) file for more details.
