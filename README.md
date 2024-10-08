@@ -24,7 +24,6 @@ O framework funciona com um parser de [templates Go](https://pkg.go.dev/text/tem
 
   # variables:
   # packageName = github.com/arthurbcp/kuma-hello-world
-  # serviceName = customPrint
   # msg = Hello, Kuma!
 
   #  Global variables to be used in all the templates.
@@ -33,35 +32,15 @@ O framework funciona com um parser de [templates Go](https://pkg.go.dev/text/tem
 
   # Structure of folders and files that will be generated
   structure:
-
-    # src
-    src:
-
-      # src/services
-      services:
-
-        # src/services/custom_print.go
-      {{toSnakeCase .data.serviceName}}.ts:
-        # o template que será usado com base para a criação do arquivo custom_print.go
-        template: templates/Service.go
-
-        # variáveis que serão utilizadas dentro do template
-        data:
-        # name: CustomPrint
-          name: {{toPascalCase .data.serviceName}}
-
     # main.go
     main.go:
-        # o template que será usado com base para a criação do arquivo main.go
-        template: templates/Main.go
+      # o template que será usado com base para a criação do arquivo main.go
+      template: templates/Main.go
 
       # variáveis que serão utilizadas dentro do template
       data:
-        # name: CustomPrint
-        service: {{toPascalCase .data.serviceName}}
-
         # msg: Hello, Kuma!
-        msg: {{.data.msg}}
+        msg: "{{ .data.msg }}"
   ```
 
   &nbsp;&nbsp;
@@ -71,44 +50,78 @@ O framework funciona com um parser de [templates Go](https://pkg.go.dev/text/tem
   &nbsp;
 
   ```go
-  // .kuma/templates/Main.go
   package main
 
   import (
-  "fmt"
-  //github.com/arthurbcp/kuma-hello-world/src/services/custom_print.go
-  "{{.global.packageName}}/src/services/{{.data.service}}"
+    "fmt"
   )
 
   func main() {
-  service := new{{data.service}}Service()
-      // service.Print("Hello, Kuma!")
-      service.Print("{{.data.msg}}")
+    // fmt.Print("Hello, Kuma!")
+    fmt.Println("{{ .data.msg }}")
   }
 
   ```
 
-  ```go
-  // .kuma/templates/Service.go
-  package services
-
-  import (
-  "fmt"
-  )
-
-  // type CustomPrint struct {
-  type {{.data.name}}Service struct {
-  Print(msg string)
-  }
-
-  // func (s *CustomPrintService) Print(msg string) {
-  func (s \*{{.data.name}}Service) Print(msg string) {
-  fmt.Print(msg)
-  }
-
-  ```
+&nbsp;&nbsp;
 
 - **Runs**
+  Arquivo YAML contendo um sequencias de ações que serem executadas ao chamar uma `run`. Desde logs, comandos de terminal, chamadas http, inputs de texto e múltipla escolha para terminal e ações para criar pastas arquivos baseados nos builders e templates.
+  **Confira a documentação completa aqui:**
+  &nbsp;
+
+  ```yaml
+  # Nome da run que será executada assim que o repositório for obtido através do comando `kuma-cli get`
+  initial:
+    # descrição da run
+    description: "Initial run"
+    # passos que serão executados quando a run for chamada
+    steps:
+      # input action
+      - input:
+          label: "What is your project package name?"
+          out: packageName #github.com/arthurbcp/kuma-hello-world
+      # input actions
+      - input:
+          label: "What message do you want to print?" #
+          out: msg #Hello, Kuma!
+
+      # log a message
+      - log: "creating structure for {{.data.packageName}}" # creating structure for github.com/arthurbcp/kuma-hello-world
+
+      # create the project structore using base.yaml builder
+      - create:
+          from: base.yaml
+
+      #log a message
+      - log: Base structure created successfully!
+
+      # init the go package
+      - cmd: go mod init {{.data.packageName}} #go mod init github.com/arthurbcp/kuma-hello-world
+
+      # install dependencies
+      - cmd: go mod tidy
+
+      #exec the main.go file
+      - cmd: go run main.go # Hello, Kuma!
+  ```
+
+### Comandos de terminal
+
+#### Criar um boilerplate
+
+O comando `create` é usado para criar um boilerplate baseado nos builders e templates que estão dentro da pasta `.kuma` e um arquivo JSON ou YAML contendo as variáveis para fazer as substituição nos templetes.
+
+```
+kuma-cli create --v=swagger.json --project=. --from=base.yaml
+```
+
+**Flags**
+`--variables`, `-v`: Path or URL to the variables file
+`--project`, `-p`: Path to the project you want to create
+`--from`, `-f`: Path to the YAML file with the structure and templates
+
+&nbsp;
 
 #### Executar uma RUN
 
@@ -121,7 +134,9 @@ kuma-cli exec --run=initial
 **Flags**
 `--run`, `-r`: Nome da run que será executada
 
-#### Obter template do GitHub
+&nbsp;
+
+#### Obter templates do GitHub
 
 Obtenha templates e runs através de um repositório GitHub.
 
@@ -140,11 +155,8 @@ kuma get --template=typescript-rest-openapi-services
 **Flags**
 `--repo`, `-r`: Nome do repositório GitHub
 `--template`, `-t`: Nome do template oficial
+&nbsp;
 
 ##### Templates oficiais:
 
 - **[OpenAPI 2.0 TypeScript services](github.com/arthurbcp/typescript-rest-openapi-services):** Crie uma library TypeScript com serviços tipados para todos os endpoints descrito em um arquivo Open API 2.0
-
-```
-
-```
