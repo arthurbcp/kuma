@@ -1,0 +1,30 @@
+# Nome da run que será executada assim que o repositório for obtido através do comando `kuma-cli get`
+initial:
+  # descrição da run
+  description: "Initial run"
+  steps:
+    - input:
+        label: "What is your project package name?"
+        out: packageName #github.com/arthurbcp/kuma-hello-world
+
+    - input:
+        label: "What message do you want to print?" #
+        out: msg #custoPrint
+
+      # log a message
+    - log: "creating structure for {{.data.packageName}}" # creating structure for github.com/arthurbcp/kuma-hello-world
+
+      # create the project structore using base.yaml builder
+    - create:
+        from: base.yaml
+
+      #log a message
+    - log: Base structure created successfully!
+
+      # init the go package
+    - cmd: go mod init {{.data.packageName}} #go mod init github.com/arthurbcp/kuma-hello-world
+    # install dependencies
+    - cmd: go mod tidy
+
+    #exec the main.go file
+    - cmd: go run main.go # Hello, Kuma!
