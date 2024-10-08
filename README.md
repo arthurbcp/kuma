@@ -27,40 +27,22 @@ Kuma é um poderoso framework projetado para gerar estruturas de projetos para q
 
 ## Instalação
 
-Para instalar o Kuma, siga os passos abaixo:
+Para instalar o Kuma, utilize o comando `go install`. Siga os passos abaixo:
 
 ### Requisitos
 
-- [Go](https://golang.org/dl/) versão 1.16 ou superior.
-- Git instalado e configurado no seu sistema.
+- [Go](https://golang.org/dl/) versão 1.23 ou superior.
+- Git instalado e configurado no seu sistema (necessário para `go install`).
 
 ### Passo a Passo
 
-1. **Clone o repositório do Kuma:**
+1. **Execute o comando de instalação:**
 
    ```bash
-   git clone https://github.com/arthurbcp/kuma.git
+   go install github.com/arthurbcp/kuma@latest
    ```
 
-2. **Navegue até o diretório do projeto:**
-
-   ```bash
-   cd kuma
-   ```
-
-3. **Compile o binário do Kuma:**
-
-   ```bash
-   go build -o kuma-cli main.go
-   ```
-
-4. **Movimente o binário para um diretório no PATH:**
-
-   ```bash
-   sudo mv kuma-cli /usr/local/bin/
-   ```
-
-5. **Verifique a instalação:**
+2. **Verifique a instalação:**
 
    ```bash
    kuma-cli --help
