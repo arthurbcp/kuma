@@ -1,6 +1,6 @@
 # Kuma runs
 
-## Index
+## Table of Contents
 
 - [Introduction](#introduction)
 - [Structure of a Run](#structure-of-a-run)
