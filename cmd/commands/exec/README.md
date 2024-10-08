@@ -14,7 +14,7 @@
 - [How to Execute a Run](#how-to-execute-a-run)
   - [Using the CLI Command](#using-the-cli-command)
   - [Interactive Run Selection](#interactive-run-selection)
-- [Run Examples](#run-examples)
+- [Advanced Examples](#advanced-examples)
   - [Run that extracts variables from a swagger file](#run-that-extracts-variables-from-a-swagger-file)
 - [License](#license)
 

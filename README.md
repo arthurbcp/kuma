@@ -23,7 +23,7 @@ Kuma is a powerful framework designed to generate project structures for any pro
 - Customize your project’s directory and file structures through [Go templates](https://pkg.go.dev/text/template).
 - GitHub integration to download pre-defined templates from the community or for personal use via private repositories.
 - Ability to create custom CLI command workflows through a YAML file using runs.
-- Dynamic variable usage to be applied to templates. Variables can be extracted from a local YAML or JSON file or fetched from a public URL. They can also be obtained from user input during the execution of a run.
+- Dynamic variable usage to be applied to templates. Variables can be extracted from a local YAML or JSON file or fetched from a public URL. They can also be obtained from user input during the execution of a [run](cmd/commands/exec).
 
 ## Installation
 
@@ -196,7 +196,7 @@ kuma-cli create --variables=swagger.json --project=. --from=base.yaml
 - `--project`, `-p`: Path to the project where the boilerplate will be created.
 - `--from`, `-f`: Path to the YAML file with the structure and templates.
 
-### Run a Run
+### Execute a Run
 
 The `exec` command is used to start the process of a [run](cmd/commands/exec).
 
