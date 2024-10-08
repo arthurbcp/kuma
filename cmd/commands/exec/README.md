@@ -3,7 +3,6 @@
 ## Índice
 
 - [Introdução](#introdução)
-- [O que são Runs?](#o-que-são-runs)
 - [Estrutura de uma Run](#estrutura-de-uma-run)
   - [Tipos de Ações](#tipos-de-ações)
     - [Input](#input)
@@ -16,18 +15,7 @@
   - [Usando o Comando CLI](#usando-o-comando-cli)
   - [Seleção Interativa de Runs](#seleção-interativa-de-runs)
 - [Exemplos de Runs](#exemplos-de-runs)
-  - [Run Inicial](#run-inicial)
-  - [Run Avançada com Carregamento de Variáveis](#run-avançada-com-carregamento-de-variáveis)
-  - [Run com Seleção de Runtime](#run-com-seleção-de-runtime)
-- [Gerenciamento de Runs](#gerenciamento-de-runs)
-  - [Listar Todas as Runs](#listar-todas-as-runs)
-  - [Adicionar uma Nova Run](#adicionar-uma-nova-run)
-- [Detalhes Técnicos](#detalhes-técnicos)
-  - [Fluxo de Execução](#fluxo-de-execução)
-  - [Manipulação de Variáveis](#manipulação-de-variáveis)
-- [Boas Práticas](#boas-práticas)
-- [FAQ](#faq)
-- [Contribuição](#contribuição)
+  - [Run que extraí as variáveis de um arquivo swagger](#run-que-extraí-as-variáveis-de-um-arquivo-swagger)
 - [Licença](#licença)
 
 ## Introdução
