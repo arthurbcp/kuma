@@ -9,8 +9,6 @@ import (
 )
 
 func TestUnmarshalFile(t *testing.T) {
-	h := &Helpers{}
-
 	// Create a temporary JSON file
 	aferoFS := afero.NewMemMapFs()
 
@@ -38,7 +36,7 @@ func TestUnmarshalFile(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := h.UnmarshalFile(tt.fileName, fs)
+			got, err := UnmarshalFile(tt.fileName, fs)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UnmarshalFile() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -51,8 +49,6 @@ func TestUnmarshalFile(t *testing.T) {
 }
 
 func TestStringContains(t *testing.T) {
-	h := &Helpers{}
-
 	tests := []struct {
 		name string
 		s    []string
@@ -66,7 +62,7 @@ func TestStringContains(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := h.StringContains(tt.s, tt.e); got != tt.want {
+			if got := StringContains(tt.s, tt.e); got != tt.want {
 				t.Errorf("StringContains() = %v, want %v", got, tt.want)
 			}
 		})
@@ -74,8 +70,6 @@ func TestStringContains(t *testing.T) {
 }
 
 func TestInterfaceContains(t *testing.T) {
-	h := &Helpers{}
-
 	tests := []struct {
 		name string
 		s    []interface{}
@@ -89,7 +83,7 @@ func TestInterfaceContains(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := h.InterfaceContains(tt.s, tt.e); got != tt.want {
+			if got := InterfaceContains(tt.s, tt.e); got != tt.want {
 				t.Errorf("InterfaceContains() = %v, want %v", got, tt.want)
 			}
 		})
@@ -127,24 +121,20 @@ func TestGetRefFrom(t *testing.T) {
 }
 
 func TestPrettyJson(t *testing.T) {
-	h := &Helpers{}
-
 	input := `{"key":"value"}`
 	expected := "{\n\t\"key\": \"value\"\n}"
 
-	result := h.PrettyJson(input)
+	result := PrettyJson(input)
 	if result != expected {
 		t.Errorf("PrettyJson() = %v, want %v", result, expected)
 	}
 }
 
 func TestPrettyMarshal(t *testing.T) {
-	h := &Helpers{}
-
 	input := map[string]string{"key": "value"}
 	expected := "{\n\t\"key\": \"value\"\n}"
 
-	result, err := h.PrettyMarshal(input)
+	result, err := PrettyMarshal(input)
 	if err != nil {
 		t.Errorf("PrettyMarshal() error = %v", err)
 	}
@@ -154,13 +144,11 @@ func TestPrettyMarshal(t *testing.T) {
 }
 
 func TestReplaceVars(t *testing.T) {
-	h := &Helpers{}
-
 	template := "Hello, {{.Name}}!"
 	vars := map[string]string{"Name": "World"}
 	expected := "Hello, World!"
 
-	result, err := h.ReplaceVars(template, vars, nil)
+	result, err := ReplaceVars(template, vars, nil)
 	if err != nil {
 		t.Errorf("ReplaceVars() error = %v", err)
 	}

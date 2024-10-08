@@ -5,8 +5,9 @@ package selectInput
 import (
 	"fmt"
 
-	"github.com/arthurbcp/kuma-cli/cmd/steps"
 	"github.com/arthurbcp/kuma-cli/cmd/ui/textInput"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/program"
+	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/steps"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -25,14 +26,13 @@ func (s *Selection) Update(value string) {
 //
 // It has the required methods that make it a bubbletea.Model
 type model struct {
-	cursor    int
-	choices   []steps.Item
-	selected  map[int]struct{}
-	choice    *Selection
-	header    string
-	other     *bool
-	skippable *bool
-	exit      *bool
+	cursor   int
+	choices  []steps.Item
+	selected map[int]struct{}
+	choice   *Selection
+	header   string
+	other    bool
+	program  *program.Program
 }
 
 func (m model) Init() tea.Cmd {
@@ -41,15 +41,14 @@ func (m model) Init() tea.Cmd {
 
 // InitialSelectInputModel initializes a multiInput step with
 // the given data
-func InitialSelectInputModel(choices []steps.Item, selection *Selection, header string, other, skippable, exit bool) model {
+func InitialSelectInputModel(choices []steps.Item, selection *Selection, header string, other bool, program *program.Program) model {
 	m := model{
-		choices:   choices,
-		selected:  make(map[int]struct{}),
-		choice:    selection,
-		header:    style.TitleStyle.Render(header),
-		exit:      &exit,
-		other:     &other,
-		skippable: &skippable,
+		choices:  choices,
+		selected: make(map[int]struct{}),
+		choice:   selection,
+		header:   style.TitleStyle.Render(header),
+		program:  program,
+		other:    other,
 	}
 	return m
 }
@@ -62,7 +61,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
-			*m.exit = true
+			m.program.Exit = true
 			return m, tea.Quit
 		case "up", "k":
 			if m.cursor > 0 {
@@ -91,20 +90,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 			}
 		case "o":
-			if *m.other {
+			if m.other {
 				textValue := &textInput.Output{}
-				p := tea.NewProgram(textInput.InitialTextInputModel(textValue, "", false))
+				p := tea.NewProgram(textInput.InitialTextInputModel(textValue, "", m.program))
 				_, err := p.Run()
 				if err != nil {
 					style.ErrorPrint("error running program: " + err.Error())
-					*m.exit = true
+					m.program.Exit = true
 					return m, tea.Quit
 				}
 				m.choice.Update(textValue.Output)
-				return m, tea.Quit
-			}
-		case "s":
-			if *m.skippable {
 				return m, tea.Quit
 			}
 		}
@@ -120,23 +115,25 @@ func (m model) View() string {
 		if m.cursor == i {
 			cursor = style.FocusedStyle.Render(">")
 			choice.Label = style.SelectedItemStyle.Render(choice.Label)
+			choice.Description = style.DescriptionStyle.Render(choice.Description)
+			choice.Tags = style.TagsStyle.Render(choice.Tags)
 		}
 
 		checked := " "
 		if _, ok := m.selected[i]; ok {
-			checked = style.FocusedStyle.Render("x")
+			checked = style.FocusedStyle.Render("*")
 		}
-		label := style.FocusedStyle.Render(choice.Label)
 
-		s += fmt.Sprintf("%s [%s] %s\n\n", cursor, checked, label)
+		label := style.FocusedStyle.Render(choice.Label)
+		description := style.DescriptionStyle.Render(choice.Description)
+		tags := style.TagsStyle.Render(choice.Tags)
+
+		s += fmt.Sprintf("%s [%s] %s\n%s\n%s\n\n", cursor, checked, label, description, tags)
 	}
 
 	s += fmt.Sprintf("Press %s to confirm choice.\n", style.FocusedStyle.Render("y"))
-	if *m.other {
+	if m.other {
 		s += fmt.Sprintf("Press %s to text another option.\n", style.FocusedStyle.Render("o"))
-	}
-	if *m.skippable {
-		s += fmt.Sprintf("Press %s to skip.\n", style.FocusedStyle.Render("s"))
 	}
 	s += fmt.Sprintf("Press %s to quit.\n", style.FocusedStyle.Render("q"))
 	s += "\n"

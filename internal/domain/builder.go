@@ -37,9 +37,6 @@ type Builder struct {
 
 	// Fs is the file system service used to interact with the file system.
 	Fs filesystem.FileSystemInterface
-
-	// Helpers is a helper service used to perform common operations.
-	Helpers helpers.HelpersInterface
 }
 
 // NewBuilder initializes a new Builder instance.
@@ -52,10 +49,9 @@ type Builder struct {
 // Returns:
 //
 //	A pointer to a Builder instance if successful, or an error if initialization fails.
-func NewBuilder(fs filesystem.FileSystemInterface, helpers helpers.HelpersInterface, config *Config) (*Builder, error) {
+func NewBuilder(fs filesystem.FileSystemInterface, config *Config) (*Builder, error) {
 	builder := Builder{}
 	builder.Fs = fs
-	builder.Helpers = helpers
 	err := builder.setConfig(config)
 	if err != nil {
 		return nil, err
@@ -82,7 +78,7 @@ func (b *Builder) SetBuilderDataFromFile(file string, vars map[string]interface{
 	}
 
 	// Replace variables in the configuration data.
-	configData, err = b.Helpers.ReplaceVars(configData, vars, b.Helpers.GetFuncMap())
+	configData, err = helpers.ReplaceVars(configData, vars, helpers.GetFuncMap())
 	b.ParsedData = string(configData)
 	style.DebugPrint("Config file", b.ParsedData)
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/arthurbcp/kuma-cli/internal/domain"
+	"github.com/arthurbcp/kuma-cli/internal/helpers"
 	"github.com/arthurbcp/kuma-cli/pkg/style"
 	"github.com/spf13/afero"
 )
@@ -88,7 +89,7 @@ func (h *BuilderHandler) createDirAndFilesRecursive(key string, node interface{}
 			}
 
 			// Replace variables in the directory name.
-			childKey, err := h.builder.Helpers.ReplaceVars(childKey, childValue, h.builder.Helpers.GetFuncMap())
+			childKey, err := helpers.ReplaceVars(childKey, childValue, helpers.GetFuncMap())
 			if err != nil {
 				return err
 			}
@@ -174,7 +175,7 @@ func (h *BuilderHandler) getTemplate(data map[string]interface{}) (*template.Tem
 	}
 
 	// Create a new template object
-	tmpl := template.New(templateName).Funcs(h.builder.Helpers.GetFuncMap())
+	tmpl := template.New(templateName).Funcs(helpers.GetFuncMap())
 
 	// Iterate through all the template paths, read them from the afero filesystem, and parse them
 	for _, tmplFile := range allTemplates {

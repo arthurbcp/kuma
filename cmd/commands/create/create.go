@@ -28,6 +28,12 @@ var (
 
 	//VariablesFile specifies the path to the variables file.
 	VariablesFile string
+
+	//FromFile specifies the path to the YAML file with the structure and templates.
+	FromFile string
+
+	// TemplateVariables holds the variables for template replacement during the generate process.
+	TemplateVariables map[string]interface{}
 )
 
 // CreateCmd represents the 'create' subcommand.
@@ -40,7 +46,6 @@ var CreateCmd = &cobra.Command{
 }
 
 func Create() {
-	helpers := helpers.NewHelpers()
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	if VariablesFile != "" {
 		var vars interface{}
@@ -65,7 +70,7 @@ func Create() {
 				os.Exit(1)
 			}
 		}
-		shared.TemplateVariables = vars.(map[string]interface{})
+		TemplateVariables = vars.(map[string]interface{})
 		build()
 	}
 }
@@ -97,10 +102,9 @@ func readFileFromURL(url string) (string, error) {
 // It reads the Kuma configuration file and applies templates to create the project structure.
 func build() {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
-	helpers := helpers.NewHelpers()
 	// Initialize a new Builder with the provided configurations.
-	builder, err := domain.NewBuilder(fs, helpers, domain.NewConfig(ProjectPath, shared.KumaTemplatesPath))
-	builder.SetBuilderDataFromFile(shared.KumaConfigFilePath, shared.TemplateVariables)
+	builder, err := domain.NewBuilder(fs, domain.NewConfig(ProjectPath, shared.KumaFilesPath))
+	builder.SetBuilderDataFromFile(shared.KumaFilesPath+"/"+FromFile, TemplateVariables)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
@@ -116,6 +120,7 @@ func build() {
 // init sets up flags for the 'create' subcommand and binds them to variables.
 func init() {
 	// Target file directory
-	CreateCmd.Flags().StringVarP(&VariablesFile, "variables-file", "v", "", "path or URL to the variables file")
-	CreateCmd.Flags().StringVarP(&ProjectPath, "project-path", "p", ".", "Path to the project you want to create")
+	CreateCmd.Flags().StringVarP(&VariablesFile, "variables", "v", "", "path or URL to the variables file")
+	CreateCmd.Flags().StringVarP(&ProjectPath, "project", "p", ".", "Path to the project you want to create")
+	CreateCmd.Flags().StringVarP(&FromFile, "from", "f", ".", "Path to the YAML file with the structure and templates")
 }

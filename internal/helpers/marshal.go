@@ -9,7 +9,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func (h *Helpers) UnmarshalFile(fileName string, fs filesystem.FileSystemInterface) (map[string]interface{}, error) {
+func UnmarshalFile(fileName string, fs filesystem.FileSystemInterface) (map[string]interface{}, error) {
 	// Read the content of the OpenAPI file.
 	fileContent, err := fs.ReadFile(fileName)
 	if err != nil {
@@ -17,24 +17,24 @@ func (h *Helpers) UnmarshalFile(fileName string, fs filesystem.FileSystemInterfa
 	}
 
 	// Unmarshal the JSON or YAML content into a generic map.
-	fileData, err := h.UnmarshalByExt(fileName, []byte(fileContent))
+	fileData, err := UnmarshalByExt(fileName, []byte(fileContent))
 	if err != nil {
 		return nil, err
 	}
 	return fileData, nil
 }
 
-func (h *Helpers) UnmarshalByExt(file string, configData []byte) (map[string]interface{}, error) {
+func UnmarshalByExt(file string, configData []byte) (map[string]interface{}, error) {
 	// Determine the file type based on its extension and unmarshal accordingly.
 	switch filepath.Ext(file) {
 	case ".yaml", ".yml":
-		data, err := h.UnmarshalYaml(configData)
+		data, err := UnmarshalYaml(configData)
 		if err != nil {
 			return nil, err
 		}
 		return data, nil
 	case ".json":
-		data, err := h.UnmarshalJson(configData)
+		data, err := UnmarshalJson(configData)
 		if err != nil {
 			return nil, err
 		}
@@ -52,7 +52,7 @@ func (h *Helpers) UnmarshalByExt(file string, configData []byte) (map[string]int
 // Returns:
 //
 //	A pointer to BuilderData and an error if unmarshaling fails.
-func (h *Helpers) UnmarshalJson(configData []byte) (map[string]interface{}, error) {
+func UnmarshalJson(configData []byte) (map[string]interface{}, error) {
 	fileData := make(map[string]interface{})
 	err := json.Unmarshal(configData, &fileData)
 	if err != nil {
@@ -69,7 +69,7 @@ func (h *Helpers) UnmarshalJson(configData []byte) (map[string]interface{}, erro
 // Returns:
 //
 //	A pointer to BuilderData and an error if unmarshaling fails.
-func (h *Helpers) UnmarshalYaml(configData []byte) (map[string]interface{}, error) {
+func UnmarshalYaml(configData []byte) (map[string]interface{}, error) {
 	fileData := make(map[string]interface{})
 	err := yaml.Unmarshal(configData, &fileData)
 	if err != nil {
