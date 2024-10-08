@@ -11,7 +11,7 @@ Kuma é um poderoso framework projetado para gerar estruturas de projetos para q
 
 ### Crie seus próprios boilerplates utilizando Kuma
 
-Para o funcionamento do Kuma, todos arquivos relacionados ao framework devem ficar dentro da pasta `.kuma-files`
+Para o funcionamento do Kuma, todos arquivos relacionados ao framework devem ficar dentro da pasta `.kuma`
 
 O framework funciona com um parser de templates Go que são divididos em 3 tipos de arquivos
 
