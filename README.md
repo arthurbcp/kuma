@@ -66,7 +66,7 @@ Kuma é um poderoso framework projetado para gerar estruturas de projetos para q
 
    **Resultados Esperados:**
 
-   - **Se $GOPATH estiver configurado corretamente:** O comando retornará o caminho do diretório do GOPATH, geralmente algo como `/home/usuario/go` no Linux ou `C:Usersusuariogo` no Windows.
+   - **Se $GOPATH estiver configurado corretamente:** O comando retornará o caminho do diretório do GOPATH, geralmente algo como `/home/usuario/go` no Linux ou `C:Users/usuario/go` no Windows.
    - **Se $GOPATH estiver vazio ou incorreto:** Você precisará configurá-lo adicionando a seguinte linha ao seu arquivo de configuração de shell:
 
      ```bash
@@ -140,7 +140,7 @@ func main() {
 
 Arquivo YAML contendo uma sequência de ações que serão executadas ao chamar uma `run`. Inclui logs, comandos de terminal, chamadas HTTP, inputs de texto e múltipla escolha para terminal, além de ações para criar pastas e arquivos baseados nos builders e templates.
 
-**Confira a documentação completa [aqui](#).**
+**Confira a documentação completa [aqui](cmd/commands/exec).**
 
 ```yaml
 # Nome da run que será executada assim que o repositório for obtido através do comando `kuma-cli get`

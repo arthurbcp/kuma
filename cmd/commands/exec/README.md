@@ -1,7 +1,3 @@
-// runsDocumentation.js
-
-const runsReadmeContent = `
-
 # Documentação das Runs no Kuma
 
 ## Índice
