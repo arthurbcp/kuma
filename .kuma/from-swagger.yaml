@@ -1,0 +1,51 @@
+{{$base := .data.apiData}}
+structure:
+      src:
+        dto:
+          index.ts:
+            template: templates/DTOExporter.gtpl
+            data: 
+              {{range $name, $prop := $base.definitions }}{{ if eq $prop.type "object" }}
+                - {{ $name }}
+              {{end}}{{end}}
+              
+          {{range $name, $prop := $base.definitions }}{{ if eq $prop.type "object" }}{{ toSnakeCase $name }}.ts:
+            template: templates/DTO.gtpl
+            includes:
+              - templates/TypeResolver.gtpl
+            data:
+              name: {{ $name }}
+              {{ range toYaml . }}{{ . }}
+              {{end}}
+          {{end}}{{end}}
+        services:
+          builder.ts:
+            template: templates/ServiceBuilder.gtpl
+            data:
+              {{range $base.tags}}
+              - {{.name}} 
+              {{end}}
+          index.ts:
+            template: templates/ServiceExporter.gtpl
+            data:
+              {{range $base.tags}}
+              - {{.name}}
+              {{end}}
+
+          {{range $base.tags}}{{toSnakeCase .name}}:
+            {{$tag := .}}
+            service.ts:
+              template: templates/Service.gtpl
+              includes:
+                - templates/TypeResolver.gtpl
+                - templates/ResponseTypeResolver.gtpl
+              data:
+                name: {{$tag.name}}
+                description:  {{$tag.description}}
+                operations:
+                {{range $path, $req := getPathsByTag $base.paths $tag.name}}
+                  {{$path}}: 
+                      {{range toYaml $req}}{{.}}
+                      {{end}}
+                {{end}}
+          {{end}}
