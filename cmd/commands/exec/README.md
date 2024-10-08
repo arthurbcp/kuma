@@ -85,7 +85,7 @@ Cria a estrutura do projeto com base em um builder definido.
 
 ```yaml
 - create:
-  from: base.yaml
+    from: base.yaml
 ```
 
 **Campos:**
@@ -121,19 +121,19 @@ Carrega variáveis a partir de um arquivo local ou URL.
 
 #### Run Aninhada
 
-Executa uma Run dentro de outra Run. As variáveis de uma run são passadas automaticamente para as runs aninhadas.
+Executa uma run dentro de outra run. As variáveis de uma run são passadas automaticamente para as runs aninhadas.
 
 ```yaml
 main:
   description: "main run"
   steps:
-    log: "Executing main run"
-    run: nested
+    - log: "Executing main run"
+    - run: nested
 
 nested:
   description: "nested run"
   steps:
-    log: "Executing nested run"
+    - log: "Executing nested run"
 ```
 
 **Campos:**
@@ -167,9 +167,11 @@ kuma-cli exec
 1. **Seleção de Run:** Uma lista de Runs disponíveis será exibida para seleção.
 2. **Execução:** A Run selecionada será executada com base nos passos definidos.
 
-## Exemplos de Runs
+## Exemplos avançados
 
 ### Run que extraí as variáveis de um arquivo swagger
+
+Confira os builders e templates utilizados clonando esse [repositório](https://github.com/arthurbcp/typescript-rest-openapi-services) ou através do comando `kuma-cli get -t typescript-rest-openapi-services`
 
 ```yaml
 initial:

@@ -226,6 +226,7 @@ Ou utilizar um dos nossos templates oficiais com:
 kuma-cli get --template=typescript-rest-openapi-services
 ```
 
+**PS:** Se o arquivo `.kuma/runs.yaml` conter uma **run** chamada chamada `initial`, essa **run** será executada automaticamente após a execução do comando `get`
 **Flags:**
 
 - `--repo`, `-r`: Nome do repositório GitHub.
