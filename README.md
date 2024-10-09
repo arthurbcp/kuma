@@ -1,4 +1,4 @@
-# Kuma
+[![SBlcK.webp](https://s1.gifyu.com/images/SBlcK.webp)](https://gifyu.com/image/SBlcK) # Kuma
 
 Kuma is a powerful framework designed to generate project structures for any programming language based on [Go templates](https://pkg.go.dev/text/template). It streamlines the process of setting up new projects by automating the creation of directories, files, and base code, ensuring consistency and saving valuable development time.
 
