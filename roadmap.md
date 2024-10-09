@@ -12,7 +12,7 @@
 
 ## Read.me
 
-- [ ] Terminar o readme
+- [x] Terminar o readme
 
 ## Interno
 

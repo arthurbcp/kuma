@@ -193,7 +193,8 @@ initial:
 
 ## Terminal Commands
 
-![render1728441537530](https://github.com/user-attachments/assets/abffd609-ece1-4d61-bcca-f218a5abe89f)
+![render1728444387729](https://github.com/user-attachments/assets/54f74beb-cd85-47b0-87c2-4e7bd471cb54)
+
 
 ### Create a Boilerplate
 
@@ -228,7 +229,7 @@ Fetch templates and runs from a GitHub repository.
 You can get templates from any repository using the command:
 
 ```bash
-kuma get --repo=github.com/arthurbcp/typescript-rest-openapi-services
+kuma get --repo=arthurbcp/typescript-rest-openapi-services
 ```
 
 Or use one of our official templates with:
