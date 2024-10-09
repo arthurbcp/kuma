@@ -229,7 +229,7 @@ Fetch templates and runs from a GitHub repository.
 You can get templates from any repository using the command:
 
 ```bash
-kuma get --repo=github.com/arthurbcp/typescript-rest-openapi-services
+kuma get --repo=arthurbcp/typescript-rest-openapi-services
 ```
 
 Or use one of our official templates with:
