@@ -3,10 +3,10 @@ package execHandlers
 import (
 	"os"
 
-	execBuilders "github.com/arthurbcp/kuma-cli/cmd/commands/exec/builders"
-	"github.com/arthurbcp/kuma-cli/cmd/ui/textInput"
-	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/program"
-	"github.com/arthurbcp/kuma-cli/pkg/style"
+	execBuilders "github.com/arthurbcp/kuma/cmd/commands/exec/builders"
+	"github.com/arthurbcp/kuma/cmd/ui/textInput"
+	"github.com/arthurbcp/kuma/cmd/ui/utils/program"
+	"github.com/arthurbcp/kuma/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 )
 

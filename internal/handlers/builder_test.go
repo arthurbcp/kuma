@@ -3,8 +3,8 @@ package handlers
 import (
 	"testing"
 
-	"github.com/arthurbcp/kuma-cli/internal/domain"
-	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
+	"github.com/arthurbcp/kuma/internal/domain"
+	"github.com/arthurbcp/kuma/pkg/filesystem"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )

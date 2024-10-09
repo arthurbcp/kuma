@@ -3,12 +3,12 @@ package execBuilders
 import (
 	"os"
 
-	"github.com/arthurbcp/kuma-cli/cmd/ui/multiSelectInput"
-	"github.com/arthurbcp/kuma-cli/cmd/ui/selectInput"
-	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/program"
-	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/steps"
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
-	"github.com/arthurbcp/kuma-cli/pkg/style"
+	"github.com/arthurbcp/kuma/cmd/ui/multiSelectInput"
+	"github.com/arthurbcp/kuma/cmd/ui/selectInput"
+	"github.com/arthurbcp/kuma/cmd/ui/utils/program"
+	"github.com/arthurbcp/kuma/cmd/ui/utils/steps"
+	"github.com/arthurbcp/kuma/internal/helpers"
+	"github.com/arthurbcp/kuma/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 )
 

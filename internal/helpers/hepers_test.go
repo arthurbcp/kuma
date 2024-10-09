@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/arthurbcp/kuma-cli/internal/functions"
-	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
+	"github.com/arthurbcp/kuma/internal/functions"
+	"github.com/arthurbcp/kuma/pkg/filesystem"
 	"github.com/spf13/afero"
 )
 

@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/arthurbcp/kuma-cli/cmd/commands/create"
-	execRun "github.com/arthurbcp/kuma-cli/cmd/commands/exec"
-	"github.com/arthurbcp/kuma-cli/cmd/commands/get"
-	"github.com/arthurbcp/kuma-cli/internal/debug"
+	"github.com/arthurbcp/kuma/cmd/commands/create"
+	execRun "github.com/arthurbcp/kuma/cmd/commands/exec"
+	"github.com/arthurbcp/kuma/cmd/commands/get"
+	"github.com/arthurbcp/kuma/internal/debug"
 	"github.com/spf13/cobra"
 )
 

@@ -4,10 +4,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/arthurbcp/kuma-cli/cmd/shared"
-	"github.com/arthurbcp/kuma-cli/internal/services"
-	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
-	"github.com/arthurbcp/kuma-cli/pkg/style"
+	"github.com/arthurbcp/kuma/cmd/shared"
+	"github.com/arthurbcp/kuma/internal/services"
+	"github.com/arthurbcp/kuma/pkg/filesystem"
+	"github.com/arthurbcp/kuma/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/afero"
 )

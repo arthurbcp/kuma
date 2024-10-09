@@ -6,8 +6,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
-	"github.com/arthurbcp/kuma-cli/pkg/style"
+	"github.com/arthurbcp/kuma/internal/helpers"
+	"github.com/arthurbcp/kuma/pkg/style"
 )
 
 func HandleCommand(cmdStr string, vars map[string]interface{}) {

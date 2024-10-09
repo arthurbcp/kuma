@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os" // Import the os package
 
-	"github.com/arthurbcp/kuma-cli/pkg/style"
+	"github.com/arthurbcp/kuma/pkg/style"
 	"github.com/spf13/afero"
 )
 

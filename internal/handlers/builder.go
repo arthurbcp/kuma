@@ -6,9 +6,9 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/arthurbcp/kuma-cli/internal/domain"
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
-	"github.com/arthurbcp/kuma-cli/pkg/style"
+	"github.com/arthurbcp/kuma/internal/domain"
+	"github.com/arthurbcp/kuma/internal/helpers"
+	"github.com/arthurbcp/kuma/pkg/style"
 	"github.com/spf13/afero"
 )
 

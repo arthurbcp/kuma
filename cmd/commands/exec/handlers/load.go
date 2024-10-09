@@ -5,10 +5,10 @@ import (
 	"os"
 	"strings"
 
-	execBuilders "github.com/arthurbcp/kuma-cli/cmd/commands/exec/builders"
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
-	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
-	"github.com/arthurbcp/kuma-cli/pkg/style"
+	execBuilders "github.com/arthurbcp/kuma/cmd/commands/exec/builders"
+	"github.com/arthurbcp/kuma/internal/helpers"
+	"github.com/arthurbcp/kuma/pkg/filesystem"
+	"github.com/arthurbcp/kuma/pkg/style"
 	"github.com/spf13/afero"
 )
 

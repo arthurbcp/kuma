@@ -84,7 +84,7 @@ Kuma is a powerful framework designed to generate project structures for any pro
 4. **Verify the installation:**
 
    ```bash
-   kuma-cli --help
+   kuma --help
    ```
 
    You should see the Kuma CLI help, confirming that the installation was successful.
@@ -143,7 +143,7 @@ A YAML file containing a sequence of actions that will be executed when calling 
 **Check the full documentation [here](cmd/commands/exec).**
 
 ```yaml
-# Name of the run that will be executed as soon as the repository is obtained via the `kuma-cli get` command
+# Name of the run that will be executed as soon as the repository is obtained via the `kuma get` command
 initial:
   # Description of the run
   description: "Initial run to set up the project"
@@ -194,7 +194,7 @@ initial:
 The `create` command is used to create a boilerplate based on the builders and templates inside the `.kuma` folder and a JSON or YAML file containing the variables to replace in the templates.
 
 ```bash
-kuma-cli create --variables=swagger.json --project=. --from=base.yaml
+kuma create --variables=swagger.json --project=. --from=base.yaml
 ```
 
 **Flags:**
@@ -208,7 +208,7 @@ kuma-cli create --variables=swagger.json --project=. --from=base.yaml
 The `exec` command is used to start the process of a [run](cmd/commands/exec).
 
 ```bash
-kuma-cli exec --run=initial
+kuma exec --run=initial
 ```
 
 **Flags:**
@@ -222,13 +222,13 @@ Fetch templates and runs from a GitHub repository.
 You can get templates from any repository using the command:
 
 ```bash
-kuma-cli get --repo=github.com/arthurbcp/typescript-rest-openapi-services
+kuma get --repo=github.com/arthurbcp/typescript-rest-openapi-services
 ```
 
 Or use one of our official templates with:
 
 ```bash
-kuma-cli get --template=typescript-rest-openapi-services
+kuma get --template=typescript-rest-openapi-services
 ```
 
 **Note:** If the `.kuma/runs.yaml` file contains a **run** named `initial`, this **run** will be executed automatically after the `get` command is executed.

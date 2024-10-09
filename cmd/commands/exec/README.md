@@ -147,7 +147,7 @@ nested:
 To execute a specific Run, use the `exec` command followed by the name of the Run.
 
 ```bash
-kuma-cli exec --run=initial
+kuma exec --run=initial
 ```
 
 **Flags:**
@@ -159,7 +159,7 @@ kuma-cli exec --run=initial
 If the name of the Run is not specified, Kuma CLI will present an interactive interface to select which Run you want to execute.
 
 ```bash
-kuma-cli exec
+kuma exec
 ```
 
 **Steps:**
@@ -171,7 +171,7 @@ kuma-cli exec
 
 ### Run that extracts variables from a swagger file
 
-Check out the builders and templates used by cloning this [repository](https://github.com/arthurbcp/typescript-rest-openapi-services) or via the command `kuma-cli get -t typescript-rest-openapi-services`.
+Check out the builders and templates used by cloning this [repository](https://github.com/arthurbcp/typescript-rest-openapi-services) or via the command `kuma get -t typescript-rest-openapi-services`.
 
 ```yaml
 initial:

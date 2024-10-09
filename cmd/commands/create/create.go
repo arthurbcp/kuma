@@ -12,12 +12,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/arthurbcp/kuma-cli/cmd/shared"
-	"github.com/arthurbcp/kuma-cli/internal/domain"
-	"github.com/arthurbcp/kuma-cli/internal/handlers"
-	"github.com/arthurbcp/kuma-cli/internal/helpers"
-	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
-	"github.com/arthurbcp/kuma-cli/pkg/style"
+	"github.com/arthurbcp/kuma/cmd/shared"
+	"github.com/arthurbcp/kuma/internal/domain"
+	"github.com/arthurbcp/kuma/internal/handlers"
+	"github.com/arthurbcp/kuma/internal/helpers"
+	"github.com/arthurbcp/kuma/pkg/filesystem"
+	"github.com/arthurbcp/kuma/pkg/style"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )

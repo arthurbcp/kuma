@@ -7,14 +7,14 @@ package exec
 import (
 	"os"
 
-	execHandlers "github.com/arthurbcp/kuma-cli/cmd/commands/exec/handlers"
-	"github.com/arthurbcp/kuma-cli/cmd/shared"
-	"github.com/arthurbcp/kuma-cli/cmd/ui/selectInput"
-	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/program"
-	"github.com/arthurbcp/kuma-cli/cmd/ui/utils/steps"
-	"github.com/arthurbcp/kuma-cli/internal/services"
-	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
-	"github.com/arthurbcp/kuma-cli/pkg/style"
+	execHandlers "github.com/arthurbcp/kuma/cmd/commands/exec/handlers"
+	"github.com/arthurbcp/kuma/cmd/shared"
+	"github.com/arthurbcp/kuma/cmd/ui/selectInput"
+	"github.com/arthurbcp/kuma/cmd/ui/utils/program"
+	"github.com/arthurbcp/kuma/cmd/ui/utils/steps"
+	"github.com/arthurbcp/kuma/internal/services"
+	"github.com/arthurbcp/kuma/pkg/filesystem"
+	"github.com/arthurbcp/kuma/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/spf13/afero"
