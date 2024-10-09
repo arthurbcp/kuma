@@ -1,8 +1,8 @@
-# Kuma
+![image](https://github.com/user-attachments/assets/1de7b9ae-1926-4057-a423-3e19298cbdb4)
 
 Kuma is a powerful framework designed to generate project structures for any programming language based on [Go templates](https://pkg.go.dev/text/template). It streamlines the process of setting up new projects by automating the creation of directories, files, and base code, ensuring consistency and saving valuable development time.
 
-[![SBlWy.gif](https://s11.gifyu.com/images/SBlWy.gif)](https://gifyu.com/image/SBlWy)
+![render1728441537530](https://github.com/user-attachments/assets/abffd609-ece1-4d61-bcca-f218a5abe89f)
 
 ## Table of Contents
 
