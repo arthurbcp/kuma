@@ -2,9 +2,18 @@
 
 This document provides an overview of the functions available in this package. These functions are designed to extract and manipulate data from OpenAPI 2.0 files and convert data into YAML format for use in Go templates.
 
+## Table of Contents
+
+- [Parser Functions](#parser-functions)
+  - [ToYaml](#toyaml)
+- [OpenAPI Functions](#openapi-functions)
+  - [GetRefFrom](#getreffrom)
+  - [GetPathsByTag](#getpathsbytag)
+  - [GetParamsByType](#getparamsbytype)
+
 ## Functions
 
-### Parser functions
+### Parser Functions
 
 #### ToYaml
 
@@ -46,7 +55,9 @@ data:
 
 ---
 
-### GetRefFrom
+### OpenAPI Functions
+
+#### GetRefFrom
 
 GetRefFrom extracts the reference identifier from an OpenAPI 2.0 object if it exists. The function expects the reference to be in the format of a JSON pointer within the OpenAPI specification.
 
@@ -80,7 +91,7 @@ A string containing the reference identifier or an empty string if no valid refe
 
 ---
 
-### GetPathsByTag
+#### GetPathsByTag
 
 GetPathsByTag filters OpenAPI paths by a specified tag. It returns a subset of paths that are associated with the provided tag, useful for generating documentation for specific sections of an API.
 
@@ -155,7 +166,7 @@ A map containing the paths that include the specified tag.
 
 ---
 
-### GetParamsByType
+#### GetParamsByType
 
 GetParamsByType filters parameters based on their `in` field type (e.g., query, header, path, formData). This function helps in extracting parameters of a certain type from an OpenAPI operation.
 
