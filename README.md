@@ -180,13 +180,12 @@ initial:
     - cmd: go run main.go # Example: Hello, Kuma!
 ```
 
-&nbsp;
-
 ### Additional Notes
 
 - This project uses [sprout](https://github.com/go-sprout/sprout) as a dependency, which contains hundreds of extremely useful functions for working with Go templates. In addition to our official functions, further enhancing your experience with our framework.
   Sproute: [Official Docs](https://docs.atom.codes/sprout)
   Kuma functions: [Read me](internal/functions)
+  &nbsp;
 
 ## Terminal Commands
 
@@ -241,6 +240,7 @@ kuma-cli get --template=typescript-rest-openapi-services
 
 #### Official Templates
 
+- **[Hello World](https://github.com/arthurbcp/kuma-hello-world):** A simple Hello World in Go.
 - **[OpenAPI 2.0 TypeScript Services](https://github.com/arthurbcp/typescript-rest-openapi-services):** Create a TypeScript library with typed services for all endpoints described in an Open API 2.0 file.
 
 ## Contribution

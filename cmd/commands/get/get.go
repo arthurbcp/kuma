@@ -36,6 +36,11 @@ var Templates = map[string]domain.Template{
 		"Create a library TypeScript with services typed for all endpoints described in a file Open API 2.0",
 		[]string{"typescript", "openapi", "rest", "library"},
 	),
+	"arthurbcp/kuma-hello-world": domain.NewTemplate(
+		"kuma-hello-world",
+		"A simple Hello World in Go!",
+		[]string{"golang", "example"},
+	),
 }
 
 // GetCmd represents the 'get' subcommand.
