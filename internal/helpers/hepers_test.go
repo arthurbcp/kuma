@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/arthurbcp/kuma-cli/internal/functions"
 	"github.com/arthurbcp/kuma-cli/pkg/filesystem"
 	"github.com/spf13/afero"
 )
@@ -92,7 +93,7 @@ func TestInterfaceContains(t *testing.T) {
 
 func TestToYaml(t *testing.T) {
 	data := map[string]string{"key": "value"}
-	result := ToYaml(data)
+	result := functions.ToYaml(data)
 	expected := []string{"key: value", ""}
 
 	if !reflect.DeepEqual(result, expected) {
@@ -113,7 +114,7 @@ func TestGetRefFrom(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetRefFrom(tt.object); got != tt.want {
+			if got := functions.GetRefFrom(tt.object); got != tt.want {
 				t.Errorf("GetRefFrom() = %v, want %v", got, tt.want)
 			}
 		})
