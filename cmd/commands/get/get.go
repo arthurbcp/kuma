@@ -18,20 +18,16 @@ import (
 	"github.com/arthurbcp/kuma/cmd/ui/selectInput"
 	"github.com/arthurbcp/kuma/cmd/ui/utils/program"
 	"github.com/arthurbcp/kuma/cmd/ui/utils/steps"
-	"github.com/arthurbcp/kuma/internal/helpers"
-	"github.com/arthurbcp/kuma/pkg/filesystem"
 	"github.com/arthurbcp/kuma/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/go-github/github"
 	"github.com/gookit/color"
-	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
 var (
-	Repo      string
-	Template  string
-	Templates map[string]interface{}
+	Repo     string
+	Template string
 )
 
 // GetCmd represents the 'get' subcommand.
@@ -47,32 +43,21 @@ var GetCmd = &cobra.Command{
 }
 
 func handleTea() string {
-	var err error
 	program := program.NewProgram()
 	var options = make([]steps.Item, 0)
-	fs := filesystem.NewFileSystem(afero.NewOsFs())
-	Templates, err = helpers.UnmarshalFile(shared.OfficialTemplatesPath, fs)
-	if err != nil {
-		style.ErrorPrint("error parsing official templates file: " + err.Error())
-		os.Exit(1)
-	}
-	for repository, template := range Templates {
-		template := template.(map[string]interface{})
-		tags := make([]string, 0)
-		for _, tag := range template["tags"].([]interface{}) {
-			tags = append(tags, tag.(string))
-		}
+
+	for repository, template := range shared.Templates {
 		options = append(options, steps.NewItem(
-			template["name"].(string),
+			template.Name,
 			repository,
-			template["description"].(string),
-			tags,
+			template.Description,
+			template.Tags,
 		))
 	}
 
 	output := &selectInput.Selection{}
 	p := tea.NewProgram(selectInput.InitialSelectInputModel(options, output, "Select a template or type \"o\" to use a different repository", true, program))
-	_, err = p.Run()
+	_, err := p.Run()
 
 	program.ExitCLI(p)
 
@@ -93,7 +78,7 @@ func download(cmd *cobra.Command) {
 	}
 
 	repo := Template
-	if _, ok := Templates[Template]; !ok {
+	if _, ok := shared.Templates[Template]; !ok {
 		repo = Repo
 	}
 	style.LogPrint("getting templates from github repository...")
@@ -178,8 +163,8 @@ func downloadRepo(client *github.Client, owner, repo, path, baseDir string) erro
 func init() {
 	// Repository name
 	GetCmd.Flags().StringVarP(&Repo, "repo", "r", "", "Github repository")
-	templates := make([]string, 0, len(Templates))
-	for key := range Templates {
+	templates := make([]string, 0, len(shared.Templates))
+	for key := range shared.Templates {
 		templates = append(templates, key)
 	}
 	GetCmd.Flags().StringVarP(&Template, "template", "t", "", fmt.Sprintf("KUMA official template repositories:\n - %s",
