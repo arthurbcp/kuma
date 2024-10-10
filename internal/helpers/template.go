@@ -14,6 +14,7 @@ func GetFuncMap() template.FuncMap {
 	fnMap["getRefFrom"] = functions.GetRefFrom
 	fnMap["getPathsByTag"] = functions.GetPathsByTag
 	fnMap["getParamsByType"] = functions.GetParamsByType
+	fnMap["groupByKey"] = functions.GroupByKey
 	return fnMap
 }
 
