@@ -14,34 +14,25 @@ import (
 	"strings"
 
 	execHandlers "github.com/arthurbcp/kuma/cmd/commands/exec/handlers"
+	"github.com/arthurbcp/kuma/cmd/shared"
 	"github.com/arthurbcp/kuma/cmd/ui/selectInput"
 	"github.com/arthurbcp/kuma/cmd/ui/utils/program"
 	"github.com/arthurbcp/kuma/cmd/ui/utils/steps"
-	"github.com/arthurbcp/kuma/internal/domain"
+	"github.com/arthurbcp/kuma/internal/helpers"
+	"github.com/arthurbcp/kuma/pkg/filesystem"
 	"github.com/arthurbcp/kuma/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/go-github/github"
 	"github.com/gookit/color"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
 var (
-	Repo     string
-	Template string
+	Repo      string
+	Template  string
+	Templates map[string]interface{}
 )
-
-var Templates = map[string]domain.Template{
-	"arthurbcp/typescript-rest-openapi-services": domain.NewTemplate(
-		"typescript-rest-openapi-services",
-		"Create a library TypeScript with services typed for all endpoints described in a file Open API 2.0",
-		[]string{"typescript", "openapi", "rest", "library"},
-	),
-	"arthurbcp/kuma-hello-world": domain.NewTemplate(
-		"kuma-hello-world",
-		"A simple Hello World in Go!",
-		[]string{"golang", "example"},
-	),
-}
 
 // GetCmd represents the 'get' subcommand.
 var GetCmd = &cobra.Command{
@@ -56,20 +47,32 @@ var GetCmd = &cobra.Command{
 }
 
 func handleTea() string {
+	var err error
 	program := program.NewProgram()
 	var options = make([]steps.Item, 0)
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	Templates, err = helpers.UnmarshalFile(shared.OfficialTemplatesPath, fs)
+	if err != nil {
+		style.ErrorPrint("error parsing official templates file: " + err.Error())
+		os.Exit(1)
+	}
 	for repository, template := range Templates {
+		template := template.(map[string]interface{})
+		tags := make([]string, 0)
+		for _, tag := range template["tags"].([]interface{}) {
+			tags = append(tags, tag.(string))
+		}
 		options = append(options, steps.NewItem(
-			template.Name,
+			template["name"].(string),
 			repository,
-			template.Description,
-			template.Tags,
+			template["description"].(string),
+			tags,
 		))
 	}
 
 	output := &selectInput.Selection{}
 	p := tea.NewProgram(selectInput.InitialSelectInputModel(options, output, "Select a template or type \"o\" to use a different repository", true, program))
-	_, err := p.Run()
+	_, err = p.Run()
 
 	program.ExitCLI(p)
 

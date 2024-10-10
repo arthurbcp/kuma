@@ -230,13 +230,13 @@ Fetch templates and runs from a GitHub repository.
 You can get templates from any repository using the command:
 
 ```bash
-kuma get --repo=arthurbcp/typescript-rest-openapi-services
+kuma get --repo=arthurbcp/kuma-typescript-rest-services
 ```
 
 Or use one of our official templates with:
 
 ```bash
-kuma get --template=typescript-rest-openapi-services
+kuma get --template=kuma-typescript-rest-services
 ```
 
 **Note:** If the `.kuma/runs.yaml` file contains a **run** named `initial`, this **run** will be executed automatically after the `get` command is executed.
@@ -249,7 +249,8 @@ kuma get --template=typescript-rest-openapi-services
 #### Official Templates
 
 - **[Hello World](https://github.com/arthurbcp/kuma-hello-world):** A simple Hello World in Go.
-- **[OpenAPI 2.0 TypeScript Services](https://github.com/arthurbcp/typescript-rest-openapi-services):** Create a TypeScript library with typed services for all endpoints described in an Open API 2.0 file.
+- **[OpenAPI 2.0 TypeScript Services](https://github.com/arthurbcp/kuma-typescript-rest-services):** Create a TypeScript library with typed services for all endpoints described in an Open API 2.0 file.
+- **[Changelog Generator](https://github.com/arthurbcp/kuma-changelog-generator):** Helper to write a good changelog to your project.
 
 ## Contribution
 

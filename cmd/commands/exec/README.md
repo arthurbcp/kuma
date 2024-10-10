@@ -173,7 +173,7 @@ kuma exec
 
 ### Run that extracts variables from a swagger file
 
-Check out the builders and templates used by cloning this [repository](https://github.com/arthurbcp/typescript-rest-openapi-services) or via the command `kuma get -t typescript-rest-openapi-services`.
+Check out the builders and templates used by cloning this [repository](https://github.com/arthurbcp/kuma-typescript-rest-services) or via the command `kuma get -t kuma-typescript-rest-services`.
 
 ```yaml
 initial:
