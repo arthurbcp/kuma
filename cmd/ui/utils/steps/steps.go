@@ -26,11 +26,11 @@ type Item struct {
 
 func NewItem(label, value, description string, tags []string) Item {
 	if description != "" {
-		description = "\t\t" + description
+		description = "\n\t\t" + description
 	}
 	tagsStr := ""
 	if len(tags) > 0 {
-		tagsStr = "\t\ttags: " + strings.Join(tags, ", ")
+		tagsStr = "\n\t\ttags: " + strings.Join(tags, ", ")
 	}
 	return Item{
 		Label:       label,
