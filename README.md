@@ -142,6 +142,8 @@ func main() {
 
 A YAML file containing a sequence of actions that will be executed when calling a `run`. It includes logs, terminal commands, HTTP calls, text input, and multiple-choice prompts, along with actions to create folders and files based on builders and templates.
 
+all runs must be located within the `.kuma/runs` directory
+
 **Check the full documentation [here](cmd/commands/exec).**
 
 ```yaml
@@ -194,7 +196,6 @@ initial:
 ## Terminal Commands
 
 ![render1728444387729](https://github.com/user-attachments/assets/54f74beb-cd85-47b0-87c2-4e7bd471cb54)
-
 
 ### Create a Boilerplate
 
