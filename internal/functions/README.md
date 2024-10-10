@@ -6,6 +6,8 @@ This document provides an overview of the functions available in this package. T
 
 - [Parser Functions](#parser-functions)
   - [ToYaml](#toyaml)
+- [Group Functions](#group-functions)
+  - [GroupByKey](#groupbykey)
 - [OpenAPI Functions](#openapi-functions)
   - [GetRefFrom](#getreffrom)
   - [GetPathsByTag](#getpathsbytag)
@@ -51,6 +53,54 @@ data:
 #         - item1
 #         - item2
 #         - item3
+```
+
+---
+
+### Group Functions
+
+#### GroupByKey
+
+GroupByKey organizes a slice of maps based on a specified key. It returns a map where the keys are unique values found at the specified key in the input items, and the values are slices of items that share that key value. This function is useful for categorizing data in Go applications.
+
+**Signature:**
+
+```go
+func GroupByKey(data []interface{}, key string) map[string]interface{
+```
+
+**Parameters:**
+
+- `data`: A slice of maps where each map represents an item with key-value pairs.
+- `key`: The key used to group items in the data slice.
+
+**Returns:**
+
+A map where each key represents a unique value from the specified key in the data slice, and the corresponding value is a slice of items that have that key value.
+
+**Example**
+
+```yaml
+# input:
+# data:
+#   - {"name": "Alice", "department": "HR"}
+#   - {"name": "Bob", "department": "IT"}
+#   - {"name": "Charlie", "department": "HR"}
+#   - {"name": "Dave", "department": "IT"}
+# key: "department"
+
+"{{ groupByKey .data .key }}"
+# output:
+# {
+#   "HR": [
+#     {"name": "Alice", "department": "HR"},
+#     {"name": "Charlie", "department": "HR"}
+#   ],
+#   "IT": [
+#     {"name": "Bob", "department": "IT"},
+#     {"name": "Dave", "department": "IT"}
+#   ]
+# }
 ```
 
 ---
