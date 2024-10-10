@@ -22,6 +22,8 @@
 
 **Runs** in Kuma are sequences of actions designed to automate repetitive tasks during project development. They enable the execution of custom pipelines, which can include everything from user inputs to terminal commands, ensuring consistency and efficiency in the workflow.
 
+All runs must be located within the `.kuma/runs` directory
+
 ## Structure of a Run
 
 A Run is composed of a sequence of steps that define the actions to be executed. Below are the main components and types of actions that can be included in a Run.

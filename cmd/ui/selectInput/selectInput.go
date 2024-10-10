@@ -128,7 +128,7 @@ func (m model) View() string {
 		description := style.DescriptionStyle.Render(choice.Description)
 		tags := style.TagsStyle.Render(choice.Tags)
 
-		s += fmt.Sprintf("%s [%s] %s\n%s\n%s\n\n", cursor, checked, label, description, tags)
+		s += fmt.Sprintf("%s [%s] %s%s%s\n\n", cursor, checked, label, description, tags)
 	}
 
 	s += fmt.Sprintf("Press %s to confirm choice.\n", style.FocusedStyle.Render("y"))

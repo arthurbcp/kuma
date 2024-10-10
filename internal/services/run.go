@@ -21,17 +21,28 @@ func NewRunService(path string, fs filesystem.FileSystemInterface) *RunService {
 }
 
 func (s *RunService) GetAll() (map[string]domain.Run, error) {
-	data, err := helpers.UnmarshalFile(s.path, s.fs)
+	deprecateRunsFileMsg := "\nif your a using runs.yaml file, please move it to the runs folder"
+	files, err := s.fs.ReadDir(s.path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error reading runs directory: %w%s", err, deprecateRunsFileMsg)
 	}
-	var runs = make(map[string]domain.Run)
-	for key, run := range data {
-		runs[key] = domain.NewRun(
-			run.(map[string]interface{})["description"].(string),
-			run.(map[string]interface{})["steps"].([]interface{}),
-		)
+	if len(files) == 0 {
+		return nil, fmt.Errorf("no runs found in %s%s", s.path, deprecateRunsFileMsg)
 	}
+	runs := make(map[string]domain.Run)
+	for _, fileName := range files {
+		data, err := helpers.UnmarshalFile(s.path+"/"+fileName, s.fs)
+		if err != nil {
+			return nil, err
+		}
+		for key, run := range data {
+			runs[key] = domain.NewRun(
+				run.(map[string]interface{})["description"].(string),
+				run.(map[string]interface{})["steps"].([]interface{}),
+			)
+		}
+	}
+
 	return runs, nil
 }
 
