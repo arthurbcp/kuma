@@ -5,5 +5,5 @@ var (
 	KumaFilesPath string = ".kuma"
 
 	// KumaRunsPath defines the path to the directory containing Kuma runs.
-	KumaRunsPath string = KumaFilesPath + "/runs.yaml"
+	KumaRunsPath string = KumaFilesPath + "/runs"
 )
