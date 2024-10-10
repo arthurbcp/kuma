@@ -1,0 +1,65 @@
+name: Create Release on Merge to Main
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine Next Tag
+        id: get_tag
+        run: |
+          # Fetch all tags
+          git fetch --tags
+
+          # Get the latest tag
+          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+
+          echo "Latest tag: $latest_tag"
+
+          if [ -z "$latest_tag" ]; then
+            next_tag="v1.0.0"
+          else
+            # Extract version numbers
+            major=$(echo $latest_tag | cut -d. -f1 | tr -d 'v')
+            minor=$(echo $latest_tag | cut -d. -f2)
+            patch=$(echo $latest_tag | cut -d. -f3)
+
+            # Increment patch version
+            patch=$((patch + 1))
+
+            next_tag="v$major.$minor.$patch"
+          fi
+
+          echo "Next tag: $next_tag"
+          echo "::set-output name=TAG::$next_tag"
+
+      - name: Create Tag
+        run: |
+          git tag ${{ steps.get_tag.outputs.TAG }}
+          git push origin ${{ steps.get_tag.outputs.TAG }}
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_tag.outputs.TAG }}
+          release_name: Release ${{ steps.get_tag.outputs.TAG }}
+          body: "Automatically generated release for `${{ steps.get_tag.outputs.TAG }}`."
+          draft: false
+          prerelease: false
