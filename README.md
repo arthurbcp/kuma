@@ -239,8 +239,6 @@ Or use one of our official templates with:
 kuma get --template=kuma-typescript-rest-services
 ```
 
-**Note:** If the `.kuma/runs.yaml` file contains a **run** named `initial`, this **run** will be executed automatically after the `get` command is executed.
-
 **Flags:**
 
 - `--repo`, `-r`: Name of the GitHub repository.

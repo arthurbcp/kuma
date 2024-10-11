@@ -30,14 +30,18 @@ var ExecRunCmd = &cobra.Command{
 	Use:   "exec",
 	Short: "Run a specific pipeline",
 	Run: func(cmd *cobra.Command, args []string) {
-		if Run == "" {
-			Run = handleTea()
-		}
-		vars := map[string]interface{}{
-			"data": map[string]interface{}{},
-		}
-		execHandlers.HandleRun(Run, vars)
+		Execute()
 	},
+}
+
+func Execute() {
+	if Run == "" {
+		Run = handleTea()
+	}
+	vars := map[string]interface{}{
+		"data": map[string]interface{}{},
+	}
+	execHandlers.HandleRun(Run, vars)
 }
 
 func handleTea() string {
