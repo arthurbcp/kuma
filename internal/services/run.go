@@ -36,6 +36,9 @@ func (s *RunService) GetAll() (map[string]domain.Run, error) {
 			return nil, err
 		}
 		for key, run := range data {
+			if _, ok := runs[key]; ok {
+				return nil, fmt.Errorf("conflict between runs found for the run %s\n rename one of them and try again", key)
+			}
 			runs[key] = domain.NewRun(
 				run.(map[string]interface{})["description"].(string),
 				run.(map[string]interface{})["steps"].([]interface{}),
