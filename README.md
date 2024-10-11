@@ -1,4 +1,4 @@
-<p align="center">
+
  <svg width="951" height="325" viewBox="0 0 951 325" fill="none" xmlns="http://www.w3.org/2000/svg">
 <mask id="path-1-outside-1_0_1" maskUnits="userSpaceOnUse" x="355.983" y="94.9553" width="595.493" height="211.4" fill="black">
 <rect fill="white" x="355.983" y="94.9553" width="595.493" height="211.4"/>
@@ -48,8 +48,6 @@
 <path fill-rule="evenodd" clip-rule="evenodd" d="M345.542 192.027L334.392 197.758L276.142 201.357C284.445 191.3 307.578 188.19 345.542 192.027Z" fill="#D90062"/>
 <path d="M299.283 203.972C315.611 193.605 337.918 196.335 351.037 194.978C329.402 181.853 307.86 177.585 293.751 180.364C283.24 182.435 276.854 188.417 277.629 197.564C278.03 203.657 288.969 203.596 299.283 203.972Z" stroke="black" stroke-width="7.15802" stroke-linecap="square" stroke-linejoin="bevel"/>
 </svg>
-
-</p>
 
 Kuma is a powerful framework designed to generate boilerplates for any programming language, based on [Go templates](https://pkg.go.dev/text/template). It streamlines the process of setting up new projects by automating the creation of directories, files, and base code, ensuring consistency and saving valuable development time. Additionally, Kuma features a customizable user-interaction CLI and a user-friendly graphical interface, providing an intuitive and efficient experience both for those creating boilerplates and those using them, making the process accessible and seamless for developers of all levels.
 
