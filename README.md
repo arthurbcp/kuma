@@ -1,7 +1,4 @@
-<p align="center>
- <img src="https://github.com/user-attachments/assets/7498189e-7ad5-4867-800d-3ad9aa909498" style="max-width="500px" />
- </p>
-
+![image](https://github.com/user-attachments/assets/72e8dedc-4fc2-4a4c-810f-da49b6cacaae)
 
  
 Kuma is a powerful framework designed to generate boilerplates for any programming language, based on [Go templates](https://pkg.go.dev/text/template). It streamlines the process of setting up new projects by automating the creation of directories, files, and base code, ensuring consistency and saving valuable development time. Additionally, Kuma features a customizable user-interaction CLI and a user-friendly graphical interface, providing an intuitive and efficient experience both for those creating boilerplates and those using them, making the process accessible and seamless for developers of all levels.
