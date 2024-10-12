@@ -42,6 +42,7 @@ func (s *RunService) GetAll() (map[string]domain.Run, error) {
 			runs[key] = domain.NewRun(
 				run.(map[string]interface{})["description"].(string),
 				run.(map[string]interface{})["steps"].([]interface{}),
+				fileName,
 			)
 		}
 	}

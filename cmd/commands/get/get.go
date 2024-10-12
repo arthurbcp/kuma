@@ -5,24 +5,26 @@
 package get
 
 import (
-	"context"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
-	"path/filepath"
+	"os/exec"
 	"strings"
 
-	"github.com/arthurbcp/kuma/cmd/commands/exec"
+	execCmd "github.com/arthurbcp/kuma/cmd/commands/exec"
 	"github.com/arthurbcp/kuma/cmd/shared"
 	"github.com/arthurbcp/kuma/cmd/ui/selectInput"
 	"github.com/arthurbcp/kuma/cmd/ui/utils/program"
 	"github.com/arthurbcp/kuma/cmd/ui/utils/steps"
+	"github.com/arthurbcp/kuma/internal/domain"
+	"github.com/arthurbcp/kuma/internal/helpers"
+	"github.com/arthurbcp/kuma/internal/services"
+	"github.com/arthurbcp/kuma/pkg/filesystem"
 	"github.com/arthurbcp/kuma/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/google/go-github/github"
 	"github.com/gookit/color"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -68,9 +70,52 @@ func handleTea() string {
 	return output.Choice
 }
 
-func download(cmd *cobra.Command) {
-	client := github.NewClient(nil)
+func addKumaModule(newModule string) error {
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	modulesFile := shared.KumaFilesPath + "/kuma-modules.yaml"
+	_, err := fs.CreateFileIfNotExists(modulesFile)
+	if err != nil {
+		return err
+	}
+	modules, err := helpers.UnmarshalFile(modulesFile, fs)
+	if err != nil {
+		return err
+	}
 
+	module, err := getModule(newModule)
+	if err != nil {
+		return err
+	}
+
+	mapModule, err := helpers.StructToMap(module)
+	if err != nil {
+		return err
+	}
+	modules[newModule] = mapModule
+
+	yamlContent, err := yaml.Marshal(modules)
+	if err != nil {
+		return err
+	}
+	fs.WriteFile(modulesFile, string(yamlContent))
+	return nil
+}
+
+func getModule(module string) (domain.Module, error) {
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	configData, err := helpers.UnmarshalFile(shared.KumaFilesPath+"/"+module+"/kuma-config.yaml", fs)
+	if err != nil {
+		return domain.Module{}, err
+	}
+	runsService := services.NewRunService(shared.KumaRunsPath+"/"+module, fs)
+	runs, err := runsService.GetAll()
+	if err != nil {
+		return domain.Module{}, err
+	}
+	return domain.NewModule(configData, runs), nil
+}
+
+func download(cmd *cobra.Command) {
 	if Template == "" && Repo == "" {
 		cmd.Help()
 		style.LogPrint("\nplease specify a template or a repository")
@@ -81,77 +126,40 @@ func download(cmd *cobra.Command) {
 	if _, ok := shared.Templates[Template]; !ok {
 		repo = Repo
 	}
-	style.LogPrint("getting templates from github repository...")
-	splitRepo := strings.Split(repo, "/")
-	if len(splitRepo) != 2 {
-		style.ErrorPrint("invalid repository name: " + Repo)
+	style.LogPrint("getting templates from github repository as a submodule...")
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	err := fs.CreateDirectoryIfNotExists(shared.KumaFilesPath)
+	if err != nil {
+		style.ErrorPrint("error creating kuma files directory: " + err.Error())
 		os.Exit(1)
 	}
-	org := splitRepo[0]
-	repoName := splitRepo[1]
-	downloadRepo(client, org, repoName, "", "")
+	err = addGitSubmodule(repo)
+	if err != nil {
+		style.ErrorPrint("error adding submodule: " + err.Error())
+		os.Exit(1)
+	}
 	style.CheckMarkPrint("templates downloaded successfully!\n")
-	exec.Execute()
+	err = addKumaModule(GetModuleName(repo))
+	if err != nil {
+		style.ErrorPrint("error adding kuma module: " + err.Error())
+		os.Exit(1)
+	}
+	execCmd.Execute()
 	os.Exit(0)
 }
 
-// downloadFile writes the content of the file to the local file system
-func downloadFile(content *github.RepositoryContent, baseDir string) error {
-	// Ensure the content is a file
-	if *content.Type == "file" {
-		// Create file path
-		filePath := filepath.Join(baseDir, *content.Path)
-		err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
-		if err != nil {
-			return err
-		}
-
-		// Fetch the file's contents via the download URL
-		if content.DownloadURL != nil {
-			resp, err := http.Get(*content.DownloadURL)
-			if err != nil {
-				return err
-			}
-			defer resp.Body.Close()
-
-			// Read the content
-			data, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return err
-			}
-
-			// Write the content to the file
-			return os.WriteFile(filePath, data, 0644)
-		}
-	}
-	return nil
+func GetModuleName(repo string) string {
+	splitRepo := strings.Split(repo, "/")
+	return splitRepo[1]
 }
 
-// downloadRepo recursively downloads repository contents (directories and files)
-func downloadRepo(client *github.Client, owner, repo, path, baseDir string) error {
-	ctx := context.Background()
-
-	// Fetch the contents of the path (directory or file)
-	_, dirContents, _, err := client.Repositories.GetContents(ctx, owner, repo, path, nil)
+func addGitSubmodule(repo string) error {
+	cmd := exec.Command("git", "submodule", "add", shared.GitHubURL+"/"+repo, shared.KumaFilesPath+"/"+GetModuleName(repo))
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
 	if err != nil {
 		return err
-	}
-
-	// Iterate over each content item
-	for _, content := range dirContents {
-		if *content.Type == "dir" {
-			// If it's a directory, recursively download its contents
-			err = downloadRepo(client, owner, repo, *content.Path, baseDir)
-			if err != nil {
-				return err
-			}
-		} else if *content.Type == "file" {
-			// If it's a file, download it
-			err = downloadFile(content, baseDir)
-			if err != nil {
-				return err
-			}
-		}
 	}
 	return nil
 }
