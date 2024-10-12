@@ -89,7 +89,7 @@ func download(cmd *cobra.Command) {
 
 	moduleService := services.NewModuleService(shared.KumaFilesPath, fs)
 
-	err = addGitSubmodule(repo)
+	err = addGitSubmodule(moduleService.GetModuleName(repo))
 	if err != nil {
 		style.ErrorPrint("error adding submodule: " + err.Error())
 		os.Exit(1)

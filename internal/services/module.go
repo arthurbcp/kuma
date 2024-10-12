@@ -33,7 +33,7 @@ func (m *ModuleService) Add(newModule string) error {
 		return err
 	}
 
-	module, err := m.GetModule(newModule)
+	module, err := m.Get(newModule)
 	if err != nil {
 		return err
 	}
@@ -52,7 +52,28 @@ func (m *ModuleService) Add(newModule string) error {
 	return nil
 }
 
-func (m *ModuleService) GetModule(module string) (domain.Module, error) {
+func (m *ModuleService) Remove(module string) error {
+	modulesFile := shared.KumaFilesPath + "/kuma-modules.yaml"
+	modules, err := helpers.UnmarshalFile(modulesFile, m.fs)
+	if err != nil {
+		return err
+	}
+
+	delete(modules, module)
+
+	if len(modules) == 0 {
+		m.fs.WriteFile(modulesFile, "")
+	}
+
+	yamlContent, err := yaml.Marshal(modules)
+	if err != nil {
+		return err
+	}
+	m.fs.WriteFile(modulesFile, string(yamlContent))
+	return nil
+}
+
+func (m *ModuleService) Get(module string) (domain.Module, error) {
 	configData, err := helpers.UnmarshalFile(m.path+"/"+module+"/kuma-config.yaml", m.fs)
 	if err != nil {
 		return domain.Module{}, err

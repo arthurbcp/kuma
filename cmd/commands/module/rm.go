@@ -9,6 +9,9 @@ import (
 	"os/exec"
 
 	"github.com/arthurbcp/kuma/cmd/shared"
+	"github.com/arthurbcp/kuma/internal/services"
+	"github.com/arthurbcp/kuma/pkg/filesystem"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
@@ -21,8 +24,18 @@ var ModuleRmCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove a Kuma module",
 	Run: func(cmd *cobra.Command, args []string) {
-		removeGitSubmodule(Module)
+		RemoveModule(Module)
 	},
+}
+
+func RemoveModule(module string) error {
+	// Remove the module from the kuma-modules.yaml file
+	moduleService := services.NewModuleService(shared.KumaFilesPath, filesystem.NewFileSystem(afero.NewOsFs()))
+	err := moduleService.Remove(module)
+	if err != nil {
+		return err
+	}
+	return removeGitSubmodule(module)
 }
 
 // remove git submodule removes a submodule from Kuma
@@ -34,25 +47,22 @@ func removeGitSubmodule(module string) error {
 	removeConfigCmd := exec.Command("git", "config", "--remove-section", "submodule."+fullSubmodulePath)
 	removeConfigCmd.Stdout = os.Stdout
 	removeConfigCmd.Stderr = os.Stderr
-	if err := removeConfigCmd.Run(); err != nil {
-		return err
-	}
+	// Does not need error checking
+	removeConfigCmd.Run()
 
 	// 2. Remove submodule entry from .gitmodules if it exists
 	removeFromGitmodulesCmd := exec.Command("git", "config", "-f", ".gitmodules", "--remove-section", "submodule."+fullSubmodulePath)
 	removeFromGitmodulesCmd.Stdout = os.Stdout
 	removeFromGitmodulesCmd.Stderr = os.Stderr
-	if err := removeFromGitmodulesCmd.Run(); err != nil {
-		return err
-	}
+	// Does not need error checking
+	removeFromGitmodulesCmd.Run()
 
 	// 3. Remove the submodule from git cache
 	cmdRmCached := exec.Command("git", "rm", "--cached", fullSubmodulePath)
 	cmdRmCached.Stdout = os.Stdout
 	cmdRmCached.Stderr = os.Stderr
-	if err := cmdRmCached.Run(); err != nil {
-		return err
-	}
+	// Does not need error checking
+	cmdRmCached.Run()
 
 	// 4. Physically remove the submodule directory
 	if err := os.RemoveAll(fullSubmodulePath); err != nil {
