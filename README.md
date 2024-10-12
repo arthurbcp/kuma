@@ -25,7 +25,7 @@ Kuma is a powerful framework designed to generate boilerplates for any programmi
 
 - Customize your project’s directory and file structures through [Go templates](https://pkg.go.dev/text/template).
 - GitHub integration to download pre-defined templates from the community or for personal use via private repositories.
-- Ability to create custom CLI command workflows through a YAML file using runs.
+- Ability to create custom CLI/TUI command workflows through a YAML file using runs.
 - Dynamic variable usage to be applied to templates. Variables can be extracted from a local YAML or JSON file or fetched from a public URL. They can also be obtained from user input during the execution of a [run](cmd/commands/exec).
 
 ## Installation
