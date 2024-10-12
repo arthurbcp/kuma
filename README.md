@@ -3,18 +3,18 @@
 </p>
 
 
-Kuma is a powerful framework designed to generate boilerplates for any programming language, based on [Go templates](https://pkg.go.dev/text/template). It streamlines the process of setting up new projects by automating the creation of directories, files, and base code, ensuring consistency and saving valuable development time. Additionally, Kuma features a customizable TUI, providing an intuitive and efficient experience both for those creating boilerplates and those using them, making the process accessible and seamless for developers of all levels.
+Kuma is a powerful framework designed to generate scaffolds for any programming language, based on [Go templates](https://pkg.go.dev/text/template). It streamlines the process of setting up new projects by automating the creation of directories, files, and base code, ensuring consistency and saving valuable development time. Additionally, Kuma features a customizable TUI, providing an intuitive and efficient experience both for those creating scaffolds and those using them, making the process accessible and seamless for developers of all levels.
 
 ## Table of Contents
 
 - [Features](#features)
 - [Installation](#installation)
-- [Create Your Own Boilerplates](#create-your-own-boilerplates)
+- [Create Your Own Boilerplates](#create-your-own-scaffolds)
   - [Builders](#builders)
   - [Templates](#templates)
   - [Runs](#runs)
 - [Terminal Commands](#terminal-commands)
-  - [Create a Boilerplate](#create-a-boilerplate)
+  - [Create a Boilerplate](#create-a-scaffold)
   - [Execute a Run](#execute-a-run)
   - [Get Templates from GitHub](#get-templates-from-github)
     - [Official Templates](#official-templates)
@@ -200,7 +200,7 @@ initial:
 
 ### Create a Boilerplate
 
-The `create` command is used to create a boilerplate based on the builders and templates inside the `.kuma` folder and a JSON or YAML file containing the variables to replace in the templates.
+The `create` command is used to create a scaffold based on the builders and templates inside the `.kuma` folder and a JSON or YAML file containing the variables to replace in the templates.
 
 ```bash
 kuma create --variables=swagger.json --project=. --from=base.yaml
@@ -209,7 +209,7 @@ kuma create --variables=swagger.json --project=. --from=base.yaml
 **Flags:**
 
 - `--variables`, `-v`: Path or URL to the variables file.
-- `--project`, `-p`: Path to the project where the boilerplate will be created.
+- `--project`, `-p`: Path to the project where the scaffold will be created.
 - `--from`, `-f`: Path to the YAML file with the structure and templates.
 
 ### Execute a Run
