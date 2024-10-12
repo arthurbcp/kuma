@@ -1,0 +1,11 @@
+kuma-hello-world:
+  description: A simple Hello World in Go.
+  runs:
+    - hello-world-runs.yaml/initial
+  version: 0.0.1
+
+typescript-rest-openapi-services:
+  description: A simple Hello World in Go.
+  runs:
+    - typescript-rest-services-runs.yaml/initial
+  version: 0.0.1

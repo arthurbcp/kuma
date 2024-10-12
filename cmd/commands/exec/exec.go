@@ -22,7 +22,8 @@ import (
 )
 
 var (
-	Run string
+	Run    string
+	Module string
 )
 
 // ExecRunCmd represents the 'run' subcommand.
@@ -41,13 +42,13 @@ func Execute() {
 	vars := map[string]interface{}{
 		"data": map[string]interface{}{},
 	}
-	execHandlers.HandleRun(Run, vars)
+	execHandlers.HandleRun(Run, Module, vars)
 }
 
 func handleTea() string {
 
 	program := program.NewProgram()
-	runService := services.NewRunService(shared.KumaRunsPath, filesystem.NewFileSystem(afero.NewOsFs()))
+	runService := services.NewRunService(shared.KumaFilesPath+"/"+Module+"/"+shared.KumaRunsPath, filesystem.NewFileSystem(afero.NewOsFs()))
 	runs, err := runService.GetAll()
 	if err != nil {
 		style.ErrorPrint("getting runs error: " + err.Error())
@@ -80,4 +81,6 @@ func handleTea() string {
 func init() {
 	// Repository name
 	ExecRunCmd.Flags().StringVarP(&Run, "run", "r", "", "run to use")
+	// Repository module
+	ExecRunCmd.Flags().StringVarP(&Module, "module", "m", "", "runs module")
 }

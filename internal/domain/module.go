@@ -1,10 +1,9 @@
 package domain
 
 type Module struct {
-	Id          string   `yaml:"id"`
-	Description string   `yaml:"description"`
-	Version     string   `yaml:"version"`
-	Runs        []string `yaml:"runs"`
+	Description string   `json:"description"`
+	Version     string   `json:"version"`
+	Runs        []string `json:"runs"`
 }
 
 func NewModule(module map[string]interface{}, runs map[string]Run) Module {
@@ -13,7 +12,6 @@ func NewModule(module map[string]interface{}, runs map[string]Run) Module {
 		moduleRuns = append(moduleRuns, run.File+"/"+key)
 	}
 	return Module{
-		Id:          module["id"].(string),
 		Description: module["description"].(string),
 		Version:     module["version"].(string),
 		Runs:        moduleRuns,
