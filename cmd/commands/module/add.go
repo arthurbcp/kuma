@@ -6,7 +6,6 @@ package module
 
 import (
 	"os"
-	"os/exec"
 
 	execCmd "github.com/arthurbcp/kuma/cmd/commands/exec"
 	"github.com/arthurbcp/kuma/cmd/shared"
@@ -101,11 +100,7 @@ func download(cmd *cobra.Command) {
 func addGitSubmodule(module string) error {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	moduleService := services.NewModuleService(shared.KumaFilesPath, fs)
-	cmd := exec.Command("git", "submodule", "add", shared.GitHubURL+"/"+module, shared.KumaFilesPath+"/"+moduleService.GetModuleName(module))
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	if err != nil {
+	if err := shared.RunCommand("git", "submodule", "add", shared.GitHubURL+"/"+module, shared.KumaFilesPath+"/"+moduleService.GetModuleName(module)); err != nil {
 		return err
 	}
 	return nil

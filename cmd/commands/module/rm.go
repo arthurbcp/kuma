@@ -6,7 +6,6 @@ package module
 
 import (
 	"os"
-	"os/exec"
 
 	"github.com/arthurbcp/kuma/cmd/shared"
 	"github.com/arthurbcp/kuma/internal/services"
@@ -36,13 +35,16 @@ var ModuleRmCmd = &cobra.Command{
 }
 
 func RemoveModule(module string) error {
+	if err := removeGitSubmodule(module); err != nil {
+		return err
+	}
 	// Remove the module from the kuma-modules.yaml file
 	moduleService := services.NewModuleService(shared.KumaFilesPath, filesystem.NewFileSystem(afero.NewOsFs()))
 	err := moduleService.Remove(module)
 	if err != nil {
 		return err
 	}
-	return removeGitSubmodule(module)
+	return nil
 }
 
 // remove git submodule removes a submodule from Kuma
@@ -51,29 +53,17 @@ func removeGitSubmodule(module string) error {
 	fullSubmodulePath := shared.KumaFilesPath + "/" + module
 
 	// 1. Remove submodule config from .git/config
-	removeConfigCmd := exec.Command("git", "config", "--remove-section", "submodule."+fullSubmodulePath)
-	removeConfigCmd.Stdout = os.Stdout
-	removeConfigCmd.Stderr = os.Stderr
-	if err := removeConfigCmd.Run(); err != nil {
-		return err
-	}
-	// 2. Remove submodule entry from .gitmodules if it exists
-	removeFromGitmodulesCmd := exec.Command("git", "config", "-f", ".gitmodules", "--remove-section", "submodule."+fullSubmodulePath)
-	removeFromGitmodulesCmd.Stdout = os.Stdout
-	removeFromGitmodulesCmd.Stderr = os.Stderr
-	if err := removeFromGitmodulesCmd.Run(); err != nil {
-		return err
-	}
-	// 3. Remove the submodule from git cache
-	cmdRmCached := exec.Command("git", "rm", "--cached", fullSubmodulePath)
-	cmdRmCached.Stdout = os.Stdout
-	cmdRmCached.Stderr = os.Stderr
-	if err := cmdRmCached.Run(); err != nil {
+	if err := shared.RunCommand("git", "config", "--remove-section", "submodule."+fullSubmodulePath); err != nil {
 		return err
 	}
 
-	// 4. Physically remove the submodule directory
-	if err := os.RemoveAll(fullSubmodulePath); err != nil {
+	// 2. Remove submodule entry from .gitmodules if it exists
+	if err := shared.RunCommand("git", "config", "-f", ".gitmodules", "--remove-section", "submodule."+fullSubmodulePath); err != nil {
+		return err
+	}
+
+	// 3. Remove the submodule from git cache
+	if err := shared.RunCommand("git", "rm", "--cached", fullSubmodulePath); err != nil {
 		return err
 	}
 

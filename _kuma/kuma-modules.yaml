@@ -1,7 +1,7 @@
-kuma-typescript-rest-services:
+kuma-hello-world:
     description: A simple Hello World in Go.
     runs:
         initial:
             description: Initial run
-            file: typescript-rest-services-runs.yaml
+            file: hello-world-runs.yaml
     version: 0.0.1
