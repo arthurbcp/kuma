@@ -71,13 +71,11 @@ func NewBuilder(fs filesystem.FileSystemInterface, config *Config) (*Builder, er
 func (b *Builder) SetBuilderDataFromFile(file string, vars map[string]interface{}) error {
 	style.LogPrint("parsing config...")
 
-	// Read the content of the configuration file.
 	configData, err := b.Fs.ReadFile(file)
 	if err != nil {
 		return err
 	}
 
-	// Replace variables in the configuration data.
 	configData, err = helpers.ReplaceVars(configData, vars, helpers.GetFuncMap())
 	b.ParsedData = string(configData)
 	style.DebugPrint("Config file", b.ParsedData)
@@ -133,7 +131,6 @@ func unmarshalJsonConfig(configData []byte) (*BuilderData, error) {
 	if err != nil {
 		return &config, err
 	}
-	// Note: The original code does not populate BuilderData from 'c'.
 	return &config, nil
 }
 
