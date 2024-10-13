@@ -16,7 +16,8 @@ import (
 )
 
 var (
-	Module string
+	Module             string
+	RemoveGitSubmodule bool
 )
 
 // Add a Kuma module from a GitHub repository
@@ -35,8 +36,10 @@ var ModuleRmCmd = &cobra.Command{
 }
 
 func RemoveModule(module string) error {
-	if err := removeGitSubmodule(module); err != nil {
-		return err
+	if RemoveGitSubmodule {
+		if err := removeGitSubmodule(module); err != nil {
+			return err
+		}
 	}
 	// Remove the module from the kuma-modules.yaml file
 	moduleService := services.NewModuleService(shared.KumaFilesPath, filesystem.NewFileSystem(afero.NewOsFs()))
@@ -73,5 +76,6 @@ func removeGitSubmodule(module string) error {
 // init sets up flags for the 'rm' subcommand and binds them to variables.
 func init() {
 	// Module name
-	ModuleRmCmd.Flags().StringVarP(&Module, "rm", "m", "", "module to remove")
+	ModuleRmCmd.Flags().StringVarP(&Module, "module", "m", "", "module to remove")
+	ModuleRmCmd.Flags().BoolVarP(&RemoveGitSubmodule, "rm-git-submodule", "", false, "remove git submodule")
 }
