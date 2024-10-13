@@ -6,13 +6,12 @@ type ModuleRun struct {
 }
 
 type Module struct {
-	Key         string               `json:"key"`
 	Description string               `json:"description"`
 	Version     string               `json:"version"`
 	Runs        map[string]ModuleRun `json:"runs"`
 }
 
-func NewModule(key string, module map[string]interface{}, runs map[string]Run) Module {
+func NewModule(module map[string]interface{}, runs map[string]Run) Module {
 	runsMap := map[string]ModuleRun{}
 	for key, run := range runs {
 		runsMap[key] = ModuleRun{
@@ -21,7 +20,6 @@ func NewModule(key string, module map[string]interface{}, runs map[string]Run) M
 		}
 	}
 	return Module{
-		Key:         key,
 		Description: module["description"].(string),
 		Version:     module["version"].(string),
 		Runs:        runsMap,

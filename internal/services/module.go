@@ -85,7 +85,7 @@ func (s *ModuleService) Get(module string) (domain.Module, error) {
 	if err != nil {
 		return domain.Module{}, err
 	}
-	return domain.NewModule(module, configData, runs), nil
+	return domain.NewModule(configData, runs), nil
 }
 
 func (s *ModuleService) GetAll() (map[string]domain.Module, error) {
