@@ -1,7 +1,0 @@
-kuma-hello-world:
-    description: A simple Hello World in Go.
-    runs:
-        initial:
-            description: Initial run
-            file: hello-world-runs.yaml
-    version: 0.0.1
