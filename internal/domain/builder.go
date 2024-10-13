@@ -152,7 +152,7 @@ func unmarshalYamlConfig(configData []byte) (*BuilderData, error) {
 	if err != nil {
 		return &config, err
 	}
-	// Decode the map into BuilderData using mapstructure.
+
 	err = mapstructure.Decode(c, &config)
 	if err != nil {
 		return &config, err
