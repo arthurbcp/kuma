@@ -93,7 +93,7 @@ Kuma is a powerful framework designed to generate scaffolds for any programming 
 
 ## Create Your Own Boilerplates
 
-For Kuma to work, all framework-related files must be inside the `_kuma` folder.
+For Kuma to work, all framework-related files must be inside the `.kuma` folder.
 
 The framework uses a parser for [Go templates](https://pkg.go.dev/text/template) divided into three file types:
 
@@ -102,7 +102,7 @@ The framework uses a parser for [Go templates](https://pkg.go.dev/text/template)
 YAML-formatted templates that contain the folder and file structure to be created.
 
 ```yaml
-# _kuma/base.yaml
+# .kuma/base.yaml
 
 # Global variables to be used in all templates.
 global:
@@ -142,7 +142,7 @@ func main() {
 
 A YAML file containing a sequence of actions that will be executed when calling a `run`. It includes logs, terminal commands, HTTP calls, text input, and multiple-choice prompts, along with actions to create folders and files based on builders and templates.
 
-all runs must be located within the `_kuma/runs` directory
+all runs must be located within the `.kuma/runs` directory
 
 **Check the full documentation [here](cmd/commands/exec).**
 
@@ -199,7 +199,7 @@ initial:
 
 ### Create a Boilerplate
 
-The `create` command is used to create a scaffold based on the builders and templates inside the `_kuma` folder and a JSON or YAML file containing the variables to replace in the templates.
+The `create` command is used to create a scaffold based on the builders and templates inside the `.kuma` folder and a JSON or YAML file containing the variables to replace in the templates.
 
 ```bash
 kuma create --variables=swagger.json --project=. --from=base.yaml

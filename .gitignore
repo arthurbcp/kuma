@@ -26,7 +26,7 @@ go.work.sum
 
 
 # Kuma files
-#_kuma/**
+#.kuma/**
 swagger.*
 mylib/**
 package.json

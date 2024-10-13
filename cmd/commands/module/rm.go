@@ -52,7 +52,7 @@ func RemoveModule(module string) error {
 
 // remove git submodule removes a submodule from Kuma
 func removeGitSubmodule(module string) error {
-	// Full path to the submodule inside _kuma
+	// Full path to the submodule inside .kuma
 	fullSubmodulePath := shared.KumaFilesPath + "/" + module
 
 	// 1. Remove submodule config from .git/config
