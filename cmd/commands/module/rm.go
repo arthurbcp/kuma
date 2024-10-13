@@ -11,6 +11,7 @@ import (
 	"github.com/arthurbcp/kuma/cmd/shared"
 	"github.com/arthurbcp/kuma/internal/services"
 	"github.com/arthurbcp/kuma/pkg/filesystem"
+	"github.com/arthurbcp/kuma/pkg/style"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -24,7 +25,13 @@ var ModuleRmCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove a Kuma module",
 	Run: func(cmd *cobra.Command, args []string) {
-		RemoveModule(Module)
+		if Module != "" {
+			err := RemoveModule(Module)
+			if err != nil {
+				style.ErrorPrint("error removing module: " + err.Error())
+				os.Exit(1)
+			}
+		}
 	},
 }
 
@@ -40,7 +47,7 @@ func RemoveModule(module string) error {
 
 // remove git submodule removes a submodule from Kuma
 func removeGitSubmodule(module string) error {
-	// Full path to the submodule inside .kuma
+	// Full path to the submodule inside _kuma
 	fullSubmodulePath := shared.KumaFilesPath + "/" + module
 
 	// 1. Remove submodule config from .git/config

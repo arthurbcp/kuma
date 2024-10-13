@@ -22,7 +22,7 @@
 
 **Runs** in Kuma are sequences of actions designed to automate repetitive tasks during project development. They enable the execution of custom pipelines, which can include everything from user inputs to terminal commands, ensuring consistency and efficiency in the workflow.
 
-All runs must be located within the `.kuma/runs` directory
+All runs must be located within the `_kuma/runs` directory
 
 ## Structure of a Run
 

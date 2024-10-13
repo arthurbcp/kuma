@@ -2,7 +2,6 @@
   <img src="https://github.com/user-attachments/assets/c023465c-132c-4fef-b4b4-4f30552148fb" />
 </p>
 
-
 Kuma is a powerful framework designed to generate scaffolds for any programming language, based on [Go templates](https://pkg.go.dev/text/template). It streamlines the process of setting up new projects by automating the creation of directories, files, and base code, ensuring consistency and saving valuable development time. Additionally, Kuma features a customizable TUI, providing an intuitive and efficient experience both for those creating scaffolds and those using them, making the process accessible and seamless for developers of all levels.
 
 ## Table of Contents
@@ -94,7 +93,7 @@ Kuma is a powerful framework designed to generate scaffolds for any programming 
 
 ## Create Your Own Boilerplates
 
-For Kuma to work, all framework-related files must be inside the `.kuma` folder.
+For Kuma to work, all framework-related files must be inside the `_kuma` folder.
 
 The framework uses a parser for [Go templates](https://pkg.go.dev/text/template) divided into three file types:
 
@@ -103,7 +102,7 @@ The framework uses a parser for [Go templates](https://pkg.go.dev/text/template)
 YAML-formatted templates that contain the folder and file structure to be created.
 
 ```yaml
-# .kuma/base.yaml
+# _kuma/base.yaml
 
 # Global variables to be used in all templates.
 global:
@@ -143,7 +142,7 @@ func main() {
 
 A YAML file containing a sequence of actions that will be executed when calling a `run`. It includes logs, terminal commands, HTTP calls, text input, and multiple-choice prompts, along with actions to create folders and files based on builders and templates.
 
-all runs must be located within the `.kuma/runs` directory
+all runs must be located within the `_kuma/runs` directory
 
 **Check the full documentation [here](cmd/commands/exec).**
 
@@ -200,7 +199,7 @@ initial:
 
 ### Create a Boilerplate
 
-The `create` command is used to create a scaffold based on the builders and templates inside the `.kuma` folder and a JSON or YAML file containing the variables to replace in the templates.
+The `create` command is used to create a scaffold based on the builders and templates inside the `_kuma` folder and a JSON or YAML file containing the variables to replace in the templates.
 
 ```bash
 kuma create --variables=swagger.json --project=. --from=base.yaml

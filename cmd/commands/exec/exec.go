@@ -36,7 +36,7 @@ var ExecRunCmd = &cobra.Command{
 }
 
 func Execute() {
-	if Run == "" {
+	if Run == "" || Module == "" {
 		Run = handleTea()
 	}
 	vars := map[string]interface{}{
@@ -46,9 +46,38 @@ func Execute() {
 }
 
 func handleTea() string {
-
+	var err error
 	program := program.NewProgram()
-	runService := services.NewRunService(shared.KumaFilesPath+"/"+Module+"/"+shared.KumaRunsPath, filesystem.NewFileSystem(afero.NewOsFs()))
+
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	if Module == "" {
+		modulesService := services.NewModuleService(shared.KumaFilesPath, fs)
+		modules, err := modulesService.GetAll()
+		if err != nil {
+			style.ErrorPrint("getting modules error: " + err.Error())
+			os.Exit(1)
+		}
+		var options = make([]steps.Item, 0)
+		for key, module := range modules {
+			options = append(options, steps.NewItem(
+				key,
+				key,
+				module.Description,
+				[]string{},
+			))
+		}
+
+		output := &selectInput.Selection{}
+		p := tea.NewProgram(selectInput.InitialSelectInputModel(options, output, "Select a module", false, program))
+		_, err = p.Run()
+		if err != nil {
+			style.ErrorPrint("error running program: " + err.Error())
+			os.Exit(1)
+		}
+		Module = output.Choice
+	}
+
+	runService := services.NewRunService(shared.KumaFilesPath+"/"+Module+"/"+shared.KumaRunsPath, fs)
 	runs, err := runService.GetAll()
 	if err != nil {
 		style.ErrorPrint("getting runs error: " + err.Error())

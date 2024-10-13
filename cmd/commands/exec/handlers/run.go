@@ -12,10 +12,17 @@ import (
 	"github.com/spf13/afero"
 )
 
-func HandleRun(name, module string, vars map[string]interface{}) {
+func HandleRun(name, moduleName string, vars map[string]interface{}) {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
-	runService := services.NewRunService(shared.KumaFilesPath+"/"+module+"/"+shared.KumaRunsPath, fs)
-	run, err := runService.Get(name)
+	moduleService := services.NewModuleService(shared.KumaFilesPath, fs)
+	modules, err := moduleService.GetAll()
+	if err != nil {
+		style.ErrorPrint(err.Error())
+		os.Exit(1)
+	}
+	module := modules[moduleName]
+	run, err := moduleService.GetRun(&module, name, shared.KumaFilesPath+"/"+moduleName+"/"+shared.KumaRunsPath)
+
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
@@ -31,9 +38,9 @@ func HandleRun(name, module string, vars map[string]interface{}) {
 			} else if key == "log" {
 				HandleLog(value.(string), vars)
 			} else if key == "run" {
-				HandleRun(value.(string), module, vars)
+				HandleRun(value.(string), moduleName, vars)
 			} else if key == "create" {
-				HandleCreate(value.(map[string]interface{}), vars)
+				HandleCreate(moduleName, value.(map[string]interface{}), vars)
 			} else if key == "load" {
 				HandleLoad(value.(map[string]interface{}), vars)
 			}

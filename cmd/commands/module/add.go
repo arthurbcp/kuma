@@ -5,10 +5,8 @@
 package module
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
-	"strings"
 
 	execCmd "github.com/arthurbcp/kuma/cmd/commands/exec"
 	"github.com/arthurbcp/kuma/cmd/shared"
@@ -19,14 +17,12 @@ import (
 	"github.com/arthurbcp/kuma/pkg/filesystem"
 	"github.com/arthurbcp/kuma/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/gookit/color"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
 var (
-	Repo     string
-	Template string
+	Repository string
 )
 
 // Add a Kuma module from a GitHub repository
@@ -34,8 +30,8 @@ var ModuleAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a Kuma module from a GitHub repository",
 	Run: func(cmd *cobra.Command, args []string) {
-		if Template == "" && Repo == "" {
-			Template = handleTea()
+		if Repository == "" {
+			Repository = handleTea()
 		}
 		download(cmd)
 	},
@@ -68,16 +64,12 @@ func handleTea() string {
 }
 
 func download(cmd *cobra.Command) {
-	if Template == "" && Repo == "" {
+	if Repository == "" {
 		cmd.Help()
-		style.LogPrint("\nplease specify a template or a repository")
+		style.LogPrint("\nplease specify a repository")
 		os.Exit(1)
 	}
 
-	repo := Template
-	if _, ok := shared.Templates[Template]; !ok {
-		repo = Repo
-	}
 	style.LogPrint("getting templates from github repository as a submodule...")
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 
@@ -87,26 +79,29 @@ func download(cmd *cobra.Command) {
 		os.Exit(1)
 	}
 
-	moduleService := services.NewModuleService(shared.KumaFilesPath, fs)
-
-	err = addGitSubmodule(moduleService.GetModuleName(repo))
+	err = addGitSubmodule(Repository)
 	if err != nil {
 		style.ErrorPrint("error adding submodule: " + err.Error())
 		os.Exit(1)
 	}
 	style.CheckMarkPrint("templates downloaded successfully!\n")
 
-	err = moduleService.Add(moduleService.GetModuleName(repo))
+	moduleService := services.NewModuleService(shared.KumaFilesPath, fs)
+	moduleName := moduleService.GetModuleName(Repository)
+	err = moduleService.Add(moduleName)
 	if err != nil {
 		style.ErrorPrint("error adding kuma module: " + err.Error())
 		os.Exit(1)
 	}
+	execCmd.Module = moduleName
 	execCmd.Execute()
 	os.Exit(0)
 }
 
 func addGitSubmodule(module string) error {
-	cmd := exec.Command("git", "submodule", "add", shared.GitHubURL+"/"+module, shared.KumaFilesPath+"/"+module)
+	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	moduleService := services.NewModuleService(shared.KumaFilesPath, fs)
+	cmd := exec.Command("git", "submodule", "add", shared.GitHubURL+"/"+module, shared.KumaFilesPath+"/"+moduleService.GetModuleName(module))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
@@ -119,11 +114,5 @@ func addGitSubmodule(module string) error {
 // init sets up flags for the 'add' subcommand and binds them to variables.
 func init() {
 	// Repository name
-	ModuleAddCmd.Flags().StringVarP(&Repo, "repo", "r", "", "Github repository")
-	templates := make([]string, 0, len(shared.Templates))
-	for key := range shared.Templates {
-		templates = append(templates, key)
-	}
-	ModuleAddCmd.Flags().StringVarP(&Template, "template", "t", "", fmt.Sprintf("KUMA official template repositories:\n - %s",
-		color.Gray.Sprintf(strings.Join(templates, "\n - "))))
+	ModuleAddCmd.Flags().StringVarP(&Repository, "repository", "r", "", "Github repository with a Kuma module")
 }

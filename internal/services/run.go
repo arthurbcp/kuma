@@ -40,6 +40,7 @@ func (s *RunService) GetAll() (map[string]domain.Run, error) {
 				return nil, fmt.Errorf("conflict between runs found for the run %s\n rename one of them and try again", key)
 			}
 			runs[key] = domain.NewRun(
+				key,
 				run.(map[string]interface{})["description"].(string),
 				run.(map[string]interface{})["steps"].([]interface{}),
 				fileName,

@@ -1,0 +1,6 @@
+[submodule "_kuma/kuma-hello-world"]
+	path = _kuma/kuma-hello-world
+	url = https://github.com/arthurbcp/kuma-hello-world
+[submodule "_kuma/kuma-typescript-rest-services"]
+	path = _kuma/kuma-typescript-rest-services
+	url = https://github.com/arthurbcp/kuma-typescript-rest-services
