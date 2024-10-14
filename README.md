@@ -8,12 +8,12 @@ Kuma is a powerful framework designed to generate scaffolds for any programming 
 
 - [Features](#features)
 - [Installation](#installation)
-- [Create Your Own Boilerplates](#create-your-own-scaffolds)
+- [Create Your Own Scaffolds](#create-your-own-scaffolds)
   - [Builders](#builders)
   - [Templates](#templates)
   - [Runs](#runs)
 - [Terminal Commands](#terminal-commands)
-  - [Create a Boilerplate](#create-a-scaffold)
+  - [Create a Scaffold](#create-a-scaffold)
   - [Execute a Run](#execute-a-run)
   - [Get Templates from GitHub](#get-templates-from-github)
     - [Official Templates](#official-templates)
@@ -91,7 +91,7 @@ Kuma is a powerful framework designed to generate scaffolds for any programming 
 
    You should see the Kuma CLI help, confirming that the installation was successful.
 
-## Create Your Own Boilerplates
+## Create Your Own Scaffolds
 
 For Kuma to work, all framework-related files must be inside the `.kuma` folder.
 
@@ -197,7 +197,7 @@ initial:
 
 ![render1728444387729](https://github.com/user-attachments/assets/54f74beb-cd85-47b0-87c2-4e7bd471cb54)
 
-### Create a Boilerplate
+### Create a Scaffold
 
 The `create` command is used to create a scaffold based on the builders and templates inside the `.kuma` folder and a JSON or YAML file containing the variables to replace in the templates.
 
