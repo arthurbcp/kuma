@@ -52,5 +52,5 @@ func init() {
 	// Add subcommands to the root command.
 	rootCmd.AddCommand(create.CreateCmd)
 	rootCmd.AddCommand(module.ModuleCmd)
-	rootCmd.AddCommand(execRun.ExecRunCmd)
+	rootCmd.AddCommand(execRun.ExecCmd)
 }

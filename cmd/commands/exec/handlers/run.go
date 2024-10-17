@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/arthurbcp/kuma/cmd/shared"
+	"github.com/arthurbcp/kuma/internal/domain"
 	"github.com/arthurbcp/kuma/internal/services"
 	"github.com/arthurbcp/kuma/pkg/filesystem"
 	"github.com/arthurbcp/kuma/pkg/style"
@@ -13,19 +14,30 @@ import (
 )
 
 func HandleRun(name, moduleName string, vars map[string]interface{}) {
+	var err error
+	var run = &domain.Run{}
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
-	moduleService := services.NewModuleService(shared.KumaFilesPath, fs)
-	modules, err := moduleService.GetAll()
-	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
-	}
-	module := modules[moduleName]
-	run, err := moduleService.GetRun(&module, name, shared.KumaFilesPath+"/"+moduleName+"/"+shared.KumaRunsPath)
+	if moduleName != "" {
+		moduleService := services.NewModuleService(shared.KumaFilesPath, fs)
+		modules, err := moduleService.GetAll()
+		if err != nil {
+			style.ErrorPrint(err.Error())
+			os.Exit(1)
+		}
+		module := modules[moduleName]
+		run, err = moduleService.GetRun(&module, name, shared.KumaFilesPath+"/"+moduleName+"/"+shared.KumaRunsPath)
 
-	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		if err != nil {
+			style.ErrorPrint(err.Error())
+			os.Exit(1)
+		}
+	} else {
+		runService := services.NewRunService(shared.KumaRunsPath, fs)
+		run, err = runService.Get(name)
+		if err != nil {
+			style.ErrorPrint(err.Error())
+			os.Exit(1)
+		}
 	}
 
 	for _, step := range run.Steps {

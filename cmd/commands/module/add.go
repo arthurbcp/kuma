@@ -7,7 +7,7 @@ package module
 import (
 	"os"
 
-	execCmd "github.com/arthurbcp/kuma/cmd/commands/exec"
+	execModule "github.com/arthurbcp/kuma/cmd/commands/exec/module"
 	"github.com/arthurbcp/kuma/cmd/shared"
 	"github.com/arthurbcp/kuma/cmd/ui/selectInput"
 	"github.com/arthurbcp/kuma/cmd/ui/utils/program"
@@ -92,8 +92,8 @@ func download(cmd *cobra.Command) {
 		style.ErrorPrint("error adding kuma module: " + err.Error())
 		os.Exit(1)
 	}
-	execCmd.Module = moduleName
-	execCmd.Execute()
+	shared.Module = moduleName
+	execModule.Execute()
 	os.Exit(0)
 }
 

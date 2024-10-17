@@ -26,12 +26,13 @@ go.work.sum
 
 
 # Kuma files
-#.kuma/**
+.kuma/**
 swagger.*
 mylib/**
 package.json
 package-lock.json
 tsconfig.json
 node_modules/**
+.gitmodules
 dist/**
 src/**

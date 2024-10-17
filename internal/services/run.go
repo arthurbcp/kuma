@@ -51,14 +51,14 @@ func (s *RunService) GetAll() (map[string]domain.Run, error) {
 	return runs, nil
 }
 
-func (s *RunService) Get(name string) (domain.Run, error) {
+func (s *RunService) Get(name string) (*domain.Run, error) {
 	runs, err := s.GetAll()
 	if err != nil {
-		return domain.Run{}, err
+		return nil, err
 	}
 	run, ok := runs[name]
 	if !ok {
-		return domain.Run{}, fmt.Errorf("run not found: %s", name)
+		return nil, fmt.Errorf("run not found: %s", name)
 	}
-	return run, nil
+	return &run, nil
 }

@@ -1,3 +1,0 @@
-[submodule ".kuma/kuma-hello-world"]
-	path = .kuma/kuma-hello-world
-	url = https://github.com/arthurbcp/kuma-hello-world
