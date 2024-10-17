@@ -10,6 +10,7 @@ import (
 
 	"github.com/arthurbcp/kuma/cmd/commands/create"
 	execRun "github.com/arthurbcp/kuma/cmd/commands/exec"
+	"github.com/arthurbcp/kuma/cmd/commands/modify"
 	"github.com/arthurbcp/kuma/cmd/commands/module"
 	"github.com/arthurbcp/kuma/internal/debug"
 	"github.com/spf13/cobra"
@@ -53,4 +54,5 @@ func init() {
 	rootCmd.AddCommand(create.CreateCmd)
 	rootCmd.AddCommand(module.ModuleCmd)
 	rootCmd.AddCommand(execRun.ExecCmd)
+	rootCmd.AddCommand(modify.ModifyCmd)
 }
