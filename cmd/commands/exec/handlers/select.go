@@ -4,13 +4,11 @@ import (
 	"os"
 
 	execBuilders "github.com/arthurbcp/kuma/cmd/commands/exec/builders"
-	"github.com/arthurbcp/kuma/cmd/ui/textInput"
 	"github.com/arthurbcp/kuma/cmd/ui/utils/program"
 	"github.com/arthurbcp/kuma/pkg/style"
-	tea "github.com/charmbracelet/bubbletea"
 )
 
-func HandleInput(input map[string]interface{}, vars map[string]interface{}) {
+func HandleSelect(input map[string]interface{}, vars map[string]interface{}) {
 	var err error
 	program := program.NewProgram()
 	data := vars["data"].(map[string]interface{})
@@ -26,22 +24,25 @@ func HandleInput(input map[string]interface{}, vars map[string]interface{}) {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	placeholder, err := execBuilders.BuildStringValue("placeholder", input, vars, false)
+
+	other, err := execBuilders.BuildBoolValue("other", input, vars, true)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
 
-	output := &textInput.Output{}
-	p := tea.NewProgram(textInput.InitialTextInputModel(output, label, placeholder, program))
-	_, err = p.Run()
-
-	program.ExitCLI(p)
-
+	multi, err := execBuilders.BuildBoolValue("multi", input, vars, true)
 	if err != nil {
-		style.ErrorPrint("error running program: " + err.Error())
+		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	data[out] = output.Output
 
+	if mapOptions, ok := input["options"].([]interface{}); ok {
+		options, err := execBuilders.BuildOptions(program, mapOptions, other, multi, label, vars)
+		if err != nil {
+			style.ErrorPrint(err.Error())
+			os.Exit(1)
+		}
+		data[out] = options
+	}
 }

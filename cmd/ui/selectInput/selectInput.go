@@ -92,7 +92,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "o":
 			if m.other {
 				textValue := &textInput.Output{}
-				p := tea.NewProgram(textInput.InitialTextInputModel(textValue, "", m.program))
+				p := tea.NewProgram(textInput.InitialTextInputModel(textValue, "", "Enter another option", m.program))
 				_, err := p.Run()
 				if err != nil {
 					style.ErrorPrint("error running program: " + err.Error())

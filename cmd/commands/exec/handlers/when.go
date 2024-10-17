@@ -8,12 +8,12 @@ import (
 )
 
 func HandleWhen(module string, data map[string]interface{}, vars map[string]interface{}) {
-	isTrue, err := execBuilders.BuildBoolValue("condition", data, vars)
+	isTrue, err := execBuilders.BuildBoolValue("condition", data, vars, true)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	run, err := execBuilders.BuildStringValue("run", data, vars)
+	run, err := execBuilders.BuildStringValue("run", data, vars, true)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)

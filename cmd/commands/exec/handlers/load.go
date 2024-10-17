@@ -17,13 +17,13 @@ func HandleLoad(load map[string]interface{}, vars map[string]interface{}) {
 	data := vars["data"].(map[string]interface{})
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 
-	from, err := execBuilders.BuildStringValue("from", load, vars)
+	from, err := execBuilders.BuildStringValue("from", load, vars, true)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
 
-	out, err := execBuilders.BuildStringValue("out", load, vars)
+	out, err := execBuilders.BuildStringValue("out", load, vars, true)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)

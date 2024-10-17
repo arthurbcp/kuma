@@ -1,7 +1,7 @@
 add-changelog:
   description: "Add changelog"
   steps:
-    - input:
+    - select:
         label: "What type of change is that?"
         options:
           - label: "Added"
@@ -19,11 +19,13 @@ add-changelog:
         out: changeType
     - input:
         label: "Describe your changes"
+        placeholder: "e.g. Adding a new feature..."
         out: changeDescription
     - input:
         label: "What version is?"
+        placeholder: "e.g. v0.0.1"
         out: changeVersion
-    - input:
+    - select:
         label: "It's released?"
         options:
           - label: "Yes"

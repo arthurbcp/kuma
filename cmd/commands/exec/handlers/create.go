@@ -21,7 +21,7 @@ func HandleCreate(module string, data map[string]interface{}, vars map[string]in
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	from, err := execBuilders.BuildStringValue("from", data, vars)
+	from, err := execBuilders.BuildStringValue("from", data, vars, true)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)

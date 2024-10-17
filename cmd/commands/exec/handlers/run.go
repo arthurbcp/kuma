@@ -47,6 +47,8 @@ func HandleRun(name, moduleName string, vars map[string]interface{}) {
 				HandleCommand(value.(string), vars)
 			} else if key == "input" {
 				HandleInput(value.(map[string]interface{}), vars)
+			} else if key == "select" {
+				HandleSelect(value.(map[string]interface{}), vars)
 			} else if key == "log" {
 				HandleLog(value.(string), vars)
 			} else if key == "run" {

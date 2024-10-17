@@ -48,13 +48,15 @@ func sanitizeInput(input string) error {
 
 // InitialTextInputModel initializes a textinput step
 // with the given data
-func InitialTextInputModel(output *Output, header string, program *program.Program) model {
+func InitialTextInputModel(output *Output, header string, placeholder string, program *program.Program) model {
 	ti := textinput.New()
 	ti.Focus()
 	ti.CharLimit = 156
 	ti.Width = 20
 	ti.Validate = sanitizeInput
-
+	if placeholder != "" {
+		ti.Placeholder = placeholder
+	}
 	m := model{
 		textInput: ti,
 		err:       nil,

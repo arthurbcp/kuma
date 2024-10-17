@@ -15,7 +15,7 @@ func HandleModify(data map[string]interface{}, vars map[string]interface{}) {
 
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 
-	file, err := execBuilders.BuildStringValue("file", data, vars)
+	file, err := execBuilders.BuildStringValue("file", data, vars, true)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
@@ -25,17 +25,17 @@ func HandleModify(data map[string]interface{}, vars map[string]interface{}) {
 		style.ErrorPrint("reading file error: " + err.Error())
 		os.Exit(1)
 	}
-	template, err := execBuilders.BuildStringValue("template", data, vars)
+	template, err := execBuilders.BuildStringValue("template", data, vars, true)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	codeMark, err := execBuilders.BuildStringValue("mark", data, vars)
+	codeMark, err := execBuilders.BuildStringValue("mark", data, vars, true)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	replace, err := execBuilders.BuildBoolValue("replace", data, vars)
+	replace, err := execBuilders.BuildBoolValue("replace", data, vars, true)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
