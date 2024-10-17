@@ -113,7 +113,7 @@ func (m model) View() string {
 	for i, choice := range m.choices {
 		cursor := " "
 		if m.cursor == i {
-			cursor = style.FocusedStyle.Render(">")
+			cursor = style.SelectedItemStyle.Render(">")
 			choice.Label = style.SelectedItemStyle.Render(choice.Label)
 			choice.Description = style.DescriptionStyle.Render(choice.Description)
 			choice.Tags = style.TagsStyle.Render(choice.Tags)
@@ -121,7 +121,7 @@ func (m model) View() string {
 
 		checked := " "
 		if _, ok := m.selected[i]; ok {
-			checked = style.FocusedStyle.Render("*")
+			checked = style.SelectedItemStyle.Render("*")
 		}
 
 		label := style.FocusedStyle.Render(choice.Label)

@@ -7,6 +7,18 @@ import (
 	"github.com/gookit/color"
 )
 
+func PrintStyles() {
+	fmt.Println(TitleStyle.Render("Title") + "\n")
+	fmt.Println(ErrorStyle.Render("Error") + "\n")
+	fmt.Println(LogStyle.Render("Log") + "\n")
+	fmt.Println(FocusedStyle.Render("Focused") + "\n")
+	fmt.Println(SelectedItemStyle.Render("Selected") + "\n")
+	fmt.Println(CheckStyle.Render("Check") + "\n")
+	fmt.Println(CrossMarkStyle.Render("Cross") + "\n")
+	fmt.Println(TagsStyle.Render("Tags") + "\n")
+	fmt.Println(DescriptionStyle.Render("Description") + "\n")
+}
+
 func TitlePrint(text string) {
 	fmt.Println(TitleStyle.Render(text) + "\n")
 }

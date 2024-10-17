@@ -61,6 +61,7 @@ func HandleForm(formData map[string]interface{}, vars map[string]interface{}) {
 	form := huh.NewForm(
 		huh.NewGroup(huhFields...),
 	)
+	form.WithTheme(style.KumaTheme())
 	form.WithAccessible(accessibility)
 	form.Run()
 }
