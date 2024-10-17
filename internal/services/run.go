@@ -39,10 +39,18 @@ func (s *RunService) GetAll() (map[string]domain.Run, error) {
 			if _, ok := runs[key]; ok {
 				return nil, fmt.Errorf("conflict between runs found for the run %s\n rename one of them and try again", key)
 			}
+			steps, ok := run.(map[string]interface{})["steps"].([]interface{})
+			if !ok {
+				steps = []interface{}{}
+			}
+			description, ok := run.(map[string]interface{})["description"].(string)
+			if !ok {
+				description = ""
+			}
 			runs[key] = domain.NewRun(
 				key,
-				run.(map[string]interface{})["description"].(string),
-				run.(map[string]interface{})["steps"].([]interface{}),
+				description,
+				steps,
 				fileName,
 			)
 		}

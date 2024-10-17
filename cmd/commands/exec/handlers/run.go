@@ -55,6 +55,10 @@ func HandleRun(name, moduleName string, vars map[string]interface{}) {
 				HandleCreate(moduleName, value.(map[string]interface{}), vars)
 			} else if key == "load" {
 				HandleLoad(value.(map[string]interface{}), vars)
+			} else if key == "when" {
+				HandleWhen(moduleName, value.(map[string]interface{}), vars)
+			} else if key == "modify" {
+				HandleModify(value.(map[string]interface{}), vars)
 			}
 		}
 	}
