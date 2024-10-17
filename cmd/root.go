@@ -10,7 +10,7 @@ import (
 
 	"github.com/arthurbcp/kuma/cmd/commands/create"
 	execRun "github.com/arthurbcp/kuma/cmd/commands/exec"
-	"github.com/arthurbcp/kuma/cmd/commands/get"
+	"github.com/arthurbcp/kuma/cmd/commands/module"
 	"github.com/arthurbcp/kuma/internal/debug"
 	"github.com/spf13/cobra"
 )
@@ -51,6 +51,6 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&debug.Debug, "debug", "", false, "Enable debug mode")
 	// Add subcommands to the root command.
 	rootCmd.AddCommand(create.CreateCmd)
-	rootCmd.AddCommand(get.GetCmd)
-	rootCmd.AddCommand(execRun.ExecRunCmd)
+	rootCmd.AddCommand(module.ModuleCmd)
+	rootCmd.AddCommand(execRun.ExecCmd)
 }

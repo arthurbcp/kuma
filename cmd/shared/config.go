@@ -9,4 +9,8 @@ var (
 
 	// Kuma Official Templates
 	OfficialTemplatesPath string = "official-templates.yaml"
+
+	Run string
+
+	Module string
 )
