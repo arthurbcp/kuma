@@ -27,7 +27,7 @@ func HandleForm(formData map[string]interface{}, vars map[string]interface{}) {
 		os.Exit(1)
 	}
 	if title != "" {
-		style.TitlePrint(title)
+		style.TitlePrint(title, true)
 	}
 	if description != "" {
 		style.LogPrint(description)

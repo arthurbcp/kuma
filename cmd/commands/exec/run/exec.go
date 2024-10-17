@@ -41,7 +41,7 @@ func handleTea() string {
 
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	runService := services.NewRunService(shared.KumaRunsPath, fs)
-	runs, err := runService.GetAll()
+	runs, err := runService.GetAll(true)
 	if err != nil {
 		style.ErrorPrint("getting runs error: " + err.Error())
 		os.Exit(1)

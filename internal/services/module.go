@@ -81,7 +81,7 @@ func (s *ModuleService) Get(module string) (domain.Module, error) {
 		return domain.Module{}, err
 	}
 	runsService := NewRunService(s.path+"/"+module+"/"+shared.KumaRunsPath, s.fs)
-	runs, err := runsService.GetAll()
+	runs, err := runsService.GetAll(false)
 	if err != nil {
 		return domain.Module{}, err
 	}
@@ -124,11 +124,24 @@ func (s *ModuleService) GetRun(module *domain.Module, runKey string, modulePath 
 	if !ok {
 		return nil, fmt.Errorf("run not found: %s", runKey)
 	}
+	description, ok := runContent.(map[string]interface{})["description"].(string)
+	if !ok {
+		description = ""
+	}
+	steps, ok := runContent.(map[string]interface{})["steps"].([]interface{})
+	if !ok {
+		steps = []interface{}{}
+	}
+	visible, ok := runContent.(map[string]interface{})["visible"].(bool)
+	if !ok {
+		visible = true
+	}
 	run := domain.NewRun(
 		runKey,
-		runContent.(map[string]interface{})["description"].(string),
-		runContent.(map[string]interface{})["steps"].([]interface{}),
+		description,
+		steps,
 		moduleRun.File,
+		visible,
 	)
 	return &run, nil
 }

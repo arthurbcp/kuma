@@ -8,7 +8,7 @@ import (
 )
 
 func PrintStyles() {
-	fmt.Println(TitleStyle.Render("Title") + "\n")
+	fmt.Println(TitleWithBgStyle.Render("Title") + "\n")
 	fmt.Println(ErrorStyle.Render("Error") + "\n")
 	fmt.Println(LogStyle.Render("Log") + "\n")
 	fmt.Println(FocusedStyle.Render("Focused") + "\n")
@@ -19,7 +19,11 @@ func PrintStyles() {
 	fmt.Println(DescriptionStyle.Render("Description") + "\n")
 }
 
-func TitlePrint(text string) {
+func TitlePrint(text string, withBG bool) {
+	if withBG {
+		fmt.Println(TitleWithBgStyle.Render(text) + "\n")
+		return
+	}
 	fmt.Println(TitleStyle.Render(text) + "\n")
 }
 

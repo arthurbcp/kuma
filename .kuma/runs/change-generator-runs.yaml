@@ -1,9 +1,9 @@
-add-changelog:
-  description: "Add changelog"
+add-change:
+  description: "Add a new change in the changelog"
   steps:
     - form:
-        title: "Add changelog"
-        description: "Add a changelog to your project"
+        title: "Add change"
+        description: "Add a new change to the changelog"
         accessibility: false
         fields:
           - select:
@@ -41,12 +41,14 @@ add-changelog:
         run: not-release
 
 is-release:
+  visible: false
   description: "Is release"
   steps:
     - log: "is a relase"
 
 
 not-release:
+  visible: false
   description: "Not release"
   steps:
     - log: "not a release"

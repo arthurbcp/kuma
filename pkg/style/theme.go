@@ -16,7 +16,8 @@ var (
 )
 
 var (
-	TitleStyle        = lipgloss.NewStyle().Background(Primary).Foreground(Cream).Bold(true).Padding(0, 1, 0)
+	TitleWithBgStyle  = lipgloss.NewStyle().Background(Primary).Foreground(Cream).Bold(true).Padding(0, 1, 0)
+	TitleStyle        = lipgloss.NewStyle().Foreground(Primary).Bold(true)
 	ErrorStyle        = lipgloss.NewStyle().Background(Error).Foreground(Cream).Bold(true).Padding(0, 1, 0)
 	LogStyle          = lipgloss.NewStyle().Foreground(Cream)
 	FocusedStyle      = lipgloss.NewStyle().Foreground(Primary).Bold(true)
