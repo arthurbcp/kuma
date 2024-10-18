@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-func HandleModify(module string, data map[string]interface{}, vars map[string]interface{}) {
+func HandleModify(data map[string]interface{}, vars map[string]interface{}) {
 
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 
