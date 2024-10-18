@@ -2,6 +2,8 @@
   <img src="https://github.com/user-attachments/assets/c023465c-132c-4fef-b4b4-4f30552148fb" />
 </p>
 
+### This README is not being updated with the latest releases. I am working on new documentation
+
 Kuma is a powerful framework designed to generate scaffolds for any programming language, based on [Go templates](https://pkg.go.dev/text/template). It streamlines the process of setting up new projects by automating the creation of directories, files, and base code, ensuring consistency and saving valuable development time. Additionally, Kuma features a customizable TUI, providing an intuitive and efficient experience both for those creating scaffolds and those using them, making the process accessible and seamless for developers of all levels.
 
 ## Table of Contents
@@ -39,7 +41,7 @@ Kuma is a powerful framework designed to generate scaffolds for any programming 
 1. **Run the installation command:**
 
    ```bash
-   go install github.com/arthurbcp/kuma@latest
+   go install github.com/arthurbcp/kuma/v2@latest
    ```
 
 2. **Add the Go bin directory to your PATH (if not already included):**
@@ -157,7 +159,7 @@ initial:
     # Input action
     - input:
         label: "What is the package name of your project?"
-        out: packageName # Example: github.com/arthurbcp/kuma-hello-world
+        out: packageName # Example: github.com/arthurbcp/kuma/v2-hello-world
 
     # Another input action
     - input:
@@ -165,7 +167,7 @@ initial:
         out: msg # Example: Hello, Kuma!
 
     # Log message
-    - log: "Creating structure for {{.data.packageName}}" # Example: Creating structure for github.com/arthurbcp/kuma-hello-world
+    - log: "Creating structure for {{.data.packageName}}" # Example: Creating structure for github.com/arthurbcp/kuma/v2-hello-world
 
     # Create the project structure using the base.yaml builder
     - create:
@@ -175,7 +177,7 @@ initial:
     - log: "Base structure created successfully!"
 
     # Initialize the Go module
-    - cmd: go mod init {{.data.packageName}} # Example: go mod init github.com/arthurbcp/kuma-hello-world
+    - cmd: go mod init {{.data.packageName}} # Example: go mod init github.com/arthurbcp/kuma/v2-hello-world
 
     # Install dependencies
     - cmd: go mod tidy
@@ -246,9 +248,9 @@ kuma get --template=kuma-typescript-rest-services
 
 #### Official Templates
 
-- **[Hello World](https://github.com/arthurbcp/kuma-hello-world):** A simple Hello World in Go.
-- **[OpenAPI 2.0 TypeScript Services](https://github.com/arthurbcp/kuma-typescript-rest-services):** Create a TypeScript library with typed services for all endpoints described in an Open API 2.0 file.
-- **[Changelog Generator](https://github.com/arthurbcp/kuma-changelog-generator):** Helper to write a good changelog to your project.
+- **[Hello World](https://github.com/arthurbcp/kuma/v2-hello-world):** A simple Hello World in Go.
+- **[OpenAPI 2.0 TypeScript Services](https://github.com/arthurbcp/kuma/v2-typescript-rest-services):** Create a TypeScript library with typed services for all endpoints described in an Open API 2.0 file.
+- **[Changelog Generator](https://github.com/arthurbcp/kuma/v2-changelog-generator):** Helper to write a good changelog to your project.
 
 ## Contribution
 

@@ -3,8 +3,8 @@ package execHandlers
 import (
 	"os"
 
-	execBuilders "github.com/arthurbcp/kuma/cmd/commands/exec/builders"
-	"github.com/arthurbcp/kuma/pkg/style"
+	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
+	"github.com/arthurbcp/kuma/v2/pkg/style"
 )
 
 func HandleWhen(module string, data map[string]interface{}, vars map[string]interface{}) {

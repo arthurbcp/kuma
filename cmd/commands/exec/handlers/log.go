@@ -3,8 +3,8 @@ package execHandlers
 import (
 	"os"
 
-	"github.com/arthurbcp/kuma/internal/helpers"
-	"github.com/arthurbcp/kuma/pkg/style"
+	"github.com/arthurbcp/kuma/v2/internal/helpers"
+	"github.com/arthurbcp/kuma/v2/pkg/style"
 )
 
 func HandleLog(log string, vars map[string]interface{}) {

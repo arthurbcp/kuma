@@ -5,8 +5,9 @@ import (
 	"io"
 	"net/http"
 	"os" // Import the os package
+	"os/exec"
 
-	"github.com/arthurbcp/kuma/pkg/style"
+	"github.com/arthurbcp/kuma/v2/pkg/style"
 	"github.com/spf13/afero"
 )
 
@@ -68,6 +69,24 @@ func (s *FileSystem) CreateFileIfNotExists(filename string) (afero.File, error) 
 
 // CreateFile creates or truncates the named file.
 func (s *FileSystem) CreateFile(filename string) (afero.File, error) {
+	// Check if the file exists
+	exists, err := afero.Exists(s.Fs, filename)
+	if err != nil {
+		return nil, err
+	}
+	if exists {
+		// Execute the git add command
+		execCmd := exec.Command("git", "add", filename)
+		// Set the command's standard output to the console
+		execCmd.Stdout = os.Stdout
+		execCmd.Stderr = os.Stderr
+		style.LogPrint("running: git add " + filename)
+		// Execute the command
+		err := execCmd.Run()
+		if err != nil {
+			return nil, err
+		}
+	}
 	file, err := s.Fs.Create(filename)
 	if err != nil {
 		return file, err
