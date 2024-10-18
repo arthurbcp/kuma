@@ -5,9 +5,6 @@
 package create
 
 import (
-	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"os"
 	"strings"
@@ -58,7 +55,7 @@ func Create() {
 			}
 		} else {
 			style.LogPrint("downloading variables file")
-			varsContent, err := readFileFromURL(VariablesFile)
+			varsContent, err := shared.ReadFileFromURL(VariablesFile)
 			if err != nil {
 				style.ErrorPrint("reading file error: " + err.Error())
 				os.Exit(1)
@@ -73,29 +70,6 @@ func Create() {
 		TemplateVariables = vars.(map[string]interface{})
 		build()
 	}
-}
-
-func readFileFromURL(url string) (string, error) {
-	// Send the HTTP GET request
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	// Check if request succeeded
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("bad status: %s", resp.Status)
-	}
-
-	// Read the body into a byte slice
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	// Convert the byte slice to a string
-	return string(bodyBytes), nil
 }
 
 // build initializes the Builder and triggers the build process.

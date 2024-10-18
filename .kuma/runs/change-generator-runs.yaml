@@ -1,0 +1,54 @@
+add-change:
+  description: "Add a new change in the changelog"
+  steps:
+    - form:
+        title: "Add change"
+        description: "Add a new change to the changelog"
+        accessibility: false
+        fields:
+          - select:
+              label: "What type of change is that?"
+              options:
+                - label: "Added"
+                - label: "Changed"
+                - label: "Deprecated"
+                - label: "Removed"
+                - label: "Fixed"
+                - label: "Security"
+              out: changeType
+          - input:
+              label: "Describe your changes"
+              placeholder: "e.g. Adding a new feature..."
+              out: changeDescription
+          - input:
+              label: "What version is?"
+              placeholder: "e.g. v0.0.1"
+              out: changeVersion
+          - select:
+              label: "It's released?"
+              options:
+                - label: "Yes"
+                  value: "y"
+                - label: "No"
+                  value: "n"
+              out: isRelease
+
+    - when:
+        condition: "{{eq .data.isRelease \"y\"}}"
+        run: is-release
+    - when:
+        condition: "{{eq .data.isRelease \"n\"}}"
+        run: not-release
+
+is-release:
+  visible: false
+  description: "Is release"
+  steps:
+    - log: "is a relase"
+
+
+not-release:
+  visible: false
+  description: "Not release"
+  steps:
+    - log: "not a release"

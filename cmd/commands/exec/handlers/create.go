@@ -12,27 +12,25 @@ import (
 	"github.com/spf13/afero"
 )
 
-func HandleCreate(data map[string]interface{}, vars map[string]interface{}) {
+func HandleCreate(module string, data map[string]interface{}, vars map[string]interface{}) {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
+	modulePath := shared.KumaFilesPath + "/" + module + "/" + shared.KumaFilesPath
+	builder, err := domain.NewBuilder(fs, domain.NewConfig(".", modulePath))
+	if err != nil {
+		style.ErrorPrint(err.Error())
+		os.Exit(1)
+	}
+	from, err := execBuilders.BuildStringValue("from", data, vars, true)
+	if err != nil {
+		style.ErrorPrint(err.Error())
+		os.Exit(1)
+	}
+	err = builder.SetBuilderDataFromFile(modulePath+"/"+from, vars)
+	if err != nil {
+		style.ErrorPrint(err.Error())
+		os.Exit(1)
+	}
 
-	// Initialize a new Builder with the provided configurations.
-	builder, err := domain.NewBuilder(fs, domain.NewConfig(".", shared.KumaFilesPath))
-	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
-	}
-	from, err := execBuilders.BuildStringValue("from", data, vars)
-	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
-	}
-	err = builder.SetBuilderDataFromFile(shared.KumaFilesPath+"/"+from, vars)
-	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
-	}
-
-	// Execute the build process using the BuilderHandler.
 	if err = handlers.NewBuilderHandler(builder).Build(); err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)

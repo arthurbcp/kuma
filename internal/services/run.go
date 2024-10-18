@@ -20,7 +20,7 @@ func NewRunService(path string, fs filesystem.FileSystemInterface) *RunService {
 	}
 }
 
-func (s *RunService) GetAll() (map[string]domain.Run, error) {
+func (s *RunService) GetAll(onlyVisible bool) (map[string]domain.Run, error) {
 	deprecateRunsFileMsg := "\nif your a using runs.yaml file, please move it to the runs folder"
 	files, err := s.fs.ReadDir(s.path)
 	if err != nil {
@@ -39,9 +39,27 @@ func (s *RunService) GetAll() (map[string]domain.Run, error) {
 			if _, ok := runs[key]; ok {
 				return nil, fmt.Errorf("conflict between runs found for the run %s\n rename one of them and try again", key)
 			}
+			steps, ok := run.(map[string]interface{})["steps"].([]interface{})
+			if !ok {
+				steps = []interface{}{}
+			}
+			visible, ok := run.(map[string]interface{})["visible"].(bool)
+			if !ok {
+				visible = true
+			}
+			description, ok := run.(map[string]interface{})["description"].(string)
+			if !ok {
+				description = ""
+			}
+			if onlyVisible && !visible {
+				continue
+			}
 			runs[key] = domain.NewRun(
-				run.(map[string]interface{})["description"].(string),
-				run.(map[string]interface{})["steps"].([]interface{}),
+				key,
+				description,
+				steps,
+				fileName,
+				visible,
 			)
 		}
 	}
@@ -49,14 +67,14 @@ func (s *RunService) GetAll() (map[string]domain.Run, error) {
 	return runs, nil
 }
 
-func (s *RunService) Get(name string) (domain.Run, error) {
-	runs, err := s.GetAll()
+func (s *RunService) Get(name string) (*domain.Run, error) {
+	runs, err := s.GetAll(false)
 	if err != nil {
-		return domain.Run{}, err
+		return nil, err
 	}
 	run, ok := runs[name]
 	if !ok {
-		return domain.Run{}, fmt.Errorf("run not found: %s", name)
+		return nil, fmt.Errorf("run not found: %s", name)
 	}
-	return run, nil
+	return &run, nil
 }

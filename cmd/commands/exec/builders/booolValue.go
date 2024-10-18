@@ -1,9 +1,20 @@
 package execBuilders
 
-func BuildBoolValue(key string, input map[string]interface{}, vars map[string]interface{}) (bool, error) {
+import "strconv"
+
+func BuildBoolValue(key string, input map[string]interface{}, vars map[string]interface{}, required bool) (bool, error) {
 	val := false
-	if o, ok := input[key]; ok {
-		val = o.(bool)
+	val, ok := input[key].(bool)
+	if !ok {
+		if valStr, err := BuildStringValue(key, input, vars, required); err == nil {
+			if valStr == "" {
+				return false, nil
+			}
+			val, err = strconv.ParseBool(valStr)
+			if err != nil {
+				return false, err
+			}
+		}
 	}
 	return val, nil
 }
