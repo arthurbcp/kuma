@@ -1,6 +1,0 @@
-[submodule ".kuma/kuma-changelog-generator"]
-	path = .kuma/kuma-changelog-generator
-	url = https://github.com/arthurbcp/kuma-changelog-generator
-[submodule ".kuma/typescript-rest-openapi-services"]
-	path = .kuma/typescript-rest-openapi-services
-	url = https://github.com/arthurbcp/typescript-rest-openapi-services

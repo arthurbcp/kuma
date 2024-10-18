@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+
+	"github.com/arthurbcp/kuma/pkg/style"
+	"github.com/charmbracelet/huh/spinner"
 )
 
 func RunCommand(command string, args ...string) error {
@@ -16,20 +19,30 @@ func RunCommand(command string, args ...string) error {
 }
 
 func ReadFileFromURL(url string) (string, error) {
-	resp, err := http.Get(url)
+	var bodyBytes []byte
+	err := spinner.New().
+		Title("Downloading variables file").
+		Action(func() {
+			resp, err := http.Get(url)
+			if err != nil {
+				style.ErrorPrint("downloading variables file error: " + err.Error())
+				os.Exit(1)
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				style.ErrorPrint(fmt.Sprintf("bad status: %s", resp.Status))
+				os.Exit(1)
+			}
+
+			bodyBytes, err = io.ReadAll(resp.Body)
+			if err != nil {
+				style.ErrorPrint("reading file error: " + err.Error())
+				os.Exit(1)
+			}
+		}).Run()
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("bad status: %s", resp.Status)
-	}
-
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
 	return string(bodyBytes), nil
 }
