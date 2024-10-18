@@ -3,14 +3,14 @@ package execModule
 import (
 	"os"
 
-	execHandlers "github.com/arthurbcp/kuma/cmd/commands/exec/handlers"
-	"github.com/arthurbcp/kuma/cmd/shared"
-	"github.com/arthurbcp/kuma/cmd/ui/selectInput"
-	"github.com/arthurbcp/kuma/cmd/ui/utils/program"
-	"github.com/arthurbcp/kuma/cmd/ui/utils/steps"
-	"github.com/arthurbcp/kuma/internal/services"
-	"github.com/arthurbcp/kuma/pkg/filesystem"
-	"github.com/arthurbcp/kuma/pkg/style"
+	execHandlers "github.com/arthurbcp/kuma/v2/cmd/commands/exec/handlers"
+	"github.com/arthurbcp/kuma/v2/cmd/shared"
+	"github.com/arthurbcp/kuma/v2/cmd/ui/selectInput"
+	"github.com/arthurbcp/kuma/v2/cmd/ui/utils/program"
+	"github.com/arthurbcp/kuma/v2/cmd/ui/utils/steps"
+	"github.com/arthurbcp/kuma/v2/internal/services"
+	"github.com/arthurbcp/kuma/v2/pkg/filesystem"
+	"github.com/arthurbcp/kuma/v2/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/spf13/afero"
