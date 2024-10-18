@@ -68,7 +68,7 @@ func handleTea() string {
 	}
 
 	runService := services.NewRunService(shared.KumaFilesPath+"/"+shared.Module+"/"+shared.KumaRunsPath, fs)
-	runs, err := runService.GetAll()
+	runs, err := runService.GetAll(true)
 	if err != nil {
 		style.ErrorPrint("getting runs error: " + err.Error())
 		os.Exit(1)

@@ -1,7 +1,3 @@
-// module.go
-//
-// Package get defines the 'module' subcommand for the Kuma CLI.
-// It handles generating project scaffolds based on Go templates.
 package module
 
 import (
@@ -24,7 +20,6 @@ var (
 	Repository string
 )
 
-// Add a Kuma module from a GitHub repository
 var ModuleAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a Kuma module from a GitHub repository",
@@ -106,8 +101,6 @@ func addGitSubmodule(module string) error {
 	return nil
 }
 
-// init sets up flags for the 'add' subcommand and binds them to variables.
 func init() {
-	// Repository name
 	ModuleAddCmd.Flags().StringVarP(&Repository, "repository", "r", "", "Github repository with a Kuma module")
 }

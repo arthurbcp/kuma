@@ -20,7 +20,7 @@ func NewRunService(path string, fs filesystem.FileSystemInterface) *RunService {
 	}
 }
 
-func (s *RunService) GetAll() (map[string]domain.Run, error) {
+func (s *RunService) GetAll(onlyVisible bool) (map[string]domain.Run, error) {
 	deprecateRunsFileMsg := "\nif your a using runs.yaml file, please move it to the runs folder"
 	files, err := s.fs.ReadDir(s.path)
 	if err != nil {
@@ -43,15 +43,23 @@ func (s *RunService) GetAll() (map[string]domain.Run, error) {
 			if !ok {
 				steps = []interface{}{}
 			}
+			visible, ok := run.(map[string]interface{})["visible"].(bool)
+			if !ok {
+				visible = true
+			}
 			description, ok := run.(map[string]interface{})["description"].(string)
 			if !ok {
 				description = ""
+			}
+			if onlyVisible && !visible {
+				continue
 			}
 			runs[key] = domain.NewRun(
 				key,
 				description,
 				steps,
 				fileName,
+				visible,
 			)
 		}
 	}
@@ -60,7 +68,7 @@ func (s *RunService) GetAll() (map[string]domain.Run, error) {
 }
 
 func (s *RunService) Get(name string) (*domain.Run, error) {
-	runs, err := s.GetAll()
+	runs, err := s.GetAll(false)
 	if err != nil {
 		return nil, err
 	}

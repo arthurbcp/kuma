@@ -1,7 +1,3 @@
-// module.go
-//
-// Package get defines the 'module' subcommand for the Kuma CLI.
-// It handles generating project scaffolds based on Go templates.
 package module
 
 import (

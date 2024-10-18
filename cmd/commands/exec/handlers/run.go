@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	execFormHandlers "github.com/arthurbcp/kuma/cmd/commands/exec/handlers/form"
 	"github.com/arthurbcp/kuma/cmd/shared"
 	"github.com/arthurbcp/kuma/internal/domain"
 	"github.com/arthurbcp/kuma/internal/services"
@@ -43,22 +44,26 @@ func HandleRun(name, moduleName string, vars map[string]interface{}) {
 	for _, step := range run.Steps {
 		step := step.(map[string]interface{})
 		for key, value := range step {
-			if key == "cmd" {
+			switch key {
+			case "cmd":
 				HandleCommand(value.(string), vars)
-			} else if key == "input" {
-				HandleInput(value.(map[string]interface{}), vars)
-			} else if key == "log" {
+			case "log":
 				HandleLog(value.(string), vars)
-			} else if key == "run" {
+			case "run":
 				HandleRun(value.(string), moduleName, vars)
-			} else if key == "create" {
+			case "create":
 				HandleCreate(moduleName, value.(map[string]interface{}), vars)
-			} else if key == "load" {
+			case "load":
 				HandleLoad(value.(map[string]interface{}), vars)
-			} else if key == "when" {
+			case "when":
 				HandleWhen(moduleName, value.(map[string]interface{}), vars)
-			} else if key == "modify" {
+			case "modify":
 				HandleModify(value.(map[string]interface{}), vars)
+			case "form":
+				execFormHandlers.HandleForm(value.(map[string]interface{}), vars)
+			default:
+				style.ErrorPrint("invalid step type: " + key)
+				os.Exit(1)
 			}
 		}
 	}

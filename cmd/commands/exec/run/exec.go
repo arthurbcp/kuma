@@ -41,7 +41,7 @@ func handleTea() string {
 
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	runService := services.NewRunService(shared.KumaRunsPath, fs)
-	runs, err := runService.GetAll()
+	runs, err := runService.GetAll(true)
 	if err != nil {
 		style.ErrorPrint("getting runs error: " + err.Error())
 		os.Exit(1)
@@ -69,8 +69,6 @@ func handleTea() string {
 	return output.Choice
 }
 
-// init sets up flags for the 'run' subcommand and binds them to variables.
 func init() {
-	// Repository name
 	ExecCmd.Flags().StringVarP(&shared.Run, "run", "r", "", "run to use")
 }
