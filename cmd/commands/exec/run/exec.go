@@ -69,8 +69,6 @@ func handleTea() string {
 	return output.Choice
 }
 
-// init sets up flags for the 'run' subcommand and binds them to variables.
 func init() {
-	// Repository name
 	ExecCmd.Flags().StringVarP(&shared.Run, "run", "r", "", "run to use")
 }

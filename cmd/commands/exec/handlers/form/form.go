@@ -10,6 +10,7 @@ import (
 )
 
 func HandleForm(formData map[string]interface{}, vars map[string]interface{}) {
+	data := vars["data"].(map[string]interface{})
 	huhFields := []huh.Field{}
 	title, err := execBuilders.BuildStringValue("title", formData, vars, false)
 	if err != nil {
@@ -46,9 +47,13 @@ func HandleForm(formData map[string]interface{}, vars map[string]interface{}) {
 			if value, ok := value.(map[string]interface{}); ok {
 				switch key {
 				case "select":
-					huhFields = append(huhFields, HandleSelect(value, vars))
+					huhField, out, outValue := HandleSelect(value, vars)
+					huhFields = append(huhFields, huhField)
+					data[out] = outValue
 				case "input":
-					huhFields = append(huhFields, HandleInput(value, vars))
+					huhField, out, outValue := HandleInput(value, vars)
+					huhFields = append(huhFields, huhField)
+					data[out] = outValue
 				default:
 					fmt.Println("invalid field type: " + key)
 				}

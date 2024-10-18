@@ -8,9 +8,8 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-func HandleSelect(input map[string]interface{}, vars map[string]interface{}) *huh.Select[string] {
+func HandleSelect(input map[string]interface{}, vars map[string]interface{}) (*huh.Select[string], string, *string) {
 	var err error
-	data := vars["data"].(map[string]interface{})
 
 	label, err := execBuilders.BuildStringValue("label", input, vars, false)
 	if err != nil {
@@ -50,9 +49,7 @@ func HandleSelect(input map[string]interface{}, vars map[string]interface{}) *hu
 			Options(options...).
 			Value(&outValue)
 
-		data[out] = outValue
-
-		return h
+		return h, out, &outValue
 	}
-	return nil
+	return nil, out, nil
 }

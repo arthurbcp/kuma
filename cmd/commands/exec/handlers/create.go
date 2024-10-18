@@ -15,7 +15,6 @@ import (
 func HandleCreate(module string, data map[string]interface{}, vars map[string]interface{}) {
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 	modulePath := shared.KumaFilesPath + "/" + module + "/" + shared.KumaFilesPath
-	// Initialize a new Builder with the provided configurations.
 	builder, err := domain.NewBuilder(fs, domain.NewConfig(".", modulePath))
 	if err != nil {
 		style.ErrorPrint(err.Error())
@@ -32,7 +31,6 @@ func HandleCreate(module string, data map[string]interface{}, vars map[string]in
 		os.Exit(1)
 	}
 
-	// Execute the build process using the BuilderHandler.
 	if err = handlers.NewBuilderHandler(builder).Build(); err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)

@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-func HandleInput(input map[string]interface{}, vars map[string]interface{}) *huh.Input {
+func HandleInput(input map[string]interface{}, vars map[string]interface{}) (*huh.Input, string, *string) {
 	var err error
 	data := vars["data"].(map[string]interface{})
 
@@ -36,5 +36,5 @@ func HandleInput(input map[string]interface{}, vars map[string]interface{}) *huh
 
 	data[out] = out
 
-	return h
+	return h, out, &outValue
 }

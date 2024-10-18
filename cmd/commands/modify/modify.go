@@ -1,7 +1,3 @@
-// modify.go
-//
-// Package modify defines the 'modify' subcommand for the Kuma CLI.
-// It handles generating project scaffolds based on Go templates.
 package modify
 
 import (

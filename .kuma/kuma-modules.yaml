@@ -1,7 +1,7 @@
 typescript-rest-openapi-services:
-    description: Create a TypeScript library with typed services for all endpoints described in an Open API 2.0 file.
+    description: Create an TypeScript type safe services and dtos for all endpoints described in an Open API 2.0 file.
     runs:
-        initial:
-            description: Initial run
+        create-services:
+            description: Create an TypeScript type safe services and dtos for all endpoints described in an Open API 2.0 file.
             file: typescript-rest-services-runs.yaml
     version: 0.0.1
