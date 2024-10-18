@@ -3,7 +3,7 @@ package style
 import (
 	"fmt"
 
-	"github.com/arthurbcp/kuma/internal/debug"
+	"github.com/arthurbcp/kuma/v2/internal/debug"
 	"github.com/gookit/color"
 )
 

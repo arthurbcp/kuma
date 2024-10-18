@@ -3,7 +3,7 @@ package execBuilders
 import (
 	"fmt"
 
-	"github.com/arthurbcp/kuma/internal/helpers"
+	"github.com/arthurbcp/kuma/v2/internal/helpers"
 )
 
 func BuildStringValue(key string, input map[string]interface{}, vars map[string]interface{}, required bool) (string, error) {

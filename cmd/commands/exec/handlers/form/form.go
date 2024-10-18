@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	execBuilders "github.com/arthurbcp/kuma/cmd/commands/exec/builders"
-	"github.com/arthurbcp/kuma/pkg/style"
+	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
+	"github.com/arthurbcp/kuma/v2/pkg/style"
 	"github.com/charmbracelet/huh"
 )
 

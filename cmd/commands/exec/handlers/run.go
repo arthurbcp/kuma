@@ -4,12 +4,12 @@ import (
 	"log"
 	"os"
 
-	execFormHandlers "github.com/arthurbcp/kuma/cmd/commands/exec/handlers/form"
-	"github.com/arthurbcp/kuma/cmd/shared"
-	"github.com/arthurbcp/kuma/internal/domain"
-	"github.com/arthurbcp/kuma/internal/services"
-	"github.com/arthurbcp/kuma/pkg/filesystem"
-	"github.com/arthurbcp/kuma/pkg/style"
+	execFormHandlers "github.com/arthurbcp/kuma/v2/cmd/commands/exec/handlers/form"
+	"github.com/arthurbcp/kuma/v2/cmd/shared"
+	"github.com/arthurbcp/kuma/v2/internal/domain"
+	"github.com/arthurbcp/kuma/v2/internal/services"
+	"github.com/arthurbcp/kuma/v2/pkg/filesystem"
+	"github.com/arthurbcp/kuma/v2/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/afero"
 )

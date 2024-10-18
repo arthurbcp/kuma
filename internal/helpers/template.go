@@ -4,7 +4,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/arthurbcp/kuma/internal/functions"
+	"github.com/arthurbcp/kuma/v2/internal/functions"
 	"github.com/go-sprout/sprout/sprigin"
 )
 
