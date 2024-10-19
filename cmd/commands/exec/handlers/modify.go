@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
+	"github.com/arthurbcp/kuma/v2/cmd/constants"
 	"github.com/arthurbcp/kuma/v2/internal/helpers"
 	"github.com/arthurbcp/kuma/v2/pkg/filesystem"
 	"github.com/arthurbcp/kuma/v2/pkg/style"
@@ -15,7 +16,7 @@ func HandleModify(data map[string]interface{}, vars map[string]interface{}) {
 
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 
-	file, err := execBuilders.BuildStringValue("file", data, vars, true)
+	file, err := execBuilders.BuildStringValue("file", data, vars, true, constants.ModifyHandler)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
@@ -25,17 +26,17 @@ func HandleModify(data map[string]interface{}, vars map[string]interface{}) {
 		style.ErrorPrint("reading file error: " + err.Error())
 		os.Exit(1)
 	}
-	template, err := execBuilders.BuildStringValue("template", data, vars, true)
+	template, err := execBuilders.BuildStringValue("template", data, vars, true, constants.ModifyHandler)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	codeMark, err := execBuilders.BuildStringValue("mark", data, vars, true)
+	codeMark, err := execBuilders.BuildStringValue("mark", data, vars, true, constants.ModifyHandler)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	replace, err := execBuilders.BuildBoolValue("replace", data, vars, true)
+	replace, err := execBuilders.BuildBoolValue("replace", data, vars, true, constants.ModifyHandler)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)

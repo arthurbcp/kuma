@@ -9,35 +9,39 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-func HandleSelect(input map[string]interface{}, vars map[string]interface{}) (*huh.Select[string], string, *string) {
+func HandleMultiSelect(input map[string]interface{}, vars map[string]interface{}) (*huh.MultiSelect[string], string, *[]string) {
 	var err error
 
-	label, err := execBuilders.BuildStringValue("label", input, vars, false, constants.SelectComponent)
+	label, err := execBuilders.BuildStringValue("label", input, vars, false, constants.MultiSelectComponent)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	description, err := execBuilders.BuildStringValue("description", input, vars, false, constants.SelectComponent)
+	description, err := execBuilders.BuildStringValue("description", input, vars, false, constants.MultiSelectComponent)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	out, err := execBuilders.BuildStringValue("out", input, vars, true, constants.SelectComponent)
+	out, err := execBuilders.BuildStringValue("out", input, vars, true, constants.MultiSelectComponent)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-
+	limit, err := execBuilders.BuildIntValue("limit", input, vars, false, constants.MultiSelectComponent)
+	if err != nil {
+		style.ErrorPrint(err.Error())
+		os.Exit(1)
+	}
 	options := []huh.Option[string]{}
 	if mapOptions, ok := input["options"].([]interface{}); ok {
 		for _, option := range mapOptions {
 			optionMap := option.(map[string]interface{})
-			label, err := execBuilders.BuildStringValue("label", optionMap, vars, true, constants.SelectOptionComponent)
+			label, err := execBuilders.BuildStringValue("label", optionMap, vars, true, constants.MultiSelectOptionComponent)
 			if err != nil {
 				style.ErrorPrint(err.Error())
 				os.Exit(1)
 			}
-			value, err := execBuilders.BuildStringValue("value", optionMap, vars, false, constants.SelectOptionComponent)
+			value, err := execBuilders.BuildStringValue("value", optionMap, vars, false, constants.MultiSelectOptionComponent)
 			if err != nil {
 				style.ErrorPrint(err.Error())
 				os.Exit(1)
@@ -48,12 +52,16 @@ func HandleSelect(input map[string]interface{}, vars map[string]interface{}) (*h
 			options = append(options, huh.NewOption[string](label, value))
 		}
 
-		var outValue string
-		h := huh.NewSelect[string]().
+		var outValue []string
+		h := huh.NewMultiSelect[string]().
 			Title(label).
 			Description(description).
 			Options(options...).
 			Value(&outValue)
+
+		if limit > 0 {
+			h.Limit(limit)
+		}
 
 		return h, out, &outValue
 	}
