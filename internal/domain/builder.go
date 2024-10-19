@@ -71,13 +71,11 @@ func NewBuilder(fs filesystem.FileSystemInterface, config *Config) (*Builder, er
 func (b *Builder) SetBuilderDataFromFile(file string, vars map[string]interface{}) error {
 	style.LogPrint("parsing config...")
 
-	// Read the content of the configuration file.
 	configData, err := b.Fs.ReadFile(file)
 	if err != nil {
 		return err
 	}
 
-	// Replace variables in the configuration data.
 	configData, err = helpers.ReplaceVars(configData, vars, helpers.GetFuncMap())
 	b.ParsedData = string(configData)
 	style.DebugPrint("Config file", b.ParsedData)
@@ -85,7 +83,6 @@ func (b *Builder) SetBuilderDataFromFile(file string, vars map[string]interface{
 		return err
 	}
 
-	// Determine the file type based on its extension and unmarshal accordingly.
 	switch filepath.Ext(file) {
 	case ".yaml", ".yml":
 		data, err := unmarshalYamlConfig([]byte(configData))
@@ -133,7 +130,6 @@ func unmarshalJsonConfig(configData []byte) (*BuilderData, error) {
 	if err != nil {
 		return &config, err
 	}
-	// Note: The original code does not populate BuilderData from 'c'.
 	return &config, nil
 }
 
@@ -152,7 +148,6 @@ func unmarshalYamlConfig(configData []byte) (*BuilderData, error) {
 	if err != nil {
 		return &config, err
 	}
-	// Decode the map into BuilderData using mapstructure.
 	err = mapstructure.Decode(c, &config)
 	if err != nil {
 		return &config, err

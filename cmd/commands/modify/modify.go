@@ -14,6 +14,12 @@ import (
 )
 
 var (
+	ReplaceAction      = "replace"
+	InsertBeforeAction = "insert-before"
+	InsertAfterAction  = "insert-after"
+)
+
+var (
 	FilePath string
 
 	VariablesFile string
@@ -24,7 +30,7 @@ var (
 
 	CodeMark string
 
-	Replace bool
+	Action string
 )
 
 var ModifyCmd = &cobra.Command{
@@ -82,11 +88,7 @@ func build() {
 		style.ErrorPrint("parsing template file error: " + err.Error())
 		os.Exit(1)
 	}
-	if Replace {
-		fileContent = strings.ReplaceAll(fileContent, CodeMark, templateContent)
-	} else {
-		fileContent = strings.ReplaceAll(fileContent, CodeMark, templateContent+"\n"+CodeMark)
-	}
+	fileContent = handleAction(Action, fileContent, templateContent)
 	err = fs.WriteFile(FilePath, fileContent)
 	if err != nil {
 		style.ErrorPrint("writing file error: " + err.Error())
@@ -94,12 +96,28 @@ func build() {
 	}
 }
 
+func handleAction(action string, fileContent string, templateContent string) string {
+	if action == "" {
+		action = InsertBeforeAction
+	}
+	switch action {
+	case InsertBeforeAction:
+		fileContent = strings.ReplaceAll(fileContent, CodeMark, templateContent+CodeMark)
+	case InsertAfterAction:
+		fileContent = strings.ReplaceAll(fileContent, CodeMark, CodeMark+templateContent)
+	case ReplaceAction:
+		fileContent = strings.ReplaceAll(fileContent, CodeMark, templateContent)
+	default:
+	}
+	return fileContent
+}
+
 func init() {
 	ModifyCmd.Flags().StringVarP(&VariablesFile, "variables", "v", "", "path or URL to the variables file")
 	ModifyCmd.Flags().StringVarP(&FilePath, "file", "f", "", "Path to the file you want to modify")
 	ModifyCmd.Flags().StringVarP(&TemplateFile, "template", "t", ".", "Path to the template file that be added after the code mark")
 	ModifyCmd.Flags().StringVarP(&CodeMark, "mark", "m", "", "Mark inside the file to be identify what part of the code needs to be modified")
-	ModifyCmd.Flags().BoolVarP(&Replace, "replace", "r", false, "Replace the code mark with the template content")
+	ModifyCmd.Flags().StringVarP(&Action, "action", "r", InsertBeforeAction, "Replace the code mark with the template content")
 	ModifyCmd.MarkFlagRequired("mark")
 	ModifyCmd.MarkFlagRequired("file")
 }
