@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
+	"github.com/arthurbcp/kuma/v2/cmd/constants"
 	"github.com/arthurbcp/kuma/v2/internal/helpers"
 	"github.com/arthurbcp/kuma/v2/pkg/filesystem"
 	"github.com/arthurbcp/kuma/v2/pkg/style"
@@ -18,13 +19,13 @@ func HandleLoad(load map[string]interface{}, vars map[string]interface{}) {
 	data := vars["data"].(map[string]interface{})
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 
-	from, err := execBuilders.BuildStringValue("from", load, vars, true)
+	from, err := execBuilders.BuildStringValue("from", load, vars, true, constants.LoadHandler)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
 
-	out, err := execBuilders.BuildStringValue("out", load, vars, true)
+	out, err := execBuilders.BuildStringValue("out", load, vars, true, constants.LoadHandler)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)

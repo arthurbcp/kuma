@@ -5,6 +5,7 @@ import (
 	"os"
 
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
+	"github.com/arthurbcp/kuma/v2/cmd/constants"
 	"github.com/arthurbcp/kuma/v2/pkg/style"
 	"github.com/charmbracelet/huh"
 )
@@ -12,27 +13,22 @@ import (
 func HandleForm(formData map[string]interface{}, vars map[string]interface{}) {
 	data := vars["data"].(map[string]interface{})
 	huhFields := []huh.Field{}
-	title, err := execBuilders.BuildStringValue("title", formData, vars, false)
+	title, err := execBuilders.BuildStringValue("title", formData, vars, false, constants.FormComponent)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	description, err := execBuilders.BuildStringValue("description", formData, vars, false)
+	description, err := execBuilders.BuildStringValue("description", formData, vars, false, constants.FormComponent)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	accessibility, err := execBuilders.BuildBoolValue("accessibility", formData, vars, false)
+	accessibility, err := execBuilders.BuildBoolValue("accessibility", formData, vars, false, constants.FormComponent)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	if title != "" {
-		style.TitlePrint(title, true)
-	}
-	if description != "" {
-		style.LogPrint(description)
-	}
+
 	if _, ok := formData["fields"]; !ok {
 		style.ErrorPrint("fields is required")
 		os.Exit(1)
@@ -54,6 +50,18 @@ func HandleForm(formData map[string]interface{}, vars map[string]interface{}) {
 					huhField, out, outValue := HandleInput(value, vars)
 					huhFields = append(huhFields, huhField)
 					data[out] = outValue
+				case "multi-select":
+					huhField, out, outValue := HandleMultiSelect(value, vars)
+					huhFields = append(huhFields, huhField)
+					data[out] = outValue
+				case "text":
+					huhField, out, outValue := HandleText(value, vars)
+					huhFields = append(huhFields, huhField)
+					data[out] = outValue
+				case "confirm":
+					huhField, out, outValue := HandleConfirm(value, vars)
+					huhFields = append(huhFields, huhField)
+					data[out] = outValue
 				default:
 					fmt.Println("invalid field type: " + key)
 				}
@@ -64,7 +72,9 @@ func HandleForm(formData map[string]interface{}, vars map[string]interface{}) {
 		}
 	}
 	form := huh.NewForm(
-		huh.NewGroup(huhFields...),
+		huh.NewGroup(huhFields...).
+			Title(title).
+			Description(description),
 	)
 	form.WithTheme(style.KumaTheme())
 	form.WithAccessible(accessibility)

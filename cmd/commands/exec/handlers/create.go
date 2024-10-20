@@ -4,6 +4,7 @@ import (
 	"os"
 
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
+	"github.com/arthurbcp/kuma/v2/cmd/constants"
 	"github.com/arthurbcp/kuma/v2/cmd/shared"
 	"github.com/arthurbcp/kuma/v2/internal/domain"
 	"github.com/arthurbcp/kuma/v2/internal/handlers"
@@ -23,7 +24,7 @@ func HandleCreate(module string, data map[string]interface{}, vars map[string]in
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	from, err := execBuilders.BuildStringValue("from", data, vars, true)
+	from, err := execBuilders.BuildStringValue("from", data, vars, true, constants.CreateHandler)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)

@@ -4,16 +4,17 @@ import (
 	"os"
 
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
+	"github.com/arthurbcp/kuma/v2/cmd/constants"
 	"github.com/arthurbcp/kuma/v2/pkg/style"
 )
 
 func HandleWhen(module string, data map[string]interface{}, vars map[string]interface{}) {
-	isTrue, err := execBuilders.BuildBoolValue("condition", data, vars, true)
+	isTrue, err := execBuilders.BuildBoolValue("condition", data, vars, true, constants.WhenHandler)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
 	}
-	run, err := execBuilders.BuildStringValue("run", data, vars, true)
+	run, err := execBuilders.BuildStringValue("run", data, vars, true, constants.WhenHandler)
 	if err != nil {
 		style.ErrorPrint(err.Error())
 		os.Exit(1)
