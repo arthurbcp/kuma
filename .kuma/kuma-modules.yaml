@@ -1,0 +1,13 @@
+kuma-changelog-generator:
+    description: Helper to write a good changelog to your project.
+    runs:
+        add-change:
+            description: ""
+            file: change-generator-runs.yaml
+        create-release:
+            description: ""
+            file: change-generator-runs.yaml
+        create-unreleased-file:
+            description: ""
+            file: change-generator-runs.yaml
+    version: 0.0.1

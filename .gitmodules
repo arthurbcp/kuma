@@ -1,0 +1,3 @@
+[submodule ".kuma/kuma-changelog-generator"]
+	path = .kuma/kuma-changelog-generator
+	url = https://github.com/arthurbcp/kuma-changelog-generator
