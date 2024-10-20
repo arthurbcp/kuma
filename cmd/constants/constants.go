@@ -9,6 +9,7 @@ const (
 	ModifyHandler = "modify"
 	CmdHandler    = "cmd"
 	FormHandler   = "form"
+	DefineHandler = "define"
 )
 
 const (

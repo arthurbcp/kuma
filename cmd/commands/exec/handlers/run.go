@@ -1,6 +1,7 @@
 package execHandlers
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -10,12 +11,11 @@ import (
 	"github.com/arthurbcp/kuma/v2/internal/domain"
 	"github.com/arthurbcp/kuma/v2/internal/services"
 	"github.com/arthurbcp/kuma/v2/pkg/filesystem"
-	"github.com/arthurbcp/kuma/v2/pkg/style"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/afero"
 )
 
-func HandleRun(name, moduleName string, vars map[string]interface{}) {
+func HandleRun(name, moduleName string, vars map[string]interface{}) error {
 	var err error
 	var run = &domain.Run{}
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
@@ -23,22 +23,19 @@ func HandleRun(name, moduleName string, vars map[string]interface{}) {
 		moduleService := services.NewModuleService(shared.KumaFilesPath, fs)
 		modules, err := moduleService.GetAll()
 		if err != nil {
-			style.ErrorPrint(err.Error())
-			os.Exit(1)
+			return err
 		}
 		module := modules[moduleName]
 		run, err = moduleService.GetRun(&module, name, shared.KumaFilesPath+"/"+moduleName+"/"+shared.KumaRunsPath)
 
 		if err != nil {
-			style.ErrorPrint(err.Error())
-			os.Exit(1)
+			return err
 		}
 	} else {
 		runService := services.NewRunService(shared.KumaRunsPath, fs)
 		run, err = runService.Get(name)
 		if err != nil {
-			style.ErrorPrint(err.Error())
-			os.Exit(1)
+			return err
 		}
 	}
 
@@ -47,27 +44,56 @@ func HandleRun(name, moduleName string, vars map[string]interface{}) {
 		for key, value := range step {
 			switch key {
 			case constants.CmdHandler:
-				HandleCommand(value.(string), vars)
+				err := HandleCommand(value.(string), vars)
+				if err != nil {
+					return fmt.Errorf("[handler: %s] - %s", constants.CmdHandler, err.Error())
+				}
 			case constants.LogHandler:
-				HandleLog(value.(string), vars)
+				err := HandleLog(value.(string), vars)
+				if err != nil {
+					return fmt.Errorf("[handler: %s] - %s", constants.LogHandler, err.Error())
+				}
 			case constants.RunHandler:
-				HandleRun(value.(string), moduleName, vars)
+				err := HandleRun(value.(string), moduleName, vars)
+				if err != nil {
+					return fmt.Errorf("[handler: %s] - %s", constants.RunHandler, err.Error())
+				}
 			case constants.CreateHandler:
-				HandleCreate(moduleName, value.(map[string]interface{}), vars)
+				err := HandleCreate(moduleName, value.(map[string]interface{}), vars)
+				if err != nil {
+					return fmt.Errorf("[handler: %s] - %s", constants.CreateHandler, err.Error())
+				}
 			case constants.LoadHandler:
-				HandleLoad(value.(map[string]interface{}), vars)
+				err := HandleLoad(value.(map[string]interface{}), vars)
+				if err != nil {
+					return fmt.Errorf("[handler: %s] - %s", constants.LoadHandler, err.Error())
+				}
 			case constants.WhenHandler:
-				HandleWhen(moduleName, value.(map[string]interface{}), vars)
+				err := HandleWhen(moduleName, value.(map[string]interface{}), vars)
+				if err != nil {
+					return fmt.Errorf("[handler: %s] - %s", constants.WhenHandler, err.Error())
+				}
 			case constants.ModifyHandler:
-				HandleModify(value.(map[string]interface{}), vars)
+				err := HandleModify(moduleName, value.(map[string]interface{}), vars)
+				if err != nil {
+					return fmt.Errorf("[handler: %s] - %s", constants.ModifyHandler, err.Error())
+				}
 			case constants.FormHandler:
-				execFormHandlers.HandleForm(value.(map[string]interface{}), vars)
+				err := execFormHandlers.HandleForm(value.(map[string]interface{}), vars)
+				if err != nil {
+					return fmt.Errorf("[handler: %s] - %s", constants.FormHandler, err.Error())
+				}
+			case constants.DefineHandler:
+				err := HandleDefine(value.(map[string]interface{}), vars)
+				if err != nil {
+					return fmt.Errorf("[handler: %s] - %s", constants.DefineHandler, err.Error())
+				}
 			default:
-				style.ErrorPrint("invalid step type: " + key)
-				os.Exit(1)
+				return fmt.Errorf("invalid handler type: %s", key)
 			}
 		}
 	}
+	return nil
 }
 
 func ExitCLI(tprogram *tea.Program) {

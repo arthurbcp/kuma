@@ -67,6 +67,21 @@ func (s *FileSystem) CreateFileIfNotExists(filename string) (afero.File, error) 
 	return nil, nil
 }
 
+func (s *FileSystem) AddFile(filename string) error {
+	// Execute the git add command
+	execCmd := exec.Command("git", "add", filename)
+	// Set the command's standard output to the console
+	execCmd.Stdout = os.Stdout
+	execCmd.Stderr = os.Stderr
+	style.LogPrint("running: git add " + filename)
+	// Execute the command
+	err := execCmd.Run()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // CreateFile creates or truncates the named file.
 func (s *FileSystem) CreateFile(filename string) (afero.File, error) {
 	// Check if the file exists
@@ -75,16 +90,9 @@ func (s *FileSystem) CreateFile(filename string) (afero.File, error) {
 		return nil, err
 	}
 	if exists {
-		// Execute the git add command
-		execCmd := exec.Command("git", "add", filename)
-		// Set the command's standard output to the console
-		execCmd.Stdout = os.Stdout
-		execCmd.Stderr = os.Stderr
-		style.LogPrint("running: git add " + filename)
-		// Execute the command
-		err := execCmd.Run()
+		err = s.AddFile(filename)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error adding file to git: %w", err)
 		}
 	}
 	file, err := s.Fs.Create(filename)
@@ -96,7 +104,11 @@ func (s *FileSystem) CreateFile(filename string) (afero.File, error) {
 
 // WriteFile writes a string to a file, overwriting it if it already exists.
 func (s *FileSystem) WriteFile(filename string, content string) error {
-	err := afero.WriteFile(s.Fs, filename, []byte(content), os.ModePerm)
+	err := s.AddFile(filename)
+	if err != nil {
+		return err
+	}
+	err = afero.WriteFile(s.Fs, filename, []byte(content), os.ModePerm)
 	if err != nil {
 		return err
 	}

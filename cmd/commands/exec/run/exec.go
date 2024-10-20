@@ -32,7 +32,11 @@ func Execute() {
 	vars := map[string]interface{}{
 		"data": map[string]interface{}{},
 	}
-	execHandlers.HandleRun(shared.Run, "", vars)
+	err := execHandlers.HandleRun(shared.Run, "", vars)
+	if err != nil {
+		style.ErrorPrint(err.Error())
+		os.Exit(1)
+	}
 }
 
 func handleTea() string {

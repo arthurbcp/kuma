@@ -5,21 +5,10 @@ import (
 	"text/template"
 
 	"github.com/arthurbcp/kuma/v2/internal/functions"
-	"github.com/go-sprout/sprout/sprigin"
 )
 
-func GetFuncMap() template.FuncMap {
-	fnMap := sprigin.TxtFuncMap()
-	fnMap["toYaml"] = functions.ToYaml
-	fnMap["getRefFrom"] = functions.GetRefFrom
-	fnMap["getPathsByTag"] = functions.GetPathsByTag
-	fnMap["getParamsByType"] = functions.GetParamsByType
-	fnMap["groupByKey"] = functions.GroupByKey
-	return fnMap
-}
-
 func ReplaceVars(text string, vars interface{}, funcs template.FuncMap) (string, error) {
-	t, err := template.New("").Funcs(GetFuncMap()).Parse(text)
+	t, err := template.New("").Funcs(functions.GetFuncMap()).Parse(text)
 	if err != nil {
 		return "", err
 	}

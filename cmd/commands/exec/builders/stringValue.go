@@ -3,6 +3,7 @@ package execBuilders
 import (
 	"fmt"
 
+	"github.com/arthurbcp/kuma/v2/internal/functions"
 	"github.com/arthurbcp/kuma/v2/internal/helpers"
 )
 
@@ -15,7 +16,7 @@ func BuildStringValue(key string, input map[string]interface{}, vars map[string]
 		}
 		return "", nil
 	}
-	val, err = helpers.ReplaceVars(val, vars, helpers.GetFuncMap())
+	val, err = helpers.ReplaceVars(val, vars, functions.GetFuncMap())
 	if err != nil {
 		return "", err
 	}
