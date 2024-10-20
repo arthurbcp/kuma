@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/arthurbcp/kuma/v2/cmd/shared"
+	"github.com/arthurbcp/kuma/v2/internal/functions"
 	"github.com/arthurbcp/kuma/v2/internal/helpers"
 	"github.com/arthurbcp/kuma/v2/pkg/filesystem"
 	"github.com/arthurbcp/kuma/v2/pkg/style"
@@ -14,9 +15,10 @@ import (
 )
 
 var (
-	ReplaceAction      = "replace"
-	InsertBeforeAction = "insert-before"
-	InsertAfterAction  = "insert-after"
+	ReplaceAction        = "replace"
+	InsertBeforeAction   = "insert-before"
+	InsertAfterAction    = "insert-after"
+	ReplaceBetweenAction = "replace-between"
 )
 
 var (
@@ -83,12 +85,12 @@ func build() {
 		style.ErrorPrint("reading template file error: " + err.Error())
 		os.Exit(1)
 	}
-	templateContent, err = helpers.ReplaceVars(templateContent, map[string]interface{}{"data": TemplateVariables}, helpers.GetFuncMap())
+	templateContent, err = helpers.ReplaceVars(templateContent, map[string]interface{}{"data": TemplateVariables}, functions.GetFuncMap())
 	if err != nil {
 		style.ErrorPrint("parsing template file error: " + err.Error())
 		os.Exit(1)
 	}
-	fileContent = handleAction(Action, fileContent, templateContent)
+	fileContent = HandleAction(Action, fileContent, templateContent, CodeMark)
 	err = fs.WriteFile(FilePath, fileContent)
 	if err != nil {
 		style.ErrorPrint("writing file error: " + err.Error())
@@ -96,20 +98,41 @@ func build() {
 	}
 }
 
-func handleAction(action string, fileContent string, templateContent string) string {
+func HandleAction(action string, fileContent string, templateContent string, codeMark string) string {
+	if codeMark == "" {
+		fileContent = templateContent
+		return fileContent
+	}
 	if action == "" {
-		action = InsertBeforeAction
+		action = ReplaceAction
 	}
 	switch action {
 	case InsertBeforeAction:
-		fileContent = strings.ReplaceAll(fileContent, CodeMark, templateContent+CodeMark)
+		return strings.ReplaceAll(fileContent, codeMark, templateContent+codeMark)
 	case InsertAfterAction:
-		fileContent = strings.ReplaceAll(fileContent, CodeMark, CodeMark+templateContent)
+		return strings.ReplaceAll(fileContent, codeMark, codeMark+templateContent)
 	case ReplaceAction:
-		fileContent = strings.ReplaceAll(fileContent, CodeMark, templateContent)
+		return strings.ReplaceAll(fileContent, codeMark, templateContent)
+	case ReplaceBetweenAction:
+		splitCodeMark := strings.Split(codeMark, ",")
+		if len(splitCodeMark) != 2 {
+			style.ErrorPrint("invalid code mark: " + codeMark)
+			os.Exit(1)
+		}
+		startIdx := strings.Index(fileContent, splitCodeMark[0])
+		endIdx := strings.Index(fileContent, splitCodeMark[1])
+
+		if startIdx == -1 || endIdx == -1 || startIdx >= endIdx {
+			return fileContent
+		}
+
+		startIdx += len(splitCodeMark[0])
+
+		return fileContent[:startIdx] + templateContent + fileContent[endIdx:]
 	default:
+		return fileContent
 	}
-	return fileContent
+
 }
 
 func init() {
@@ -118,6 +141,5 @@ func init() {
 	ModifyCmd.Flags().StringVarP(&TemplateFile, "template", "t", ".", "Path to the template file that be added after the code mark")
 	ModifyCmd.Flags().StringVarP(&CodeMark, "mark", "m", "", "Mark inside the file to be identify what part of the code needs to be modified")
 	ModifyCmd.Flags().StringVarP(&Action, "action", "r", InsertBeforeAction, "Replace the code mark with the template content")
-	ModifyCmd.MarkFlagRequired("mark")
 	ModifyCmd.MarkFlagRequired("file")
 }
