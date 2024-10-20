@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 <!-- UNRELEASED -->
 
+<!-- /UNRELEASED -->
+
+<!-- NEXT RELEASE -->
+## [v2.1.0] - 2024-10-20
+
 ### Added
     - Run command > Modify handler > new action: replace-between
     - Functions > Added FileSystem functions
@@ -18,6 +23,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Run command > Improved error messages
     - Modify command > Replace property has changed to Action. An action is a string with one of these values: replace, insert-before, insert-after, replace-between
     
-<!-- /UNRELEASED -->
-
-<!-- NEXT RELEASE -->
