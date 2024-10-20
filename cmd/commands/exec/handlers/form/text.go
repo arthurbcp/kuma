@@ -1,37 +1,30 @@
 package execFormHandlers
 
 import (
-	"os"
-
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
 	"github.com/arthurbcp/kuma/v2/cmd/constants"
-	"github.com/arthurbcp/kuma/v2/pkg/style"
 	"github.com/charmbracelet/huh"
 )
 
-func HandleText(input map[string]interface{}, vars map[string]interface{}) (*huh.Text, string, *string) {
+func HandleText(input map[string]interface{}, vars map[string]interface{}) (*huh.Text, string, *string, error) {
 	var err error
 	data := vars["data"].(map[string]interface{})
 
 	label, err := execBuilders.BuildStringValue("label", input, vars, false, constants.TextComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	description, err := execBuilders.BuildStringValue("description", input, vars, false, constants.TextComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	out, err := execBuilders.BuildStringValue("out", input, vars, true, constants.TextComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	placeholder, err := execBuilders.BuildStringValue("placeholder", input, vars, false, constants.TextComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	var outValue string
 	h := huh.NewText().
@@ -42,5 +35,5 @@ func HandleText(input map[string]interface{}, vars map[string]interface{}) (*huh
 
 	data[out] = out
 
-	return h, out, &outValue
+	return h, out, &outValue, nil
 }

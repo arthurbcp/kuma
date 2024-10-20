@@ -1,28 +1,25 @@
 package execHandlers
 
 import (
-	"os"
-
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
 	"github.com/arthurbcp/kuma/v2/cmd/constants"
-	"github.com/arthurbcp/kuma/v2/pkg/style"
 )
 
-func HandleWhen(module string, data map[string]interface{}, vars map[string]interface{}) {
-	isTrue, err := execBuilders.BuildBoolValue("condition", data, vars, true, constants.WhenHandler)
+func HandleWhen(module string, params map[string]interface{}, vars map[string]interface{}) error {
+	isTrue, err := execBuilders.BuildBoolValue("condition", params, vars, true, constants.WhenHandler)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return err
 	}
-	run, err := execBuilders.BuildStringValue("run", data, vars, true, constants.WhenHandler)
+	run, err := execBuilders.BuildStringValue("run", params, vars, true, constants.WhenHandler)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
-	}
-	vars = map[string]interface{}{
-		"data": map[string]interface{}{},
+		return err
 	}
 	if isTrue {
-		HandleRun(run, module, vars)
+		err := HandleRun(run, module, vars)
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }

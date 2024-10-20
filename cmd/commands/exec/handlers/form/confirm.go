@@ -1,42 +1,34 @@
 package execFormHandlers
 
 import (
-	"os"
-
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
 	"github.com/arthurbcp/kuma/v2/cmd/constants"
-	"github.com/arthurbcp/kuma/v2/pkg/style"
 	"github.com/charmbracelet/huh"
 )
 
-func HandleConfirm(input map[string]interface{}, vars map[string]interface{}) (*huh.Confirm, string, *bool) {
+func HandleConfirm(input map[string]interface{}, vars map[string]interface{}) (*huh.Confirm, string, *bool, error) {
 	var err error
 	data := vars["data"].(map[string]interface{})
 
 	label, err := execBuilders.BuildStringValue("label", input, vars, false, constants.ConfirmComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	description, err := execBuilders.BuildStringValue("description", input, vars, false, constants.ConfirmComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	affirmative, err := execBuilders.BuildStringValue("affirmative", input, vars, false, constants.ConfirmComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	negative, err := execBuilders.BuildStringValue("negative", input, vars, false, constants.ConfirmComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	out, err := execBuilders.BuildStringValue("out", input, vars, true, constants.ConfirmComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 
 	if affirmative == "" {
@@ -56,5 +48,5 @@ func HandleConfirm(input map[string]interface{}, vars map[string]interface{}) (*
 
 	data[out] = out
 
-	return h, out, &outValue
+	return h, out, &outValue, nil
 }

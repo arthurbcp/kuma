@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/arthurbcp/kuma/v2/internal/functions"
 	"github.com/arthurbcp/kuma/v2/internal/helpers"
 	"github.com/arthurbcp/kuma/v2/pkg/filesystem"
 	"github.com/arthurbcp/kuma/v2/pkg/style"
@@ -76,7 +77,7 @@ func (b *Builder) SetBuilderDataFromFile(file string, vars map[string]interface{
 		return err
 	}
 
-	configData, err = helpers.ReplaceVars(configData, vars, helpers.GetFuncMap())
+	configData, err = helpers.ReplaceVars(configData, vars, functions.GetFuncMap())
 	b.ParsedData = string(configData)
 	style.DebugPrint("Config file", b.ParsedData)
 	if err != nil {

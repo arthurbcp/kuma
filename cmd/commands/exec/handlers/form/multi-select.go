@@ -1,36 +1,29 @@
 package execFormHandlers
 
 import (
-	"os"
-
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
 	"github.com/arthurbcp/kuma/v2/cmd/constants"
-	"github.com/arthurbcp/kuma/v2/pkg/style"
 	"github.com/charmbracelet/huh"
 )
 
-func HandleMultiSelect(input map[string]interface{}, vars map[string]interface{}) (*huh.MultiSelect[string], string, *[]string) {
+func HandleMultiSelect(input map[string]interface{}, vars map[string]interface{}) (*huh.MultiSelect[string], string, *[]string, error) {
 	var err error
 
 	label, err := execBuilders.BuildStringValue("label", input, vars, false, constants.MultiSelectComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	description, err := execBuilders.BuildStringValue("description", input, vars, false, constants.MultiSelectComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	out, err := execBuilders.BuildStringValue("out", input, vars, true, constants.MultiSelectComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	limit, err := execBuilders.BuildIntValue("limit", input, vars, false, constants.MultiSelectComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
 	options := []huh.Option[string]{}
 	if mapOptions, ok := input["options"].([]interface{}); ok {
@@ -38,13 +31,11 @@ func HandleMultiSelect(input map[string]interface{}, vars map[string]interface{}
 			optionMap := option.(map[string]interface{})
 			label, err := execBuilders.BuildStringValue("label", optionMap, vars, true, constants.MultiSelectOptionComponent)
 			if err != nil {
-				style.ErrorPrint(err.Error())
-				os.Exit(1)
+				return nil, "", nil, err
 			}
 			value, err := execBuilders.BuildStringValue("value", optionMap, vars, false, constants.MultiSelectOptionComponent)
 			if err != nil {
-				style.ErrorPrint(err.Error())
-				os.Exit(1)
+				return nil, "", nil, err
 			}
 			if value == "" {
 				value = label
@@ -63,7 +54,7 @@ func HandleMultiSelect(input map[string]interface{}, vars map[string]interface{}
 			h.Limit(limit)
 		}
 
-		return h, out, &outValue
+		return h, out, &outValue, nil
 	}
-	return nil, out, nil
+	return nil, out, nil, nil
 }
