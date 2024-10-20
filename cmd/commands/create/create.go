@@ -20,20 +20,12 @@ import (
 )
 
 var (
-	// ProjectPath defines the directory where the project will be created.
-	ProjectPath string
-
-	//VariablesFile specifies the path to the variables file.
-	VariablesFile string
-
-	//FromFile specifies the path to the YAML file with the structure and templates.
-	FromFile string
-
-	// TemplateVariables holds the variables for template replacement during the generate process.
+	ProjectPath       string
+	VariablesFile     string
+	FromFile          string
 	TemplateVariables map[string]interface{}
 )
 
-// CreateCmd represents the 'create' subcommand.
 var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a scaffold for a project based on Go Templates",

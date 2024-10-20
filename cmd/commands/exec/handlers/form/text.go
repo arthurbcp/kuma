@@ -6,28 +6,28 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-func HandleInput(input map[string]interface{}, vars map[string]interface{}) (*huh.Input, string, *string, error) {
+func HandleText(input map[string]interface{}, vars map[string]interface{}) (*huh.Text, string, *string, error) {
 	var err error
 	data := vars["data"].(map[string]interface{})
 
-	label, err := execBuilders.BuildStringValue("label", input, vars, false, constants.InputComponent)
+	label, err := execBuilders.BuildStringValue("label", input, vars, false, constants.TextComponent)
 	if err != nil {
 		return nil, "", nil, err
 	}
-	description, err := execBuilders.BuildStringValue("description", input, vars, false, constants.InputComponent)
+	description, err := execBuilders.BuildStringValue("description", input, vars, false, constants.TextComponent)
 	if err != nil {
 		return nil, "", nil, err
 	}
-	out, err := execBuilders.BuildStringValue("out", input, vars, true, constants.InputComponent)
+	out, err := execBuilders.BuildStringValue("out", input, vars, true, constants.TextComponent)
 	if err != nil {
 		return nil, "", nil, err
 	}
-	placeholder, err := execBuilders.BuildStringValue("placeholder", input, vars, false, constants.InputComponent)
+	placeholder, err := execBuilders.BuildStringValue("placeholder", input, vars, false, constants.TextComponent)
 	if err != nil {
 		return nil, "", nil, err
 	}
 	var outValue string
-	h := huh.NewInput().
+	h := huh.NewText().
 		Title(label).
 		Description(description).
 		Placeholder(placeholder).

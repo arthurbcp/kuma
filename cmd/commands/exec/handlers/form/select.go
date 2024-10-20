@@ -1,41 +1,38 @@
 package execFormHandlers
 
 import (
-	"os"
-
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
-	"github.com/arthurbcp/kuma/v2/pkg/style"
+	"github.com/arthurbcp/kuma/v2/cmd/constants"
 	"github.com/charmbracelet/huh"
 )
 
-func HandleSelect(input map[string]interface{}, vars map[string]interface{}) (*huh.Select[string], string, *string) {
+func HandleSelect(input map[string]interface{}, vars map[string]interface{}) (*huh.Select[string], string, *string, error) {
 	var err error
 
-	label, err := execBuilders.BuildStringValue("label", input, vars, false)
+	label, err := execBuilders.BuildStringValue("label", input, vars, false, constants.SelectComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
 	}
-
-	out, err := execBuilders.BuildStringValue("out", input, vars, true)
+	description, err := execBuilders.BuildStringValue("description", input, vars, false, constants.SelectComponent)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return nil, "", nil, err
+	}
+	out, err := execBuilders.BuildStringValue("out", input, vars, true, constants.SelectComponent)
+	if err != nil {
+		return nil, "", nil, err
 	}
 
 	options := []huh.Option[string]{}
 	if mapOptions, ok := input["options"].([]interface{}); ok {
 		for _, option := range mapOptions {
 			optionMap := option.(map[string]interface{})
-			label, err := execBuilders.BuildStringValue("label", optionMap, vars, true)
+			label, err := execBuilders.BuildStringValue("label", optionMap, vars, true, constants.SelectOptionComponent)
 			if err != nil {
-				style.ErrorPrint(err.Error())
-				os.Exit(1)
+				return nil, "", nil, err
 			}
-			value, err := execBuilders.BuildStringValue("value", optionMap, vars, false)
+			value, err := execBuilders.BuildStringValue("value", optionMap, vars, false, constants.SelectOptionComponent)
 			if err != nil {
-				style.ErrorPrint(err.Error())
-				os.Exit(1)
+				return nil, "", nil, err
 			}
 			if value == "" {
 				value = label
@@ -46,10 +43,11 @@ func HandleSelect(input map[string]interface{}, vars map[string]interface{}) (*h
 		var outValue string
 		h := huh.NewSelect[string]().
 			Title(label).
+			Description(description).
 			Options(options...).
 			Value(&outValue)
 
-		return h, out, &outValue
+		return h, out, &outValue, nil
 	}
-	return nil, out, nil
+	return nil, out, nil, nil
 }

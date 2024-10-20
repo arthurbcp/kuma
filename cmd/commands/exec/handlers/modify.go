@@ -1,63 +1,62 @@
 package execHandlers
 
 import (
-	"os"
-	"strings"
+	"fmt"
 
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
+	"github.com/arthurbcp/kuma/v2/cmd/commands/modify"
+	"github.com/arthurbcp/kuma/v2/cmd/constants"
+	"github.com/arthurbcp/kuma/v2/cmd/shared"
+	"github.com/arthurbcp/kuma/v2/internal/functions"
 	"github.com/arthurbcp/kuma/v2/internal/helpers"
 	"github.com/arthurbcp/kuma/v2/pkg/filesystem"
 	"github.com/arthurbcp/kuma/v2/pkg/style"
 	"github.com/spf13/afero"
 )
 
-func HandleModify(data map[string]interface{}, vars map[string]interface{}) {
-
+func HandleModify(module string, data map[string]interface{}, vars map[string]interface{}) error {
+	path := shared.KumaFilesPath
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
-
-	file, err := execBuilders.BuildStringValue("file", data, vars, true)
+	if module != "" {
+		path = shared.KumaFilesPath + "/" + module + "/" + shared.KumaFilesPath
+	}
+	file, err := execBuilders.BuildStringValue("file", data, vars, true, constants.ModifyHandler)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return err
 	}
 	fileContent, err := fs.ReadFile(file)
 	if err != nil {
-		style.ErrorPrint("reading file error: " + err.Error())
-		os.Exit(1)
+		_, err = fs.CreateFile(file)
+		if err != nil {
+			return fmt.Errorf("creating file error: %s", err.Error())
+		}
+		fileContent = ""
 	}
-	template, err := execBuilders.BuildStringValue("template", data, vars, true)
+	template, err := execBuilders.BuildStringValue("template", data, vars, true, constants.ModifyHandler)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return err
 	}
-	codeMark, err := execBuilders.BuildStringValue("mark", data, vars, true)
+	codeMark, err := execBuilders.BuildStringValue("mark", data, vars, false, constants.ModifyHandler)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return err
 	}
-	replace, err := execBuilders.BuildBoolValue("replace", data, vars, true)
+	action, err := execBuilders.BuildStringValue("action", data, vars, false, constants.ModifyHandler)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return err
 	}
-	templateContent, err := fs.ReadFile(template)
+	templateContent, err := fs.ReadFile(path + "/" + template)
 	if err != nil {
-		style.ErrorPrint("reading template file error: " + err.Error())
-		os.Exit(1)
+		return fmt.Errorf("reading template file error: %s", err.Error())
 	}
-	templateContent, err = helpers.ReplaceVars(templateContent, map[string]interface{}{"data": data}, helpers.GetFuncMap())
+	templateContent, err = helpers.ReplaceVars(templateContent, vars, functions.GetFuncMap())
 	if err != nil {
-		style.ErrorPrint("parsing template file error: " + err.Error())
-		os.Exit(1)
+		return fmt.Errorf("parsing template file error: %s", err.Error())
 	}
-	if replace {
-		fileContent = strings.ReplaceAll(fileContent, codeMark, templateContent)
-	} else {
-		fileContent = strings.ReplaceAll(fileContent, codeMark, templateContent+"\n"+codeMark)
-	}
+	fileContent = modify.HandleAction(action, fileContent, templateContent, codeMark)
 	err = fs.WriteFile(file, fileContent)
 	if err != nil {
-		style.ErrorPrint("writing file error: " + err.Error())
-		os.Exit(1)
+		return fmt.Errorf("writing file error: %s", err.Error())
 	}
+	style.CheckMarkPrint(fmt.Sprintf("file %s modified successfully!", file))
+	return nil
 }

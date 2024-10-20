@@ -1,11 +1,13 @@
 package execHandlers
 
 import (
+	"fmt"
 	"net/url"
 	"os"
 	"strings"
 
 	execBuilders "github.com/arthurbcp/kuma/v2/cmd/commands/exec/builders"
+	"github.com/arthurbcp/kuma/v2/cmd/constants"
 	"github.com/arthurbcp/kuma/v2/internal/helpers"
 	"github.com/arthurbcp/kuma/v2/pkg/filesystem"
 	"github.com/arthurbcp/kuma/v2/pkg/style"
@@ -13,21 +15,19 @@ import (
 	"github.com/spf13/afero"
 )
 
-func HandleLoad(load map[string]interface{}, vars map[string]interface{}) {
+func HandleLoad(load map[string]interface{}, vars map[string]interface{}) error {
 	var err error
 	data := vars["data"].(map[string]interface{})
 	fs := filesystem.NewFileSystem(afero.NewOsFs())
 
-	from, err := execBuilders.BuildStringValue("from", load, vars, true)
+	from, err := execBuilders.BuildStringValue("from", load, vars, true, constants.LoadHandler)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return err
 	}
 
-	out, err := execBuilders.BuildStringValue("out", load, vars, true)
+	out, err := execBuilders.BuildStringValue("out", load, vars, true, constants.LoadHandler)
 	if err != nil {
-		style.ErrorPrint(err.Error())
-		os.Exit(1)
+		return err
 	}
 
 	var fileVars map[string]interface{}
@@ -35,8 +35,7 @@ func HandleLoad(load map[string]interface{}, vars map[string]interface{}) {
 	if err != nil {
 		fileVars, err = helpers.UnmarshalFile(from, fs)
 		if err != nil {
-			style.ErrorPrint("parsing file error: " + err.Error())
-			os.Exit(1)
+			return fmt.Errorf("[handler:load] - parsing file error: %s", err.Error())
 		}
 	} else {
 		err = spinner.New().
@@ -44,22 +43,22 @@ func HandleLoad(load map[string]interface{}, vars map[string]interface{}) {
 			Action(func() {
 				varsContent, err := fs.ReadFileFromURL(from)
 				if err != nil {
-					style.ErrorPrint("reading file error: " + err.Error())
+					style.ErrorPrint("[handler:load] - reading file error: " + err.Error())
 					os.Exit(1)
 				}
 				splitURIPath := strings.Split(parsedURI.Path, "/")
 				fileVars, err = helpers.UnmarshalByExt(splitURIPath[len(splitURIPath)-1], []byte(varsContent))
 				if err != nil {
-					style.ErrorPrint("parsing file error: " + err.Error())
+					style.ErrorPrint("[handler:load] - parsing file error: " + err.Error())
 					os.Exit(1)
 				}
 			}).
 			Run()
 
 		if err != nil {
-			style.ErrorPrint("downloading variables file error: " + err.Error())
-			os.Exit(1)
+			return fmt.Errorf("[handler:load] - downloading variables file error: %s", err.Error())
 		}
 	}
 	data[out] = fileVars
+	return nil
 }

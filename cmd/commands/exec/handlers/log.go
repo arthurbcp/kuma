@@ -1,20 +1,21 @@
 package execHandlers
 
 import (
-	"os"
+	"fmt"
 
+	"github.com/arthurbcp/kuma/v2/internal/functions"
 	"github.com/arthurbcp/kuma/v2/internal/helpers"
 	"github.com/arthurbcp/kuma/v2/pkg/style"
 )
 
-func HandleLog(log string, vars map[string]interface{}) {
+func HandleLog(log string, vars map[string]interface{}) error {
 	var err error
 
-	log, err = helpers.ReplaceVars(log, vars, helpers.GetFuncMap())
+	log, err = helpers.ReplaceVars(log, vars, functions.GetFuncMap())
 	if err != nil {
-		style.ErrorPrint("parsing log error: " + err.Error())
-		os.Exit(1)
+		return fmt.Errorf("parsing log error: %s", err.Error())
 	}
 
 	style.LogPrint(log)
+	return nil
 }

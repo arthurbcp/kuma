@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/arthurbcp/kuma/v2/internal/domain"
+	"github.com/arthurbcp/kuma/v2/internal/functions"
 	"github.com/arthurbcp/kuma/v2/internal/helpers"
 	"github.com/arthurbcp/kuma/v2/pkg/style"
 	"github.com/spf13/afero"
@@ -76,9 +77,7 @@ func (h *BuilderHandler) createDirAndFilesRecursive(key string, node interface{}
 	case map[string]interface{}:
 		// Iterate through the map to handle subdirectories and files.
 		for childKey, childValue := range children {
-			// Check if the key contains a dot, indicating a file name.
 			if len(strings.Split(childKey, ".")) > 1 {
-				// Create the file and apply the corresponding template.
 				err := h.createFileAndApplyTemplate(currentPath, childKey, childValue.(map[string]interface{}))
 				if err != nil {
 					style.CrossMarkPrint(filepath.Join(currentPath, childKey))
@@ -88,8 +87,7 @@ func (h *BuilderHandler) createDirAndFilesRecursive(key string, node interface{}
 				continue
 			}
 
-			// Replace variables in the directory name.
-			childKey, err := helpers.ReplaceVars(childKey, childValue, helpers.GetFuncMap())
+			childKey, err := helpers.ReplaceVars(childKey, childValue, functions.GetFuncMap())
 			if err != nil {
 				return err
 			}
@@ -101,7 +99,6 @@ func (h *BuilderHandler) createDirAndFilesRecursive(key string, node interface{}
 			}
 		}
 	default:
-		// If the node does not have subdirectories or files, do nothing.
 	}
 
 	return nil
@@ -118,27 +115,22 @@ func (h *BuilderHandler) createDirAndFilesRecursive(key string, node interface{}
 //
 //	An error if file creation or template application fails, otherwise nil.
 func (h *BuilderHandler) createFileAndApplyTemplate(currentPath string, fileName string, data map[string]interface{}) error {
-	// Construct the full file path.
 	filePath := filepath.Join(currentPath, fileName)
 
-	// Create the file.
 	file, err := h.builder.Fs.CreateFile(filePath)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	// Retrieve and parse the template.
 	t, err := h.getTemplate(data)
 	if err != nil {
 		return err
 	}
-	// Prepare the data for template execution.
 	data = map[string]interface{}{
 		"data":   data["data"],
 		"global": h.builder.Data.Global,
 	}
-	// Execute the template and write to the file.
 	return t.Execute(file, data)
 }
 
@@ -151,19 +143,15 @@ func (h *BuilderHandler) createFileAndApplyTemplate(currentPath string, fileName
 //
 //	A pointer to the parsed template.Template and an error if parsing fails.
 func (h *BuilderHandler) getTemplate(data map[string]interface{}) (*template.Template, error) {
-	// Extract the main template name from the data.
 	templateName, ok := data["template"].(string)
 	if !ok || templateName == "" {
 		return nil, fmt.Errorf("template is required")
 	}
 
-	// Construct the path to the main template file.
 	templateFile := filepath.Join(h.builder.Config.TemplatesPath, templateName)
 
-	// Initialize a slice to hold all template file paths, including any includes.
 	allTemplates := []string{templateFile}
 
-	// If there are additional templates to include, add their paths.
 	if includes, ok := data["includes"].([]interface{}); ok {
 		for _, include := range includes {
 			includeStr, ok := include.(string)
@@ -174,24 +162,19 @@ func (h *BuilderHandler) getTemplate(data map[string]interface{}) (*template.Tem
 		}
 	}
 
-	// Create a new template object
-	tmpl := template.New(templateName).Funcs(helpers.GetFuncMap())
+	tmpl := template.New(templateName).Funcs(functions.GetFuncMap())
 
-	// Iterate through all the template paths, read them from the afero filesystem, and parse them
 	for _, tmplFile := range allTemplates {
-		// Read the template file using afero
 		content, err := afero.ReadFile(h.builder.Fs.GetAferoFs(), tmplFile)
 		if err != nil {
 			return nil, fmt.Errorf("error reading template file %s: %w", tmplFile, err)
 		}
 
-		// Parse the template content
 		_, err = tmpl.Parse(string(content))
 		if err != nil {
 			return nil, fmt.Errorf("error parsing template file %s: %w", tmplFile, err)
 		}
 	}
 
-	// Return the parsed template
 	return tmpl, nil
 }
