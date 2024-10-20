@@ -86,7 +86,10 @@ func HandleForm(formData map[string]interface{}, vars map[string]interface{}) er
 	)
 	form.WithTheme(style.KumaTheme())
 	form.WithAccessible(accessibility)
-	form.Run()
+	err = form.Run()
+	if err != nil {
+		return fmt.Errorf("error running form: %s", err.Error())
+	}
 
 	return nil
 }
