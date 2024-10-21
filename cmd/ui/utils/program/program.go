@@ -1,6 +1,7 @@
 package program
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -19,9 +20,10 @@ func NewProgram() *Program {
 
 func (p *Program) ExitCLI(tprogram *tea.Program) {
 	if p.Exit {
+		fmt.Print("saindo")
 		if err := tprogram.ReleaseTerminal(); err != nil {
 			log.Fatal(err)
 		}
-		os.Exit(1)
+		os.Exit(0)
 	}
 }
