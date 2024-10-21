@@ -64,6 +64,9 @@ func handleTea() string {
 			style.ErrorPrint("error running program: " + err.Error())
 			os.Exit(1)
 		}
+
+		program.ExitCLI(p)
+
 		shared.Module = output.Choice
 	}
 
